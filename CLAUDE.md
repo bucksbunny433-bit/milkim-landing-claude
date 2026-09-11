@@ -49,7 +49,7 @@ Nothing in here is a suggestion.
 
 | Layer | Choice |
 |---|---|
-| Framework | **Astro 5**, `output: 'static'` — zero client JS by default |
+| Framework | **Astro 7**, `output: 'static'` — zero client JS by default |
 | Templating | `.astro` components, no UI framework |
 | Styling | Hand-written CSS with custom properties + `@layer`. No CSS framework |
 | Images | Astro's built-in `<Image>` / `<Picture>` pipeline (sharp) → AVIF + WebP, `srcset` generated at build |
@@ -246,11 +246,16 @@ Ubuntu 24.04, bash 5.2, root with passwordless sudo. Verified on 2026-09-11.
 | **Chromium 141 + Playwright 1.56** at `/opt/pw-browsers` | present — drives the verifier, no install needed |
 | Static servers: `serve`, `http-server`, `python3 -m http.server`, `php` | present |
 | prettier 3.8, eslint 10.1, typescript 6.0 (global) | present |
-| **astro, sharp, motion, lenis** | **NOT installed** — `npm install` is blocked by the environment's security classifier until the client adds a Bash permission rule |
-| svgo, lighthouse | not installed; not blocking (SVG optimised by hand, budgets measured by the verifier) |
+| **astro 7.3.2, sharp 0.35.4 (libvips 8.18.6), motion 13.2.0, lenis 1.3.26** | installed and smoke-tested |
+| svgo 4.1.0, @astrojs/check, typescript 6.0 | installed |
+| lighthouse | not installed and not needed — the verifier measures the budgets directly |
 
-Image pipeline fallback, if `sharp` cannot be installed: ingest HEIC/JPEG with ImageMagick,
-encode AVIF and WebP derivatives with ffmpeg (`-c:v libaom-av1 -still-picture 1`), and wire
+Toolchain proven end to end on 2026-09-11: a throwaway page built with `astro build`
+produced AVIF derivatives with `srcset`, and the verifier measured LCP 216 ms / CLS 0 with
+every budget row green. The test page was deleted; only config remains.
+
+Image pipeline fallback, if `sharp` ever breaks: ingest HEIC/JPEG with ImageMagick, encode
+AVIF and WebP derivatives with ffmpeg (`-c:v libaom-av1 -still-picture 1`), and wire
 `<picture>` / `srcset` by hand. Slower to author, identical output weight.
 
 Network: outbound HTTPS goes through an agent proxy. Third-party apt PPAs are blocked;
@@ -258,7 +263,20 @@ the Ubuntu archives and the npm registry are reachable.
 
 ---
 
-## 9. Working agreements for future sessions
+## 9. Commands
+
+```bash
+npm run dev                       # dev server on :4321
+npm run build                     # static build into dist/
+npm run check                     # astro + TypeScript diagnostics
+npm run verify http://localhost:4321   # budgets, reduced-motion, no-JS, screenshots
+```
+
+`dist/` is the deployable folder: upload its contents to the host's web root.
+
+---
+
+## 10. Working agreements for future sessions
 
 - Mobile-first is procedural, not stylistic: build and verify 375 px, then widen.
 - Never install a dependency, download a font or an asset, or run a network command
