@@ -1,0 +1,224 @@
+# CLAUDE.md — Milkim landing page
+
+Project memory for every future session. Read this before writing any code.
+Nothing in here is a suggestion.
+
+---
+
+## 1. Client brief
+
+**Milkim** — a single-master permanent makeup studio in Omsk, Russia.
+
+- **Services:** brows, lips, inter-lash line, correction / cover-up of old permanent
+  makeup done by other artists.
+- **Audience:** Russian-speaking women, 25–55, deciding whether to trust their face to
+  this master. In this industry the visual IS the product — the decision is made by
+  looking. The page must feel expensive and calm, not loud.
+- **Language:** Russian only. Currency: ₽.
+- **Traffic:** Yandex Maps, 2GIS, Avito, Yandex Search — predominantly mobile.
+- **Deliverable:** one long-scroll landing page, no multi-page site.
+- **Materials** (real photos, price list, logo, master bio, address, messenger links) are
+  supplied by the studio. Assume nothing about them — see `assets/MANIFEST.md`.
+
+### Decisions already made by the client
+
+| Question | Answer | Consequence |
+|---|---|---|
+| Hosting | Russian shared hosting (Timeweb / Beget / Reg.ru), FTP or SSH | Build must produce a plain static folder. No serverless functions, no edge runtime, no host-specific features |
+| Booking | Messenger + phone links **and** a YCLIENTS / DIKIDI widget | Messenger links are the primary CTA and must work with JS disabled. The CRM widget is third-party and loads **on click only**, never on page load |
+| Hero video | Undecided | Hero is designed photo-first. Video is an optional layer that can be dropped in without relayout |
+| Content editing | The master edits prices herself | Prices, services, FAQ and reviews live in structured content files from day one, so a git-based CMS can be attached without touching markup |
+
+---
+
+## 2. HARD RULES — verbatim, never edit, never soften
+
+- NEVER use AI-generated, stock or borrowed images of faces, brows, lips, or any "before/after" as portfolio, results or testimonials. Every image showing a result MUST be a real photo supplied by the studio. This is non-negotiable: it is the studio's entire credibility and a legal risk when advertising a cosmetic procedure.
+- AI-generated or stock visuals are allowed ONLY as abstract, non-representational ambience: light, texture, fabric, pigment dispersing in liquid, macro surfaces. Never a person. Never a result.
+- Every placeholder MUST be visibly marked as a placeholder in the rendered page until real material replaces it. Never ship a plausible-looking fake price, review, name or photo.
+- Mobile-first. Design and verify at 375px before any desktop layout.
+- Every animation MUST respect `prefers-reduced-motion` and MUST NOT block first paint. The page must stay fully readable with JavaScript disabled.
+- No Instagram/Facebook embeds, pixels or ad scripts — legally unusable for advertising in Russia.
+- Accessibility: visible keyboard focus, real contrast ratios, alt text on every meaningful image.
+
+---
+
+## 3. Stack
+
+### Primary
+
+| Layer | Choice |
+|---|---|
+| Framework | **Astro 5**, `output: 'static'` — zero client JS by default |
+| Templating | `.astro` components, no UI framework |
+| Styling | Hand-written CSS with custom properties + `@layer`. No CSS framework |
+| Images | Astro's built-in `<Image>` / `<Picture>` pipeline (sharp) → AVIF + WebP, `srcset` generated at build |
+| Content | Astro Content Collections with Zod schemas (`src/content/`) — CMS-ready |
+| Animation | CSS-first (see below) |
+| Build output | `dist/` — a plain static folder, uploaded over FTP/SSH |
+| Deploy | GitHub Actions: build → upload `dist/` to the Russian host |
+
+### Fallback
+
+**Eleventy 3 + Nunjucks.** Same CSS and animation layer, same deploy path, even lighter.
+Chosen only if Astro's build or sharp cannot be installed in the target environment.
+Cost: the image pipeline (`eleventy-img`) and the lazy CRM widget must be wired by hand.
+
+### Animation approach — explicit
+
+1. **CSS first.** `@keyframes`, `transition`, and native scroll-driven animations
+   (`animation-timeline: view()`), with an `IntersectionObserver` fallback (~1 KB) for
+   Safari and older Android.
+2. **Motion One** (`motion`, ~5 KB, WAAPI-based) — loaded lazily **after** LCP, and only
+   for orchestrated sequences CSS genuinely cannot express.
+3. Carousels use native **CSS scroll-snap**, not a slider library.
+4. Everything sits inside `@media (prefers-reduced-motion: reduce) { }` guards that reduce
+   motion to opacity or remove it entirely.
+
+### Explicitly NOT used, and why
+
+| Rejected | Why |
+|---|---|
+| React / Next.js / Nuxt | Hydration cost destroys the mobile LCP budget for a page with zero app logic |
+| Framer Motion | Requires React |
+| GSAP + ScrollTrigger | 70 KB+ for effects CSS now does natively |
+| Three.js / WebGL | Hundreds of KB and GPU load on mid-range Android, for ambience |
+| Lottie | Heavy runtime; the same look is achievable in SVG + CSS |
+| Tailwind | A bespoke "expensive and calm" design is cleaner as tokens + plain CSS; one less build dependency |
+| Swiper / Slick / AOS / jQuery / Bootstrap | Replaced by scroll-snap, IntersectionObserver and modern CSS |
+| Instagram / Facebook embeds, Meta Pixel, any ad script | Forbidden by the hard rules and legally unusable in Russia |
+| Interactive map iframe | Static map image + link to Yandex Maps instead — an iframe alone would blow the weight budget |
+
+---
+
+## 4. Budgets — checkable numbers, not aspirations
+
+### Weight (transferred, compressed, cold cache, 375 px viewport)
+
+| Item | Budget | Hard cap |
+|---|---|---|
+| First view, everything | **≤ 600 KB** | 750 KB |
+| HTML | ≤ 25 KB | 35 KB |
+| CSS total | ≤ 30 KB | 40 KB |
+| Critical inline CSS | ≤ 10 KB | 14 KB |
+| JS on first load | ≤ 40 KB | 60 KB |
+| JS before LCP | ≤ 15 KB | 15 KB |
+| Render-blocking JS | **0 KB** | 0 KB |
+| Fonts | ≤ 120 KB | 150 KB |
+| LCP image (hero) | ≤ 180 KB AVIF | 250 KB |
+| Hero video, if used | ≤ 1.8 MB, ≤ 8 s, ≤ 1280 × 720 | — |
+| Full page, after scrolling to the bottom | ≤ 2.5 MB | 3 MB |
+| Requests on first view | ≤ 25 | 30 |
+| YCLIENTS / DIKIDI widget | not counted — loads on click only | must never load automatically |
+
+### Core Web Vitals (Lighthouse mobile: Moto G Power class, 4G, 1.6 Mbit/s, RTT 150 ms, CPU ×4)
+
+| Metric | Target | Hard cap |
+|---|---|---|
+| LCP | ≤ 2.0 s | **2.5 s** |
+| CLS | ≤ 0.05 | 0.1 |
+| INP | ≤ 150 ms | 200 ms |
+| FCP | ≤ 1.5 s | 1.8 s |
+| TBT | ≤ 150 ms | 200 ms |
+| Lighthouse Performance | ≥ 90 | 85 |
+| Lighthouse Accessibility | 100 | 95 |
+
+### Images
+
+- **Formats:** AVIF primary → WebP fallback → JPEG only for `og:image`.
+  PNG only for transparency in UI. SVG for logo and icons.
+- **`srcset` widths:** 400, 800, 1200, 1600, 2000, 2400 px. DPR capped at 2 —
+  no 3× assets.
+- Every `<img>` ships explicit `width`/`height` or `aspect-ratio`. No exceptions — this is
+  how CLS stays at 0.
+- Below the fold: `loading="lazy" decoding="async"`. Hero: `fetchpriority="high"`,
+  never lazy.
+
+### Breakpoints (mobile-first, `min-width`)
+
+`375` (baseline, design here first) · `480` · `768` · `1024` · `1280` · `1600`
+
+### Fonts
+
+Max **2 families × 2 weights**. `woff2` only, self-hosted in `public/fonts/`,
+subset to Cyrillic + Basic Latin + punctuation, `font-display: swap`,
+`<link rel="preload">` for the single face used above the fold.
+
+### Accessibility
+
+**WCAG 2.2 level AA**, verified with real measured contrast ratios:
+
+- Body text ≥ 4.5:1, large text and UI components ≥ 3:1.
+- Visible focus: 2 px outline + 2 px offset, ≥ 3:1 against its background. `:focus-visible`
+  is styled, never removed.
+- Touch targets ≥ 44 × 44 CSS px.
+- Every meaningful image has alt text; decorative and ambience images get `alt=""`.
+- Full keyboard operability, logical tab order, skip link to main content.
+- Page stays readable and usable with JS disabled and with CSS animations off.
+
+---
+
+## 5. Repository layout
+
+```
+CLAUDE.md              this file
+assets/
+  MANIFEST.md          every media slot the page needs — read before requesting materials
+  raw/                 untouched originals from the studio; never shipped as-is
+public/                copied to dist/ verbatim: fonts, icons, favicons, video
+src/
+  assets/images/       source images processed by the build pipeline
+  components/          .astro components
+  layouts/             page shells
+  pages/               routes
+  content/             editable content: prices, services, FAQ, reviews (CMS target)
+  styles/              tokens, base, layers
+```
+
+---
+
+## 6. Naming conventions
+
+- **Files and folders:** `kebab-case`, ASCII only. Never Cyrillic in a filename.
+- **Images:** `<section>-<subject>-<NN>[-<state>].<ext>` —
+  e.g. `portfolio-brows-03-before.avif`, `studio-interior-02.avif`.
+- **Components:** `PascalCase.astro`. **Layouts:** `PascalCase.astro`.
+- **Content entries:** `src/content/<collection>/<slug>.md` or `.json`.
+- **CSS custom properties:** `--mk-<group>-<name>` — e.g. `--mk-color-ink`,
+  `--mk-space-4`.
+- **CSS classes:** `.mk-<block>__<element>--<modifier>`.
+- **Branches:** `claude/<name>`. **Commits:** Conventional Commits, English.
+- **Placeholders:** filename contains `placeholder`, and the rendered element carries
+  `data-placeholder="true"` plus a visible badge. Never a silent stand-in.
+
+---
+
+## 7. Content rules
+
+- Russian only. Currency `₽`, written after the number with a non-breaking space:
+  `8 000 ₽`. Price ranges as `от 8 000 ₽`.
+- Typography: `«ёлочки»` for quotes, em dash `—` for dashes, no ALL CAPS in body text.
+- Phone displayed as `+7 913 000-00-00`, linked as `tel:+79130000000`.
+- **No medical claims and no guaranteed outcomes.** Permanent makeup is a cosmetic
+  procedure: contraindications and the need for a consultation must be stated on the page.
+- Required legal blocks: business details (ИП / самозанятый), address, contacts, and —
+  if any form collects personal data — a 152-ФЗ privacy notice and an explicit consent
+  checkbox.
+- Reviews: only real ones, shown as screenshots from Yandex Maps / 2GIS / Avito with the
+  source and date visible in the screenshot. Never a retyped, unattributed quote.
+- Portfolio entries carry the service name, the interval before the "after" shot, and a
+  recorded publication consent from the client.
+- No Instagram or Facebook anywhere: no embeds, no icons, no links, no logos.
+
+---
+
+## 8. Working agreements for future sessions
+
+- Mobile-first is procedural, not stylistic: build and verify 375 px, then widen.
+- Never install a dependency, download a font or an asset, or run a network command
+  without asking the client first and showing the exact command.
+- Never invent content. If material is missing, ship a marked placeholder and say what is
+  missing.
+- Do not add CI, tests, tooling or abstractions that were not asked for.
+- Work only inside this project directory.
+- Check every change against the budgets in §4 before calling it done.
