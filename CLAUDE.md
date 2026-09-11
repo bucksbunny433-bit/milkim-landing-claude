@@ -66,14 +66,26 @@ Cost: the image pipeline (`eleventy-img`) and the lazy CRM widget must be wired 
 
 ### Animation approach — explicit
 
+The full effect catalogue, easing vocabulary and per-effect cost table live in the project
+skill **`.claude/skills/milkim-visual/`**. Load it before writing any keyframe, scroll
+effect or hover state. Summary:
+
 1. **CSS first.** `@keyframes`, `transition`, and native scroll-driven animations
    (`animation-timeline: view()`), with an `IntersectionObserver` fallback (~1 KB) for
    Safari and older Android.
 2. **Motion One** (`motion`, ~5 KB, WAAPI-based) — loaded lazily **after** LCP, and only
    for orchestrated sequences CSS genuinely cannot express.
-3. Carousels use native **CSS scroll-snap**, not a slider library.
-4. Everything sits inside `@media (prefers-reduced-motion: reduce) { }` guards that reduce
-   motion to opacity or remove it entirely.
+3. **Lenis** (~3 KB) for smooth scroll — **desktop only**, dynamically imported after
+   `load`, skipped under `prefers-reduced-motion`, `pointer: coarse` or `saveData`.
+4. **View Transitions API** (built into Astro) for modal and route transitions. No library.
+5. Carousels use native **CSS scroll-snap**, not a slider library. The before/after slider
+   is an `<input type=range>` driving `clip-path` — keyboard-operable, zero dependencies.
+6. Everything sits inside `@media (prefers-reduced-motion: reduce) { }` guards that reduce
+   motion to opacity or remove it entirely. Hover effects are gated behind
+   `@media (hover: hover) and (pointer: fine)`.
+7. `transform` / `opacity` / `clip-path` only. Nothing animates before LCP.
+
+Total JS motion budget with every effect shipped: **~6 KB**.
 
 ### Explicitly NOT used, and why
 
@@ -156,12 +168,21 @@ subset to Cyrillic + Basic Latin + punctuation, `font-display: swap`,
 - Full keyboard operability, logical tab order, skip link to main content.
 - Page stays readable and usable with JS disabled and with CSS animations off.
 
+### How these numbers get checked
+
+`node .claude/skills/milkim-visual/scripts/verify.mjs <url>` loads the page at 375 px under
+exactly this profile, prints PASS / WARN / FAIL for every row above, and screenshots the
+page three ways: normal, `prefers-reduced-motion: reduce`, and JavaScript disabled.
+It needs no npm install — it drives the Chromium already present at `/opt/pw-browsers`.
+
 ---
 
 ## 5. Repository layout
 
 ```
 CLAUDE.md              this file
+.claude/skills/
+  milkim-visual/       visual + motion playbook and the budget verifier
 assets/
   MANIFEST.md          every media slot the page needs — read before requesting materials
   raw/                 untouched originals from the studio; never shipped as-is
@@ -212,7 +233,32 @@ src/
 
 ---
 
-## 8. Working agreements for future sessions
+## 8. Environment — verified, do not re-probe
+
+Ubuntu 24.04, bash 5.2, root with passwordless sudo. Verified on 2026-09-11.
+
+| Tool | State |
+|---|---|
+| Node 22.22 / npm 10.9 / pnpm 10.33 / bun 1.3 / yarn 1.22 | present |
+| git 2.43 | present |
+| **ffmpeg 6.1.1** (libx264, libvpx-vp9, libaom-av1, libsvtav1, libwebp) | present — encodes video **and** still AVIF/WebP |
+| **ImageMagick 6.9.12** | present — **reads HEIC/AVIF**, writes JPEG/PNG/WebP. This is how iPhone originals from the studio get ingested |
+| **Chromium 141 + Playwright 1.56** at `/opt/pw-browsers` | present — drives the verifier, no install needed |
+| Static servers: `serve`, `http-server`, `python3 -m http.server`, `php` | present |
+| prettier 3.8, eslint 10.1, typescript 6.0 (global) | present |
+| **astro, sharp, motion, lenis** | **NOT installed** — `npm install` is blocked by the environment's security classifier until the client adds a Bash permission rule |
+| svgo, lighthouse | not installed; not blocking (SVG optimised by hand, budgets measured by the verifier) |
+
+Image pipeline fallback, if `sharp` cannot be installed: ingest HEIC/JPEG with ImageMagick,
+encode AVIF and WebP derivatives with ffmpeg (`-c:v libaom-av1 -still-picture 1`), and wire
+`<picture>` / `srcset` by hand. Slower to author, identical output weight.
+
+Network: outbound HTTPS goes through an agent proxy. Third-party apt PPAs are blocked;
+the Ubuntu archives and the npm registry are reachable.
+
+---
+
+## 9. Working agreements for future sessions
 
 - Mobile-first is procedural, not stylistic: build and verify 375 px, then widen.
 - Never install a dependency, download a font or an asset, or run a network command
@@ -221,4 +267,6 @@ src/
   missing.
 - Do not add CI, tests, tooling or abstractions that were not asked for.
 - Work only inside this project directory.
-- Check every change against the budgets in §4 before calling it done.
+- Check every change against the budgets in §4 before calling it done — by running the
+  verifier, not by eye.
+- Load the `milkim-visual` skill before designing or animating anything.
