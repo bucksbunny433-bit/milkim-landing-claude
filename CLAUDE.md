@@ -27,7 +27,7 @@ Nothing in here is a suggestion.
 | Hosting | Russian shared hosting (Timeweb / Beget / Reg.ru), FTP or SSH | Build must produce a plain static folder. No serverless functions, no edge runtime, no host-specific features |
 | Booking | Messenger + phone links **and** a YCLIENTS / DIKIDI widget | Messenger links are the primary CTA and must work with JS disabled. The CRM widget is third-party and loads **on click only**, never on page load |
 | Hero video | Undecided | Hero is designed photo-first. Video is an optional layer that can be dropped in without relayout |
-| Content editing | The master edits prices herself | Prices, services, FAQ and reviews live in structured content files from day one, so a git-based CMS can be attached without touching markup |
+| Content editing | The master edits prices herself — **but the admin UI is deliberately deferred**, not cancelled | No CMS is built now. The enabling condition is mandatory and non-negotiable: prices, services, FAQ and reviews live in `src/content/` as structured data from the very first commit, never hardcoded in markup. A git-based CMS then attaches later as an admin UI over those same files, with zero changes to the page |
 
 ---
 
