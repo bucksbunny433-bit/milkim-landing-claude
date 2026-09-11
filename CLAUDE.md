@@ -150,11 +150,40 @@ Total JS motion budget with every effect shipped: **~6 KB**.
 
 `375` (baseline, design here first) · `480` · `768` · `1024` · `1280` · `1600`
 
-### Fonts
+### Fonts — CHOSEN, do not revisit
 
-Max **2 families × 2 weights**. `woff2` only, self-hosted in `public/fonts/`,
-subset to Cyrillic + Basic Latin + punctuation, `font-display: swap`,
-`<link rel="preload">` for the single face used above the fold.
+The client picked **pairing C** on 2026-09-11 after seeing all four rendered at 375 px.
+
+| Role | Face | Weights | Cyrillic subset, measured |
+|---|---|---|---|
+| Headings | **Tenor Sans** | 400 | 11.4 KB |
+| Body | **Golos Text** | 400, 500 | 13.7 KB |
+
+Total 25.1 KB for Cyrillic; roughly 50 KB once Basic Latin (digits, `₽`, Latin words) is
+added — comfortably inside the 120 KB budget, with better than 2× headroom.
+
+Why this pairing: an all-sans setting is rare in Russian beauty, where Prata-style didones
+are the default. Tenor Sans reads as calm competence rather than glamour, which is the
+right register for correcting other artists' failed work. The cost is that "luxury" is
+signalled quietly, so it survives only on disciplined spacing — see the `milkim-visual`
+skill.
+
+**Not yet downloaded.** Nothing font-related exists in the repo. The next session must show
+these commands before running them:
+
+```bash
+# Tenor Sans 400, Golos Text 400/500 - Cyrillic + Basic Latin subsets, woff2
+npx --yes google-font-installer download "Tenor Sans" -d public/fonts
+npx --yes google-font-installer download "Golos Text" -d public/fonts
+```
+
+Both faces are published on Google Fonts under the SIL Open Font License 1.1, so
+self-hosting is permitted — keep the `OFL.txt` that ships with the download inside
+`public/fonts/`.
+
+Rules that still apply: `woff2` only, self-hosted in `public/fonts/`, subset to
+Cyrillic + Basic Latin + punctuation, `font-display: swap`, and `<link rel="preload">` for
+the single face used above the fold.
 
 ### Accessibility
 
