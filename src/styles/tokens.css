@@ -1,0 +1,141 @@
+/*
+ * Milkim design tokens.
+ *
+ * Colours come from the studio's own brand pack (MILKIM_Print_Guide): screen gold
+ * #F3CF83, light signature #F4F1E8, ground #000000. Two deviations, both deliberate:
+ *
+ *   - the dark ground is #0D0C0B, not pure #000000. Pure black on an OLED phone reads
+ *     cheap and crushes the warm cast the gold needs. #0D0C0B keeps the brand's black
+ *     while staying a colour rather than an absence.
+ *   - gold is a DARK-GROUND COLOUR ONLY. Measured: 14.06:1 on black, but 1.49:1 on white
+ *     and 1.32:1 on the bone ground. On light sections it may be a large decorative fill
+ *     or a rule, never text, never a thin glyph, never an unoutlined button. Where a
+ *     gold-family colour must carry text on light, use --mk-gold-ink (5.49:1).
+ *
+ * Every ratio below was computed, not estimated. Re-measure before changing any value.
+ */
+
+:root {
+  /* ---------- dark sections: hero, footer ---------- */
+  --mk-dark-ground: #0d0c0b;
+  --mk-dark-raised: #171512; /* cards and insets on the dark ground */
+  --mk-dark-text: #f4f1e8; /* 17.30:1 */
+  --mk-dark-muted: #b8b0a2; /* 9.09:1 — secondary copy */
+  --mk-dark-faint: #a69e90; /* 7.37:1 — captions, source labels */
+  --mk-dark-rule: #3a3631; /* decorative hairline only, not a control */
+
+  /* ---------- light sections: portfolio, prices, everything showing skin ---------- */
+  --mk-light-ground: #f4f1e8;
+  --mk-light-raised: #fbf9f4;
+  --mk-light-text: #241f1d; /* 14.43:1 */
+  --mk-light-muted: #6b6157; /* 5.35:1 — secondary copy */
+  --mk-light-faint: #756b60; /* 4.62:1 — the floor; nothing lighter carries text */
+  --mk-light-rule: #ddd5c6; /* decorative hairline only */
+
+  /* ---------- the one accent ---------- */
+  --mk-gold: #f3cf83; /* 13.09:1 on --mk-dark-ground */
+  --mk-gold-ink: #7a5c27; /* 5.49:1 on --mk-light-ground — the light-ground stand-in */
+  --mk-gold-deep: #6e5322; /* 6.36:1 on light — hover state for gold-ink text */
+  --mk-on-gold: #241f1d; /* 10.91:1 label on a gold fill */
+
+  /* ---------- section-scoped roles ----------
+     Sections set these once via .mk-on-dark / .mk-on-light; components only ever read
+     the role, never a literal. That is what lets one component live in both grounds. */
+  --mk-ground: var(--mk-light-ground);
+  --mk-raised: var(--mk-light-raised);
+  --mk-text: var(--mk-light-text);
+  --mk-muted: var(--mk-light-muted);
+  --mk-faint: var(--mk-light-faint);
+  --mk-rule: var(--mk-light-rule);
+  --mk-focus: var(--mk-light-text); /* 14.43:1 — gold would be 1.32:1 here */
+
+  /* ---------- type ----------
+     Tenor Sans and Golos Text are self-hosted; the fallbacks are chosen so a font
+     failure degrades to a similar width and does not reflow the layout. */
+  --mk-font-display: "Tenor Sans", "Helvetica Neue", Arial, sans-serif;
+  --mk-font-body: "Golos Text", "Segoe UI", system-ui, -apple-system, sans-serif;
+
+  /* Mobile-first scale. 375px is the design baseline; the clamp upper bounds are
+     reached around 1280px. Display sizes stay large on purpose — timid headings are
+     what make a beauty page read as a template. */
+  --mk-step-display: clamp(2.375rem, 1.45rem + 3.95vw, 4.5rem); /* 38 → 72 */
+  --mk-step-h2: clamp(1.75rem, 1.3rem + 1.92vw, 2.75rem); /* 28 → 44 */
+  --mk-step-h3: clamp(1.25rem, 1.09rem + 0.67vw, 1.625rem); /* 20 → 26 */
+  --mk-step-lead: clamp(1.0625rem, 1.01rem + 0.24vw, 1.1875rem); /* 17 → 19 */
+  --mk-step-body: 1.0625rem; /* 17 — fixed: body text should not grow with the window */
+  --mk-step-small: 0.9375rem; /* 15 */
+  --mk-step-label: 0.6875rem; /* 11 — uppercase eyebrows only */
+
+  --mk-leading-display: 1.08;
+  --mk-leading-heading: 1.18;
+  --mk-leading-body: 1.62;
+  --mk-tracking-display: -0.015em;
+  --mk-tracking-label: 0.2em;
+  --mk-measure: 34ch; /* ~62 characters at body size */
+
+  /* ---------- space ----------
+     A 4px base on a musical-ish progression. Section padding is its own ramp so a
+     section never inherits a body-copy gap. */
+  --mk-space-1: 0.25rem;
+  --mk-space-2: 0.5rem;
+  --mk-space-3: 0.75rem;
+  --mk-space-4: 1rem;
+  --mk-space-5: 1.5rem;
+  --mk-space-6: 2rem;
+  --mk-space-7: 3rem;
+  --mk-space-8: 4rem;
+  --mk-space-9: 6rem;
+  --mk-space-10: 8rem;
+
+  --mk-gutter: 1.25rem; /* 20px side gutter at 375; never below 16 */
+  --mk-section-y: clamp(3.5rem, 2.5rem + 4.3vw, 7.5rem);
+  --mk-max-width: 78rem;
+  --mk-max-text: 42rem;
+
+  /* ---------- form ----------
+     Near-zero radii. Editorial, and it avoids the 4px default that reads unfinished. */
+  --mk-radius: 2px;
+  --mk-radius-media: 0px;
+  --mk-hit: 44px; /* minimum touch target, WCAG 2.2 */
+
+  /* ---------- motion ----------
+     Expensive motion is slow in, slower out. Nothing bouncy, nothing under 200ms
+     for a reveal. See .claude/skills/milkim-visual for the effect catalogue. */
+  --mk-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --mk-ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+  --mk-dur-fast: 240ms;
+  --mk-dur-base: 640ms;
+  --mk-dur-slow: 1200ms;
+  --mk-stagger: 80ms;
+}
+
+/* Section grounds. Setting the roles here is the only place a literal colour is read. */
+.mk-on-dark {
+  --mk-ground: var(--mk-dark-ground);
+  --mk-raised: var(--mk-dark-raised);
+  --mk-text: var(--mk-dark-text);
+  --mk-muted: var(--mk-dark-muted);
+  --mk-faint: var(--mk-dark-faint);
+  --mk-rule: var(--mk-dark-rule);
+  --mk-accent: var(--mk-gold); /* 13.09:1 here */
+  --mk-focus: var(--mk-gold);
+  background-color: var(--mk-ground);
+  color: var(--mk-text);
+}
+
+.mk-on-light {
+  --mk-ground: var(--mk-light-ground);
+  --mk-raised: var(--mk-light-raised);
+  --mk-text: var(--mk-light-text);
+  --mk-muted: var(--mk-light-muted);
+  --mk-faint: var(--mk-light-faint);
+  --mk-rule: var(--mk-light-rule);
+  --mk-accent: var(--mk-gold-ink); /* 5.49:1 — the plain gold fails at 1.32:1 */
+  --mk-focus: var(--mk-light-text);
+  background-color: var(--mk-ground);
+  color: var(--mk-text);
+}
+
+/* The page is a light document with dark bookends, so the default role set is light.
+   Declared on :root above; repeated on body so a transparent body can never borrow
+   a host background. */

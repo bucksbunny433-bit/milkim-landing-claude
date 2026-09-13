@@ -1,0 +1,11 @@
+[
+  { "id": "brows",      "title": "Брови",                 "base": 5500,  "correction": 3500, "presented": true,  "order": 1 },
+  { "id": "coverup",    "title": "Перекрытие старого перманента", "base": 6500, "correction": 4500, "presented": true, "order": 2 },
+  { "id": "lips",       "title": "Губы",                  "base": 6000,  "correction": 4000, "presented": false, "order": 3 },
+  { "id": "eyeliner",   "title": "Межресничка",           "base": 4500,  "correction": 2500, "presented": false, "order": 4 },
+  { "id": "refresh",    "title": "Рефреш",                "base": 5000,  "correction": null, "presented": false, "order": 5,
+    "note": "Обновление работы через год и позже, по уже существующему эскизу." },
+  { "id": "lips-brows", "title": "Губы и брови",          "base": 10500, "correction": 7000, "presented": false, "order": 6, "combo": true },
+  { "id": "lips-liner", "title": "Губы и межресничка",    "base": 9500,  "correction": 5500, "presented": false, "order": 7, "combo": true },
+  { "id": "brows-liner","title": "Брови и межресничка",   "base": 9000,  "correction": 5500, "presented": false, "order": 8, "combo": true }
+]

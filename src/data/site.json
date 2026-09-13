@@ -1,0 +1,49 @@
+{
+  "name": "Milkim",
+  "tagline": "Перманентный макияж",
+  "city": "Омск",
+  "master": {
+    "name": "Анастасия",
+    "fullName": "Анастасия Мильвиц",
+    "role": "мастер перманентного макияжа",
+    "experienceYears": 5
+  },
+  "address": {
+    "street": "ул. Дмитриева, 5/1",
+    "floor": "2 этаж",
+    "city": "Омск",
+    "parking": true,
+    "note": "Как пройти — подскажем по телефону, когда вы будете рядом."
+  },
+  "hours": {
+    "days": "Понедельник — воскресенье",
+    "time": "10:00 — 19:00",
+    "note": "Приём по предварительной записи, обычно за несколько дней."
+  },
+  "phones": [
+    { "display": "+7 901 006-93-11", "href": "tel:+79010069311", "primary": true, "messengers": ["telegram", "max"] },
+    { "display": "+7 906 197-70-77", "href": "tel:+79061977077", "primary": false, "messengers": [] }
+  ],
+  "booking": {
+    "dikidi": "https://dikidi.net/833342",
+    "deposit": 500,
+    "depositNote": "Депозит 500 ₽. Не возвращается, если отменить запись менее чем за сутки.",
+    "canBookDirectly": true
+  },
+  "links": {
+    "vk": "https://vk.ru/milvicpm",
+    "yandexMaps": "https://yandex.ru/maps/org/milkim/205810346343",
+    "twogis": "https://2gis.ru/omsk/geo/70000001064923408",
+    "avito": "https://www.avito.ru/omsk/predlozheniya_uslug/permanentnyy_makiyazh_brovey_gub_tatuazh_udalenie_2960505704"
+  },
+  "legal": {
+    "entity": "ИП Мильвиц Анастасия Михайловна",
+    "ogrnip": "326554300075067",
+    "inn": "553102271152"
+  },
+  "promo": {
+    "active": true,
+    "title": "Приведи подругу",
+    "text": "Скидка 15% на коррекцию."
+  }
+}
