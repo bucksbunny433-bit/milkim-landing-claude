@@ -1,5 +1,6 @@
 ---
 import site from "../data/site.json";
+import LogoSprite from "../components/LogoSprite.astro";
 import "../styles/tokens.css";
 import "../styles/fonts.css";
 import "../styles/base.css";
@@ -84,6 +85,7 @@ const schema = {
   </head>
 
   <body>
+    <LogoSprite />
     <a class="mk-skip" href="#main">Перейти к содержанию</a>
     <slot />
 

@@ -1,0 +1,198 @@
+---
+import { Image } from "astro:assets";
+import site from "../data/site.json";
+import portrait from "../assets/images/master-portrait.jpg";
+
+// Certificates are shown as images without claiming what each one says. Only one
+// was read in full; inventing titles for the other six would be exactly the kind
+// of plausible-looking detail the project rules forbid.
+const certs = Object.entries(
+  import.meta.glob<{ default: ImageMetadata }>("../assets/certificates/*.jpg", { eager: true }),
+)
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([, m]) => m.default);
+---
+
+<section class="mk-on-light mk-section master" id="master">
+  <div class="mk-container master__inner">
+    <div class="master__media">
+      <Image
+        src={portrait}
+        alt={`${site.master.fullName}, ${site.master.role}`}
+        widths={[320, 520, 760]}
+        width={760}
+        sizes="(min-width: 900px) 36vw, 88vw"
+        format="avif"
+        quality={62}
+        loading="lazy"
+        decoding="async"
+        class="master__img"
+      />
+    </div>
+
+    <div class="master__copy">
+      <p class="mk-eyebrow">Мастер</p>
+      <h2 class="master__title">{site.master.name}</h2>
+
+      <p class="master__lead">
+        Перманентным макияжем занимаюсь {site.master.experienceYears} лет.
+      </p>
+
+      <p class="master__text">
+        Я не делаю шаблонные брови. Форма строится по геометрическим точкам вашего лица,
+        а эскиз — под ваш запрос: они могут быть тонкими и изящными, если так нужно, или
+        более яркими и пушистыми, если позволяет своя форма.
+      </p>
+
+      <p class="master__text">
+        И я не обещаю того, что не могу подтвердить. Пока не увижу фото, я не скажу, что
+        старую работу получится исправить. Если случай требует сначала осветления —
+        скажу об этом прямо, а не возьму деньги и не сделаю хуже.
+      </p>
+
+      <dl class="master__facts">
+        <div>
+          <dt>Опыт</dt>
+          <dd>{site.master.experienceYears} лет</dd>
+        </div>
+        <div>
+          <dt>Документы об обучении</dt>
+          <dd>{certs.length}</dd>
+        </div>
+        <div>
+          <dt>Приём</dt>
+          <dd>по предварительной записи</dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+
+  <div class="mk-container">
+    <div class="certs" data-reveal>
+      <h3 class="certs__title">Документы об обучении</h3>
+      <ul class="certs__list" role="list">
+        {
+          certs.map((c, i) => (
+            <li class="certs__item">
+              <Image
+                src={c}
+                alt={`Сертификат об обучении ${i + 1} из ${certs.length}`}
+                widths={[160, 300]}
+                width={300}
+                sizes="30vw"
+                format="avif"
+                quality={62}
+                loading="lazy"
+                decoding="async"
+                class="certs__img"
+              />
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .master__inner {
+    display: grid;
+    gap: var(--mk-space-6);
+    margin-bottom: var(--mk-space-8);
+  }
+
+  .master__img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: 50% 20%;
+  }
+
+  .master__title {
+    margin-block: var(--mk-space-3) var(--mk-space-5);
+  }
+
+  .master__lead {
+    font-size: var(--mk-step-lead);
+    margin-bottom: var(--mk-space-4);
+  }
+
+  .master__text {
+    font-size: var(--mk-step-small);
+    color: var(--mk-muted);
+    max-width: var(--mk-measure);
+  }
+
+  .master__text + .master__text {
+    margin-top: var(--mk-space-4);
+  }
+
+  .master__facts {
+    display: grid;
+    gap: var(--mk-space-3);
+    margin: var(--mk-space-6) 0 0;
+    padding-top: var(--mk-space-4);
+    border-top: 1px solid var(--mk-rule);
+  }
+
+  .master__facts > div {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--mk-space-4);
+  }
+
+  .master__facts dt {
+    font-size: var(--mk-step-label);
+    letter-spacing: var(--mk-tracking-label);
+    text-transform: uppercase;
+    color: var(--mk-faint);
+  }
+
+  .master__facts dd {
+    margin: 0;
+    font-size: var(--mk-step-small);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .certs {
+    padding-top: var(--mk-space-5);
+    border-top: 1px solid var(--mk-rule);
+  }
+
+  .certs__title {
+    font-family: var(--mk-font-display);
+    font-size: var(--mk-step-lead);
+    font-weight: 400;
+    margin-bottom: var(--mk-space-4);
+  }
+
+  .certs__list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--mk-space-2);
+  }
+
+  .certs__img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    object-position: 50% 20%;
+    background-color: color-mix(in oklab, var(--mk-text) 5%, transparent);
+  }
+
+  @media (min-width: 760px) {
+    .certs__list {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  @media (min-width: 900px) {
+    .master__inner {
+      grid-template-columns: 36% 1fr;
+      gap: var(--mk-space-8);
+      align-items: start;
+    }
+  }
+</style>

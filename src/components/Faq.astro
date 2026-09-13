@@ -1,0 +1,204 @@
+---
+import faq from "../content/faq.json";
+import contra from "../content/contraindications.json";
+import aftercare from "../content/aftercare.json";
+
+// details/summary: an accordion with zero JavaScript, keyboard-operable and
+// screen-reader-correct for free. With JS off it still opens and closes.
+const care = [aftercare.before, aftercare.brows, aftercare.lips];
+---
+
+<section class="mk-on-light mk-section faq" id="faq">
+  <div class="mk-container">
+    <header class="faq__head">
+      <p class="mk-eyebrow">Вопросы</p>
+      <h2 class="faq__title">То, что спрашивают до записи</h2>
+    </header>
+
+    <div class="faq__grid">
+      <div class="faq__col">
+        {
+          faq.map((q) => (
+            <details class="qa" name="faq">
+              <summary class="qa__q">{q.q}</summary>
+              <p class="qa__a">{q.a}</p>
+            </details>
+          ))
+        }
+      </div>
+
+      <aside class="side">
+        <div class="panel" data-reveal>
+          <h3 class="panel__title">Противопоказания</h3>
+          <p class="panel__note">{contra.note}</p>
+
+          <h4 class="panel__sub">{contra.absolute.title}</h4>
+          <ul class="panel__list" role="list">
+            {contra.absolute.items.map((i) => <li>{i}</li>)}
+          </ul>
+
+          {/* Absolute ones stay open - they are the ones that rule a person out.
+              The relative list is ten items long and collapses. */}
+          <details class="qa qa--care">
+            <summary class="qa__q qa__q--small">{contra.relative.title}</summary>
+            <ul class="panel__list" role="list">
+              {contra.relative.items.map((i) => <li>{i}</li>)}
+            </ul>
+          </details>
+        </div>
+
+        <div class="panel" data-reveal>
+          <h3 class="panel__title">Подготовка и уход</h3>
+          {
+            care.map((c) => (
+              <details class="qa qa--care">
+                <summary class="qa__q qa__q--small">{c.title}</summary>
+                <ul class="panel__list" role="list">
+                  {c.items.map((i) => (
+                    <li>{i}</li>
+                  ))}
+                </ul>
+              </details>
+            ))
+          }
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq__head {
+    margin-bottom: var(--mk-space-7);
+  }
+
+  .faq__title {
+    margin-top: var(--mk-space-4);
+  }
+
+  .faq__grid {
+    display: grid;
+    gap: var(--mk-space-8);
+  }
+
+  .qa {
+    border-bottom: 1px solid var(--mk-rule);
+  }
+
+  .qa__q {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--mk-space-4);
+    min-height: var(--mk-hit);
+    padding-block: var(--mk-space-4);
+    font-size: var(--mk-step-lead);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .qa__q--small {
+    font-size: var(--mk-step-body);
+  }
+
+  .qa__q::-webkit-details-marker {
+    display: none;
+  }
+
+  .qa__q::after {
+    content: "+";
+    font-family: var(--mk-font-display);
+    font-size: 1.5em;
+    line-height: 1;
+    color: var(--mk-accent);
+    flex: none;
+    transition: transform var(--mk-dur-fast) var(--mk-ease-out);
+  }
+
+  .qa[open] .qa__q::after {
+    transform: rotate(45deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .qa__q::after {
+      transition-duration: 1ms;
+    }
+  }
+
+  .qa__a {
+    padding-bottom: var(--mk-space-5);
+    font-size: var(--mk-step-small);
+    color: var(--mk-muted);
+    max-width: var(--mk-measure);
+  }
+
+  .qa--care {
+    border-bottom: 1px solid var(--mk-rule);
+  }
+
+  .qa--care .panel__list {
+    padding-bottom: var(--mk-space-5);
+  }
+
+  /* ---- side panels ---- */
+  .side {
+    display: grid;
+    gap: var(--mk-space-6);
+  }
+
+  .panel {
+    padding: var(--mk-space-5);
+    background-color: var(--mk-raised);
+    border: 1px solid var(--mk-rule);
+    border-radius: var(--mk-radius);
+  }
+
+  .panel__title {
+    font-family: var(--mk-font-display);
+    font-size: var(--mk-step-h3);
+    font-weight: 400;
+    margin-bottom: var(--mk-space-3);
+  }
+
+  .panel__note {
+    font-size: var(--mk-step-small);
+    color: var(--mk-muted);
+    margin-bottom: var(--mk-space-5);
+  }
+
+  .panel__sub {
+    font-size: var(--mk-step-label);
+    letter-spacing: var(--mk-tracking-label);
+    text-transform: uppercase;
+    color: var(--mk-faint);
+    margin-block: var(--mk-space-5) var(--mk-space-3);
+    font-weight: 500;
+  }
+
+  .panel__list {
+    display: grid;
+    gap: var(--mk-space-2);
+    font-size: var(--mk-step-small);
+    color: var(--mk-muted);
+  }
+
+  .panel__list li {
+    padding-left: var(--mk-space-4);
+    position: relative;
+  }
+
+  .panel__list li::before {
+    content: "—";
+    position: absolute;
+    left: 0;
+    color: var(--mk-accent);
+  }
+
+  @media (min-width: 900px) {
+    .faq__grid {
+      grid-template-columns: 1fr minmax(0, 24rem);
+      gap: var(--mk-space-8);
+      align-items: start;
+    }
+  }
+</style>

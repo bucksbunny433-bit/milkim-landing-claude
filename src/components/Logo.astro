@@ -1,0 +1,26 @@
+---
+interface Props {
+  label: string;
+  class?: string;
+}
+const { label, class: className } = Astro.props;
+---
+
+<span class={`logo ${className ?? ""}`} role="img" aria-label={label}>
+  <svg viewBox="260 993 748 210" focusable="false" aria-hidden="true">
+    <use href="#mk-wordmark"></use>
+  </svg>
+</span>
+
+<style>
+  .logo {
+    display: block;
+    color: inherit;
+  }
+
+  .logo svg {
+    width: 100%;
+    height: auto;
+    fill: currentColor;
+  }
+</style>

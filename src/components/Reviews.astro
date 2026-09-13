@@ -1,0 +1,196 @@
+---
+import reviews from "../content/reviews.json";
+import site from "../data/site.json";
+
+const SOURCE_LINK: Record<string, string> = {
+  Авито: site.links.avito,
+  DIKIDI: site.booking.dikidi,
+};
+---
+
+<section class="mk-on-light mk-section reviews" id="reviews">
+  <div class="mk-container">
+    <header class="reviews__head">
+      <p class="mk-eyebrow">Отзывы</p>
+      <h2 class="reviews__title">Что пишут клиентки на площадках</h2>
+      <p class="mk-lead reviews__lead">
+        Здесь только отзывы с Авито и DIKIDI — с именем, датой и оценкой, которые можно
+        открыть и проверить на самой площадке.
+      </p>
+      <p class="reviews__hint" aria-hidden="true">Листайте вбок →</p>
+    </header>
+
+    <ul class="cards" role="list">
+      {
+        reviews.map((r, i) => (
+          <li class="card" data-reveal style={`--i:${i % 3}`}>
+            <div class="card__top">
+              <p class="card__stars" aria-label={`Оценка ${r.rating} из 5`}>
+                <span aria-hidden="true">{"★".repeat(r.rating)}</span>
+              </p>
+              <a class="card__source" href={SOURCE_LINK[r.source]} rel="noopener nofollow">
+                {r.source}
+              </a>
+            </div>
+            <blockquote class="card__text">{r.text}</blockquote>
+            <footer class="card__meta">
+              <cite class="card__author">{r.author}</cite>
+              <span class="card__date">{r.date}</span>
+              <span class="card__service">{r.service}</span>
+            </footer>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="reviews__more">
+      <a class="mk-btn mk-btn--ghost" href={site.links.avito} rel="noopener nofollow">
+        Все отзывы на Авито
+      </a>
+      <a class="mk-btn mk-btn--ghost" href={site.links.yandexMaps} rel="noopener nofollow">
+        Карточка в Яндекс Картах
+      </a>
+      <a class="mk-btn mk-btn--ghost" href={site.links.twogis} rel="noopener nofollow">
+        Карточка в 2ГИС
+      </a>
+    </p>
+  </div>
+</section>
+
+<style>
+  .reviews__head {
+    max-width: 44rem;
+    margin-bottom: var(--mk-space-7);
+  }
+
+  .reviews__title {
+    margin-block: var(--mk-space-4) var(--mk-space-5);
+  }
+
+  .reviews__hint {
+    margin-top: var(--mk-space-4);
+    font-size: var(--mk-step-label);
+    letter-spacing: var(--mk-tracking-label);
+    text-transform: uppercase;
+    color: var(--mk-faint);
+  }
+
+  @media (min-width: 760px) {
+    .reviews__hint {
+      display: none;
+    }
+  }
+
+  /* Eleven cards stacked made this section 5 450px tall on a phone - a quarter of
+     the whole page for one block. Same swipe track as the portfolio; the partially
+     visible next card is the affordance. */
+  .cards {
+    display: flex;
+    align-items: start;
+    gap: var(--mk-space-4);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--mk-gutter);
+    margin-inline: calc(var(--mk-gutter) * -1);
+    padding-inline: var(--mk-gutter);
+    padding-bottom: var(--mk-space-3);
+    margin-bottom: var(--mk-space-6);
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+  }
+
+  .card {
+    flex: 0 0 82vw;
+    max-width: 340px;
+    scroll-snap-align: start;
+    display: grid;
+    gap: var(--mk-space-3);
+    padding: var(--mk-space-5);
+    background-color: var(--mk-raised);
+    border: 1px solid var(--mk-rule);
+    border-radius: var(--mk-radius);
+  }
+
+  .card__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--mk-space-3);
+  }
+
+  .card__stars {
+    /* The gold reads as gold here because it sits on nothing but itself - it is a
+       glyph, not body text, and it is backed by the aria-label for anyone not
+       seeing colour at all. */
+    color: var(--mk-gold-ink);
+    letter-spacing: 0.14em;
+    font-size: var(--mk-step-small);
+  }
+
+  .card__source {
+    font-size: var(--mk-step-label);
+    letter-spacing: var(--mk-tracking-label);
+    text-transform: uppercase;
+    color: var(--mk-muted);
+    min-height: var(--mk-hit);
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .card__text {
+    margin: 0;
+    font-size: var(--mk-step-small);
+    line-height: 1.6;
+  }
+
+  .card__meta {
+    display: grid;
+    gap: 2px;
+    padding-top: var(--mk-space-3);
+    border-top: 1px solid var(--mk-rule);
+  }
+
+  .card__author {
+    font-style: normal;
+    font-weight: 500;
+    font-size: var(--mk-step-small);
+  }
+
+  .card__date,
+  .card__service {
+    font-size: var(--mk-step-label);
+    color: var(--mk-faint);
+  }
+
+  .reviews__more {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--mk-space-3);
+  }
+
+  @media (min-width: 760px) {
+    /* Masonry-ish columns: reviews are wildly different lengths, and a grid row
+       would stretch every short one to match the longest in its row. */
+    .cards {
+      display: block;
+      columns: 2;
+      column-gap: var(--mk-space-5);
+      overflow-x: visible;
+      margin-inline: 0;
+      padding-inline: 0;
+    }
+
+    .card {
+      flex: initial;
+      max-width: none;
+      break-inside: avoid;
+      margin-bottom: var(--mk-space-5);
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .cards {
+      columns: 3;
+    }
+  }
+</style>

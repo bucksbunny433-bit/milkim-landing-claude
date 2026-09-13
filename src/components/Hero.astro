@@ -1,7 +1,7 @@
 ---
 import { Image } from "astro:assets";
 import site from "../data/site.json";
-import wordmark from "../assets/brand/wordmark.svg?raw";
+import Logo from "./Logo.astro";
 import heroImage from "../assets/images/hero-master.png";
 
 const tel = site.phones.find((p) => p.primary)!;
@@ -15,9 +15,7 @@ const telegram = `https://t.me/${tel.href.replace("tel:", "")}`;
     <div class="hero__copy">
       {/* The wordmark carries the studio name, so it is the h-level brand mark,
           not decoration. Inline so it can take the section's gold via currentColor. */}
-      <div class="hero__logo" role="img" aria-label={`${site.name} — ${site.tagline}`}>
-        <Fragment set:html={wordmark} />
-      </div>
+      <Logo class="hero__logo" label={`${site.name} — ${site.tagline}`} />
 
       <p class="mk-eyebrow hero__where">
         {site.city} · {site.address.street}
@@ -123,12 +121,6 @@ const telegram = `https://t.me/${tel.href.replace("tel:", "")}`;
     width: 148px;
     margin-bottom: var(--mk-space-6);
     color: var(--mk-gold);
-  }
-
-  .hero__logo :global(svg) {
-    width: 100%;
-    height: auto;
-    fill: currentColor;
   }
 
   .hero__where {

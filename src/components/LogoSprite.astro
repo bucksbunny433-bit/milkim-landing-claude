@@ -1,0 +1,23 @@
+---
+import raw from "../assets/brand/wordmark.svg?raw";
+
+// The wordmark is 8.6 KB of path data and appears twice - header and footer.
+// Inlining it twice cost 4.4 KB gzipped for nothing, so it is defined once here as
+// a <symbol> and referenced with <use>. The symbol carries no fill, which lets each
+// instance take its colour from currentColor.
+const viewBox = raw.match(/viewBox="([^"]+)"/)?.[1] ?? "0 0 748 210";
+const inner = raw.replace(/^[\s\S]*?<svg[^>]*>/, "").replace(/<\/svg>\s*$/, "");
+---
+
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="mk-wordmark" viewBox={viewBox} set:html={inner} />
+</svg>
+
+<style>
+  .sprite {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
+</style>
