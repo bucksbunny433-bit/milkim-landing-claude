@@ -85,8 +85,18 @@ Maps and 2GIS cards — a mismatch between the card and the site destroys trust 
 - **Reviews come from mixed platforms.** Label each one with its source; where the platform is
   not visible in the screenshot, put the source in text beside it.
 - Adding or replacing a case must never require touching markup: one folder of photos plus a
-  short data file per case. Each case needs its service, category and a one-line
-  "what it was → what was done".
+  short data file per case.
+- **Cases carry no written description.** The client decided on 2026-09-13 that none will be
+  supplied, so the card is images and a stage caption, nothing else. Do not add a placeholder
+  for copy that is not coming.
+- **Ten of the nineteen cases are ready-made square collages** supplied by the studio, several
+  already carrying the studio's own baked captions. They are captioned "До и после, одним
+  кадром" and are never cropped - forcing them into the card ratio would cut into the halves
+  being compared, which is the entire content of the image.
+- Do not bake captions onto the photos. Text in a raster does not scale between a 220px and a
+  680px rendering, is invisible to screen readers, cannot be edited without re-exporting every
+  file, and would sit on top of the captions several collages already have. The HTML captions
+  are already one consistent style across every card.
 
 ### Design decisions — settled 2026-09-13
 
