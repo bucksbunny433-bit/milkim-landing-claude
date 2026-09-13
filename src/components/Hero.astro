@@ -1,0 +1,248 @@
+---
+import { Image } from "astro:assets";
+import site from "../data/site.json";
+import wordmark from "../assets/brand/wordmark.svg?raw";
+import heroImage from "../assets/images/hero-master.png";
+
+const tel = site.phones.find((p) => p.primary)!;
+const telegram = `https://t.me/${tel.href.replace("tel:", "")}`;
+---
+
+<section class="mk-on-dark hero">
+  <div class="hero__ambient" aria-hidden="true"></div>
+
+  <div class="mk-container hero__inner">
+    <div class="hero__copy">
+      {/* The wordmark carries the studio name, so it is the h-level brand mark,
+          not decoration. Inline so it can take the section's gold via currentColor. */}
+      <div class="hero__logo" role="img" aria-label={`${site.name} — ${site.tagline}`}>
+        <Fragment set:html={wordmark} />
+      </div>
+
+      <p class="mk-eyebrow hero__where">
+        {site.city} · {site.address.street}
+      </p>
+
+      <h1 class="hero__title">Брови, которые выглядят как ваши</h1>
+
+    <div class="hero__portrait">
+      {/*
+        LCP element. Eager, high priority, explicit dimensions. It does not animate
+        in - the playbook forbids anything moving before LCP.
+      */}
+      <Image
+        src={heroImage}
+        alt="Анастасия, мастер перманентного макияжа Milkim, в студии"
+        widths={[400, 600, 800, 1200, 1600]}
+        sizes="(min-width: 900px) 46vw, 100vw"
+        format="avif"
+        quality={62}
+        loading="eager"
+        fetchpriority="high"
+        decoding="sync"
+        class="hero__img"
+      />
+    </div>
+
+      <p class="mk-lead hero__lead">
+        Форма строится по геометрии вашего лица, а не по шаблону. Цвет подбираю под ваш
+        типаж. Эскиз отрисовываю до внесения пигмента — вы видите форму заранее.
+      </p>
+
+      {/*
+        Two entry paths, per the studio's own research: a broad brand of natural
+        permanent makeup with a separate branch for old pigment. The second path
+        leads to assessment, never straight to booking.
+      */}
+      <nav class="hero__paths" aria-label="С чего начать">
+        <a class="hero__path" href="#process">
+          <span class="hero__path-label">Делаю впервые</span>
+          <span class="hero__path-hint">Как проходит процедура и что входит в цену</span>
+        </a>
+        <a class="hero__path" href="#coverup">
+          <span class="hero__path-label">У меня уже есть старый перманент</span>
+          <span class="hero__path-hint">Разберу по фото, что можно сделать в вашем случае</span>
+        </a>
+      </nav>
+
+      <div class="hero__actions">
+        <a class="mk-btn mk-btn--primary" href={site.booking.dikidi} rel="noopener">
+          Записаться онлайн
+        </a>
+        <a class="mk-btn mk-btn--ghost" href={telegram} rel="noopener">Написать в Telegram</a>
+      </div>
+
+      <p class="hero__note">{site.booking.depositNote}</p>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    isolation: isolate;
+    overflow: clip;
+    padding-block: var(--mk-space-7) 0;
+  }
+
+  /* Ambient concentric rings - the studio's own motif, taken from their printed
+     price card, which extends the spiral in the emblem. Pure CSS, zero bytes.
+     No animation: this sits above the fold and nothing moves before LCP. */
+  .hero__ambient {
+    position: absolute;
+    inset: -20% -30% auto -30%;
+    height: 150%;
+    z-index: -1;
+    background:
+      radial-gradient(
+        60% 45% at 72% 12%,
+        color-mix(in oklab, var(--mk-gold) 14%, transparent) 0%,
+        transparent 70%
+      ),
+      repeating-radial-gradient(
+        circle at 72% 12%,
+        transparent 0 46px,
+        color-mix(in oklab, var(--mk-gold) 9%, transparent) 46px 47px
+      );
+    opacity: 0.85;
+  }
+
+  .hero__inner {
+    display: grid;
+    gap: var(--mk-space-7);
+  }
+
+  .hero__copy {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hero__logo {
+    width: 148px;
+    margin-bottom: var(--mk-space-6);
+    color: var(--mk-gold);
+  }
+
+  .hero__logo :global(svg) {
+    width: 100%;
+    height: auto;
+    fill: currentColor;
+  }
+
+  .hero__where {
+    margin-bottom: var(--mk-space-4);
+  }
+
+  .hero__title {
+    margin-bottom: var(--mk-space-6);
+  }
+
+  .hero__lead {
+    margin-bottom: var(--mk-space-6);
+  }
+
+  .hero__paths {
+    display: grid;
+    gap: 0;
+    border-top: 1px solid var(--mk-rule);
+    margin-bottom: var(--mk-space-6);
+  }
+
+  .hero__path {
+    display: grid;
+    gap: var(--mk-space-1);
+    padding-block: var(--mk-space-4);
+    min-height: var(--mk-hit);
+    border-bottom: 1px solid var(--mk-rule);
+    text-decoration: none;
+    transition: border-color var(--mk-dur-fast) var(--mk-ease-out);
+  }
+
+  .hero__path-label {
+    font-size: var(--mk-step-lead);
+    color: var(--mk-text);
+  }
+
+  .hero__path-label::after {
+    content: " →";
+    color: var(--mk-gold);
+  }
+
+  .hero__path-hint {
+    font-size: var(--mk-step-small);
+    color: var(--mk-faint);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--mk-space-3);
+    margin-bottom: var(--mk-space-4);
+  }
+
+  .hero__note {
+    font-size: var(--mk-step-small);
+    color: var(--mk-faint);
+    max-width: var(--mk-measure);
+  }
+
+  .hero__portrait {
+    /* Full-bleed out of the container gutter. On a phone the photo sits directly
+       under the headline: in this category the face is the argument, and it has to
+       land above the fold, not 90px below it. The copy continues underneath. */
+    margin-inline: calc(var(--mk-gutter) * -1);
+    margin-bottom: var(--mk-space-6);
+  }
+
+  .hero__img {
+    width: 100%;
+    height: auto;
+    /* 4:5 rather than the source 2012x2560 - the full frame is too tall on a phone
+       and would push the copy off the screen. object-position keeps her face in. */
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: 50% 22%;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .hero__path:hover {
+      border-bottom-color: var(--mk-gold);
+    }
+  }
+
+  @media (min-width: 900px) {
+    .hero {
+      padding-block: var(--mk-space-8) 0;
+    }
+
+    /* The portrait now lives inside .hero__copy, so the outer grid is a single
+       column - a 46% track here would leave an empty gutter on the right. */
+    .hero__copy {
+      display: grid;
+      grid-template-columns: 1fr 46%;
+      column-gap: var(--mk-space-8);
+      align-items: start;
+      padding-bottom: var(--mk-space-9);
+    }
+
+    /* On a wide screen the portrait moves into its own column and spans the block,
+       so the copy reads down the left and the photo holds the right. */
+    .hero__portrait {
+      grid-column: 2;
+      grid-row: 1 / -1;
+      align-self: end;
+      margin-inline: 0;
+      margin-bottom: 0;
+    }
+
+    .hero__copy > :not(.hero__portrait) {
+      grid-column: 1;
+    }
+
+    .hero__img {
+      aspect-ratio: 3 / 4;
+      object-position: 50% 18%;
+    }
+  }
+</style>

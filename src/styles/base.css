@@ -1,0 +1,261 @@
+/* Base layer: reset, document defaults, shared primitives.
+   Everything here reads a role token from tokens.css, never a literal colour. */
+
+@layer reset, base, components;
+
+@layer reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  body,
+  h1,
+  h2,
+  h3,
+  p,
+  figure,
+  blockquote,
+  dl,
+  dd,
+  ul,
+  ol {
+    margin: 0;
+  }
+
+  ul[class],
+  ol[class] {
+    list-style: none;
+    padding: 0;
+  }
+
+  /* Images never overflow, and always reserve their box so CLS stays at zero. */
+  img,
+  picture,
+  svg,
+  video {
+    display: block;
+    max-width: 100%;
+  }
+
+  img,
+  video {
+    height: auto;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+    color: inherit;
+  }
+}
+
+@layer base {
+  body {
+    background-color: var(--mk-light-ground);
+    color: var(--mk-light-text);
+    font-family: var(--mk-font-body);
+    font-size: var(--mk-step-body);
+    line-height: var(--mk-leading-body);
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: clip;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--mk-font-display);
+    font-weight: 400;
+    line-height: var(--mk-leading-heading);
+    letter-spacing: var(--mk-tracking-display);
+    text-wrap: balance;
+  }
+
+  h1 {
+    font-size: var(--mk-step-display);
+    line-height: var(--mk-leading-display);
+  }
+
+  h2 {
+    font-size: var(--mk-step-h2);
+  }
+
+  h3 {
+    font-size: var(--mk-step-h3);
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  /* Focus is never removed. The ring colour comes from the section role because
+     gold measures 1.32:1 on the bone ground - invisible, and a WCAG failure. */
+  :focus-visible {
+    outline: 2px solid var(--mk-focus);
+    outline-offset: 2px;
+    border-radius: var(--mk-radius);
+  }
+
+  ::selection {
+    background: var(--mk-gold);
+    color: var(--mk-on-gold);
+  }
+}
+
+@layer components {
+  .mk-container {
+    width: 100%;
+    max-width: var(--mk-max-width);
+    margin-inline: auto;
+    padding-inline: var(--mk-gutter);
+  }
+
+  .mk-section {
+    padding-block: var(--mk-section-y);
+  }
+
+  /* Uppercase micro-label. Tracking is what keeps it from reading as shouting. */
+  .mk-eyebrow {
+    font-family: var(--mk-font-body);
+    font-size: var(--mk-step-label);
+    font-weight: 500;
+    letter-spacing: var(--mk-tracking-label);
+    text-transform: uppercase;
+    color: var(--mk-muted);
+  }
+
+  .mk-lead {
+    font-size: var(--mk-step-lead);
+    color: var(--mk-muted);
+    max-width: var(--mk-measure);
+  }
+
+  .mk-prose {
+    max-width: var(--mk-measure);
+  }
+
+  /* Skip link: present for keyboard users, out of the way for everyone else. */
+  .mk-skip {
+    position: absolute;
+    left: var(--mk-gutter);
+    top: -100%;
+    z-index: 100;
+    background: var(--mk-light-ground);
+    color: var(--mk-light-text);
+    padding: var(--mk-space-3) var(--mk-space-4);
+    border-radius: var(--mk-radius);
+  }
+
+  .mk-skip:focus {
+    top: var(--mk-space-3);
+  }
+
+  /* ---- buttons ---- */
+  .mk-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--mk-space-2);
+    min-height: var(--mk-hit);
+    padding: var(--mk-space-3) var(--mk-space-5);
+    font-family: var(--mk-font-body);
+    font-size: var(--mk-step-small);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    border: 1px solid transparent;
+    border-radius: var(--mk-radius);
+    cursor: pointer;
+    transition:
+      background-color var(--mk-dur-fast) var(--mk-ease-out),
+      color var(--mk-dur-fast) var(--mk-ease-out),
+      border-color var(--mk-dur-fast) var(--mk-ease-out),
+      transform var(--mk-dur-fast) var(--mk-ease-out);
+  }
+
+  .mk-btn--primary {
+    background-color: var(--mk-gold);
+    color: var(--mk-on-gold); /* 10.91:1 */
+    /* On the light ground the gold fill is only 1.32:1 against the page, so the
+       button needs its own edge to be perceivable as a control. */
+    border-color: var(--mk-gold-ink);
+  }
+
+  .mk-on-dark .mk-btn--primary {
+    border-color: transparent; /* 13.09:1 against the dark ground - no edge needed */
+  }
+
+  .mk-btn--ghost {
+    background-color: transparent;
+    color: var(--mk-text);
+    border-color: color-mix(in oklab, var(--mk-text) 34%, transparent);
+  }
+
+  /* Hover only where a real pointer exists. On a phone a stuck hover is a bug. */
+  @media (hover: hover) and (pointer: fine) {
+    .mk-btn--primary:hover {
+      transform: translateY(-2px);
+    }
+
+    .mk-btn--ghost:hover {
+      border-color: var(--mk-text);
+      transform: translateY(-2px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mk-btn {
+      transition-duration: 1ms;
+    }
+
+    .mk-btn--primary:hover,
+    .mk-btn--ghost:hover {
+      transform: none;
+    }
+  }
+
+  /* ---- reveal on enter ----
+     Resting state is VISIBLE. The observer adds .is-armed only when JS runs, so a
+     page without JS - or before the script loads - shows everything. Nothing is
+     ever parked at opacity 0 waiting for an observer that may never come. */
+  [data-reveal].is-armed {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  [data-reveal].is-armed.is-in {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity var(--mk-dur-base) var(--mk-ease-out),
+      transform var(--mk-dur-base) var(--mk-ease-out);
+    transition-delay: calc(var(--i, 0) * var(--mk-stagger));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal].is-armed {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}

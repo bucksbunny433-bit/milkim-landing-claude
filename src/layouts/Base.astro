@@ -1,0 +1,121 @@
+---
+import site from "../data/site.json";
+import "../styles/tokens.css";
+import "../styles/fonts.css";
+import "../styles/base.css";
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? "https://example.ru");
+
+// Local business data for Yandex and Google. Every value is the studio's own -
+// nothing here is invented, and nothing claims a rating we have not earned.
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "BeautySalon",
+  name: site.name,
+  description,
+  url: canonical.href,
+  telephone: site.phones.map((p) => p.href.replace("tel:", "")),
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: site.address.city,
+    streetAddress: `${site.address.street}, ${site.address.floor}`,
+    addressCountry: "RU",
+  },
+  openingHours: "Mo-Su 10:00-19:00",
+  sameAs: [site.links.vk, site.links.yandexMaps, site.links.twogis],
+};
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical.href} />
+
+    {/* The dark hero is what a phone paints behind the status bar on first load. */}
+    <meta name="theme-color" content="#0d0c0b" />
+
+    {/*
+      Preload only the two faces that render above the fold: the display face for
+      the headline and the body regular. The 500 weight and both latin subsets are
+      left to normal discovery - preloading them would compete with the hero image.
+    */}
+    <link
+      rel="preload"
+      href="/fonts/tenor-sans-400-cyrillic.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/golos-text-400-cyrillic.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical.href} />
+    <meta property="og:image" content={new URL("/og.jpg", canonical).href} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${site.name} — перманентный макияж, ${site.city}`} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  </head>
+
+  <body>
+    <a class="mk-skip" href="#main">Перейти к содержанию</a>
+    <slot />
+
+    {/*
+      One observer for the whole page, imported after load so it never competes
+      with the LCP image. It arms the reveals itself, which is why the resting
+      state in CSS is visible: no JS, no hidden content.
+    */}
+    <script>
+      const start = () => {
+        if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        const targets = document.querySelectorAll("[data-reveal]");
+        if (!targets.length || !("IntersectionObserver" in window)) return;
+
+        targets.forEach((el) => el.classList.add("is-armed"));
+
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              entry.target.classList.add("is-in");
+              io.unobserve(entry.target);
+            }
+          },
+          { rootMargin: "0px 0px -12% 0px", threshold: 0.05 },
+        );
+
+        targets.forEach((el) => io.observe(el));
+      };
+
+      if (document.readyState === "complete") start();
+      else window.addEventListener("load", start, { once: true });
+    </script>
+  </body>
+</html>
