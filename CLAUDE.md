@@ -64,9 +64,9 @@ fears — are in the studio's "Р0 вопросы и ответы" document on G
 | Губы + межресничка | 9 500 ₽ | 5 500 ₽ |
 | Брови + межресничка | 9 000 ₽ | 5 500 ₽ |
 
-Confirmed directly by the client: брови 5 500 ₽ and рефреш 5 000 ₽. The remaining figures are
-read from the studio's price image and still need a one-line yes before they ship — until
-then they are placeholders and are marked as such in the page.
+The client confirmed this whole table verbatim on 2026-09-13 ("таблица верна"). These are
+final figures, not placeholders. They must match the prices published on the studio's Yandex
+Maps and 2GIS cards — a mismatch between the card and the site destroys trust on its own.
 
 ### Content decisions — client's call, do not re-litigate
 
@@ -88,10 +88,39 @@ then they are placeholders and are marked as such in the page.
   short data file per case. Each case needs its service, category and a one-line
   "what it was → what was done".
 
-### Still open
+### Design decisions — settled 2026-09-13
 
-- **Dark or light page.** The brand is gold on black; a light page shows skin and healed
-  pigment honestly. Not yet decided — needed before any design work.
+- **Split theme.** Hero and footer are dark, carrying the brand as it was designed; portfolio,
+  prices and everything showing skin sit on the light ground so healed pigment reads truthfully.
+- **Hero is a static photo** or a lightweight CSS/SVG animation. Never video — the LCP budget wins.
+- **Palette is derived from the brand pack**, whose guide states the colours outright, so there
+  is no need to eyedropper the logo. Measured contrast against WCAG 2.2 AA:
+
+| Pair | Ratio | Verdict |
+|---|---|---|
+| gold `#F3CF83` on black `#000000` | 14.06:1 | passes everything |
+| bone `#F4F1E8` on black `#000000` | 18.59:1 | passes everything |
+| black `#000000` on bone `#F4F1E8` | 18.59:1 | passes everything |
+| **gold `#F3CF83` on white** | **1.49:1** | **fails — never text or an icon on a light ground** |
+| **gold `#F3CF83` on bone `#F4F1E8`** | **1.32:1** | **fails — same** |
+
+  So gold is a dark-ground colour only. On the light sections it may appear as a large
+  decorative fill or a rule, never as text or a thin glyph. Where a gold-family colour must
+  carry text on the light ground, use the darkened `#7A5C27` (5.49:1) — it reads as the same
+  metal, and it passes.
+
+### Positioning — decided, per the client's own research
+
+Research V2 (`assets/raw/docs/research-v2-audit.docx`) audits V1 and downgrades "cover-up as
+the umbrella brand" to an unproven hypothesis. The working basis is V2's option 2: a broad
+brand of natural, face-appropriate permanent makeup with an honest process, plus a **separate
+expert branch** for diagnosing old pigment. Practically: the hero speaks about a natural
+result and a clear process, and splits two entry paths — first-time and "I already have old
+permanent makeup" — with the second leading to assessment by photo rather than instant booking.
+
+Never promise: covering any old pigment, a guaranteed colour, a fixed number of sessions, or
+that it is completely painless. Pain is described through the process, in the master's own
+words, without the absolute.
 
 ---
 
