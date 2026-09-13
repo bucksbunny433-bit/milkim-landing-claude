@@ -29,6 +29,70 @@ Nothing in here is a suggestion.
 | Hero video | Undecided | Hero is designed photo-first. Video is an optional layer that can be dropped in without relayout |
 | Content editing | The master edits prices herself — **but the admin UI is deliberately deferred**, not cancelled | No CMS is built now. The enabling condition is mandatory and non-negotiable: prices, services, FAQ and reviews live in `src/content/` as structured data from the very first commit, never hardcoded in markup. A git-based CMS then attaches later as an admin UI over those same files, with zero changes to the page |
 
+### Confirmed studio data — supplied 2026-09-13, do not re-ask
+
+| | |
+|---|---|
+| Master | Анастасия Мильвиц. 5 years of experience |
+| Legal | ИП Мильвиц Анастасия Михайловна · ОГРНИП 326554300075067 · ИНН 553102271152 · ОКВЭД 96.02 · registered 19.08.2026 |
+| Address | Омск, ул. Дмитриева, 5/1, 2 этаж. Parking available. No entrance/facade photo — the master gives directions by phone |
+| Hours | 10:00–19:00, Mon–Sun, by appointment, usually booked a few days ahead |
+| Phone, primary | +7 901 006-93-11 — also carries Telegram and MAX. This is the site owner |
+| Phone, secondary | +7 906 197-70-77 — publish both |
+| Online booking | DIKIDI — https://dikidi.net/833342 |
+| VK | https://vk.ru/milvicpm |
+| Listings | Avito, 2GIS (`70000001064923408`), Yandex Maps (`205810346343`) |
+| Deposit | 500 ₽. Forfeited if cancelled less than 24 hours ahead |
+| Promo | "Приведи друга" — 15% off a correction. Currently active, publish it |
+| Brand | Full SVG pack (full lockup / emblem / wordmark × gold / black / white / transparent). Screen gold `#F3CF83`, light signature `#F4F1E8`, ground `#000000` |
+
+Answers covering almost all page copy — positioning, what each price includes, procedure
+length, the correction / refresh / cover-up distinction, which cover-up cases are accepted,
+the full contraindication list, aftercare for brows and for lips, and answers to the standard
+fears — are in the studio's "Р0 вопросы и ответы" document on Google Drive.
+
+### Price list — client-confirmed 2026-09-13
+
+| Service | Base | Correction |
+|---|---|---|
+| Брови | 5 500 ₽ | 3 500 ₽ |
+| Губы | 6 000 ₽ | 4 000 ₽ |
+| Межресничка | 4 500 ₽ | 2 500 ₽ |
+| Перекрытие | 6 500 ₽ | 4 500 ₽ |
+| Рефреш | 5 000 ₽ | — |
+| Губы + брови | 10 500 ₽ | 7 000 ₽ |
+| Губы + межресничка | 9 500 ₽ | 5 500 ₽ |
+| Брови + межресничка | 9 000 ₽ | 5 500 ₽ |
+
+Confirmed directly by the client: брови 5 500 ₽ and рефреш 5 000 ₽. The remaining figures are
+read from the studio's price image and still need a one-line yes before they ship — until
+then they are placeholders and are marked as such in the page.
+
+### Content decisions — client's call, do not re-litigate
+
+- **Only брови and перекрытие get presented.** Губы and межресничка appear as price rows and
+  nothing else: no section, no cases, no photography, no copy. The master rarely does lips and
+  accepts losing that traffic. Lips therefore ship with zero portfolio by design.
+- **Ремувер is not mentioned anywhere on the site.** The master decides case by case from a
+  photo whether she can work with old pigment. Do not build a "removal" path.
+- **Prices display as the base figure alone** — `5 500 ₽`, not "5 500 ₽ + коррекция". The
+  client's position is that clients already know a correction is required, so it is not a
+  surprise. Correction prices remain visible as their own column in the price table.
+- **Portfolio is accepted as complete.** 11 brow cases, 8 cover-up cases. Case folders follow
+  `до / сразу после / зажившие`; several single files are before/after collages. Brow cases 5
+  and 6 have no "before" frame — present those as a finished result, never labelled as a pair.
+- **Publication consent obtained** for the client photos supplied.
+- **Reviews come from mixed platforms.** Label each one with its source; where the platform is
+  not visible in the screenshot, put the source in text beside it.
+- Adding or replacing a case must never require touching markup: one folder of photos plus a
+  short data file per case. Each case needs its service, category and a one-line
+  "what it was → what was done".
+
+### Still open
+
+- **Dark or light page.** The brand is gold on black; a light page shows skin and healed
+  pigment honestly. Not yet decided — needed before any design work.
+
 ---
 
 ## 2. HARD RULES — verbatim, never edit, never soften
