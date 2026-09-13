@@ -13,12 +13,30 @@
  */
 
 import { createRequire } from 'node:module';
-import { mkdirSync } from 'node:fs';
+import { mkdirSync, readdirSync, existsSync } from 'node:fs';
 import path from 'node:path';
 
 const GLOBAL_MODULES = '/opt/node22/lib/node_modules';
-const CHROMIUM = '/opt/pw-browsers/chromium/chrome-linux/chrome';
+const BROWSER_ROOT = '/opt/pw-browsers';
 const OUT = '.verify';
+
+// The Playwright browser directory carries a build number that changes when the image is
+// rebuilt, so resolve it rather than hardcoding a path that silently goes stale.
+function findChromium() {
+  try {
+    const dirs = readdirSync(BROWSER_ROOT)
+      .filter((d) => d.startsWith('chromium') && !d.includes('headless'))
+      .sort()
+      .reverse();
+    for (const d of dirs) {
+      const exe = path.join(BROWSER_ROOT, d, 'chrome-linux', 'chrome');
+      if (existsSync(exe)) return exe;
+    }
+  } catch {
+    /* fall through to Playwright's own resolution */
+  }
+  return null;
+}
 
 // Budgets - keep in sync with CLAUDE.md section 4. [target, hardCap]
 const BUDGET = {
@@ -53,11 +71,15 @@ const { chromium, devices } = loadPlaywright();
 mkdirSync(OUT, { recursive: true });
 
 async function launch() {
-  try {
-    return await chromium.launch({ executablePath: CHROMIUM });
-  } catch {
-    return await chromium.launch();
+  const exe = findChromium();
+  if (exe) {
+    try {
+      return await chromium.launch({ executablePath: exe });
+    } catch {
+      /* fall back to Playwright's bundled resolution */
+    }
   }
+  return await chromium.launch();
 }
 
 const MOBILE = { ...devices['Pixel 5'], viewport: { width: 375, height: 812 }, deviceScaleFactor: 2 };

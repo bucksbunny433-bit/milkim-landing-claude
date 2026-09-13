@@ -1,0 +1,11 @@
+Tenor Sans and Golos Text are licensed under the SIL Open Font License, Version 1.1.
+
+Tenor Sans  - Copyright (c) Denis Masharov.
+              https://fonts.google.com/specimen/Tenor+Sans/license
+Golos Text  - Copyright (c) Paratype.
+              https://fonts.google.com/specimen/Golos+Text/license
+
+Full licence text: https://openfontlicense.org/open-font-license-official-text/
+
+The woff2 files in this directory are the cyrillic and latin subsets as served by
+Google Fonts. They are redistributed unmodified.
