@@ -1,0 +1,182 @@
+---
+import { Image } from "astro:assets";
+
+interface CaseData {
+  id: string;
+  service: string;
+  serviceTitle: string;
+  number: number;
+  kind: string;
+  stages: Record<string, string>;
+  collage: string | null;
+  unknown: string[];
+  summary: string | null;
+}
+
+interface Props {
+  data: CaseData;
+  index: number;
+}
+
+const { data, index } = Astro.props;
+
+// Every portfolio source lives in src/assets/portfolio, so one glob resolves them
+// all. Adding a case means dropping in a folder - no markup changes, which is the
+// condition the client set.
+const files = import.meta.glob<{ default: ImageMetadata }>(
+  "../assets/portfolio/**/*.{jpg,jpeg,png,JPG,PNG}",
+  { eager: true },
+);
+const pick = (rel: string) => files[`../assets/portfolio/${rel}`]?.default;
+
+const STAGE_LABEL: Record<string, string> = {
+  before: "До",
+  fresh: "Сразу после",
+  healed: "Через месяц, зажившее",
+};
+
+const ORDER = ["before", "fresh", "healed"];
+const frames: { src: ImageMetadata | undefined; label: string; marked: boolean }[] = [];
+
+for (const stage of ORDER) {
+  const rel = data.stages[stage];
+  if (rel) frames.push({ src: pick(rel), label: STAGE_LABEL[stage], marked: false });
+}
+if (data.collage) {
+  frames.push({ src: pick(data.collage), label: "До и после, одним кадром", marked: false });
+}
+// Files whose stage the studio has not confirmed. They are shown, because they are
+// real work, but they are never labelled with a stage we guessed.
+for (const rel of data.unknown) {
+  frames.push({ src: pick(rel), label: "Стадия не указана", marked: true });
+}
+
+const alt = `${data.serviceTitle}, работа ${data.number}`;
+---
+
+<article class="case" data-reveal style={`--i:${index % 4}`}>
+  <div class={`case__frames case__frames--${frames.length}`}>
+    {
+      frames.map((f) => (
+        <figure class="case__frame">
+          {f.src && (
+            <Image
+              src={f.src}
+              alt={`${alt} — ${f.label.toLowerCase()}`}
+              widths={[220, 340, 680]}
+              width={680}
+              sizes="(min-width: 680px) 20vw, 85vw"
+              format="avif"
+              quality={58}
+              loading="lazy"
+              decoding="async"
+              class="case__img"
+            />
+          )}
+          <figcaption class={`case__label${f.marked ? " case__label--marked" : ""}`}>
+            {f.label}
+          </figcaption>
+        </figure>
+      ))
+    }
+  </div>
+
+  <div class="case__meta">
+    <span class="case__service">{data.serviceTitle}</span>
+    {
+      data.summary ? (
+        <p class="case__summary">{data.summary}</p>
+      ) : (
+        /* Hard rule: a placeholder must be impossible to mistake for real copy. */
+        <p class="case__summary case__summary--missing" data-placeholder="true">
+          Описание работы ещё не получено от студии
+        </p>
+      )
+    }
+  </div>
+</article>
+
+<style>
+  .case {
+    display: grid;
+    gap: var(--mk-space-3);
+  }
+
+  /* On a phone the stages stack. Side by side, three frames in one card are about
+     85px wide each, and nobody can judge a brow at 85px - which is the entire job
+     of this section. Stacked, each frame gets the full card width. */
+  .case__frames {
+    display: grid;
+    gap: var(--mk-space-3);
+    grid-template-columns: 1fr;
+  }
+
+  .case__frames--1 {
+    --n: 1;
+  }
+  .case__frames--2 {
+    --n: 2;
+  }
+  .case__frames--3 {
+    --n: 3;
+  }
+
+  @media (min-width: 680px) {
+    .case__frames {
+      gap: var(--mk-space-2);
+      grid-template-columns: repeat(var(--n, 2), 1fr);
+    }
+  }
+
+  .case__frame {
+    margin: 0;
+    display: grid;
+    gap: var(--mk-space-2);
+  }
+
+  .case__img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    background-color: color-mix(in oklab, var(--mk-text) 6%, transparent);
+  }
+
+  .case__label {
+    font-size: var(--mk-step-label);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--mk-faint);
+  }
+
+  /* A stage we were not told. Marked so it can never read as a confirmed claim. */
+  .case__label--marked {
+    color: var(--mk-gold-ink);
+    border-bottom: 1px dashed currentColor;
+    padding-bottom: 2px;
+    justify-self: start;
+  }
+
+  .case__meta {
+    display: grid;
+    gap: var(--mk-space-1);
+  }
+
+  .case__service {
+    font-size: var(--mk-step-label);
+    letter-spacing: var(--mk-tracking-label);
+    text-transform: uppercase;
+    color: var(--mk-muted);
+  }
+
+  .case__summary {
+    font-size: var(--mk-step-small);
+    color: var(--mk-text);
+  }
+
+  .case__summary--missing {
+    color: var(--mk-gold-ink);
+    border-left: 2px dashed currentColor;
+    padding-left: var(--mk-space-3);
+  }
+</style>

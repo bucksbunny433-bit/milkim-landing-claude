@@ -134,9 +134,17 @@ slower, hero video does not load at all.
 **no npm install** — it resolves the globally installed Playwright.
 
 ```bash
-# start the dev server or serve dist/, then:
-node .claude/skills/milkim-visual/scripts/verify.mjs http://localhost:4321
+# build, then serve WITH COMPRESSION, then measure:
+npm run build
+node .claude/skills/milkim-visual/scripts/serve.mjs dist 4173 &
+node .claude/skills/milkim-visual/scripts/verify.mjs http://127.0.0.1:4173/
 ```
+
+**Always measure against `serve.mjs`, never against `http-server` or `serve`.** The
+budgets are stated for transferred, compressed bytes. The servers on PATH do not
+compress, which overstates HTML and CSS by four to five times and produces failures
+that are not real - HTML measured 44.2 KB uncompressed against a 25 KB budget, and
+9.4 KB once served the way real hosting serves it.
 
 It reports, against `CLAUDE.md` §4:
 

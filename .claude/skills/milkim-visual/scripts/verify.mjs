@@ -162,6 +162,20 @@ async function variant(browser, name, opts) {
   await page.goto(url, { waitUntil: 'load', timeout: 90_000 });
   await page.waitForTimeout(1500);
 
+  // Walk the page so lazy images actually load. Without this the full-page shot is a
+  // grid of empty boxes and useless for review. Only the variants do this - the
+  // measured pass above must stay a cold first view.
+  //
+  // Driven from here with mouse.wheel rather than an in-page loop: the JS-disabled
+  // variant cannot run timers, so an async page.evaluate never resolves there.
+  for (let i = 0; i < 40; i += 1) {
+    await page.mouse.wheel(0, 700);
+    await page.waitForTimeout(90);
+  }
+  await page.waitForTimeout(1200);
+  await page.mouse.wheel(0, -40000);
+  await page.waitForTimeout(400);
+
   const text = await page.evaluate(() => (document.body.innerText || '').replace(/\s+/g, ' ').trim().length);
   const imgs = await page.evaluate(() =>
     [...document.images].filter((i) => i.getBoundingClientRect().width > 0).length,

@@ -19,6 +19,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "verify": "node .claude/skills/milkim-visual/scripts/verify.mjs"
+    "verify": "node .claude/skills/milkim-visual/scripts/verify.mjs http://127.0.0.1:4173/",
+    "serve": "node .claude/skills/milkim-visual/scripts/serve.mjs dist 4173"
   }
 }

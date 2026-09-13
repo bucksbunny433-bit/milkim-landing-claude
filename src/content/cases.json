@@ -1,0 +1,260 @@
+[
+  {
+    "id": "brows-01",
+    "service": "brows",
+    "serviceTitle": "Брови",
+    "number": 1,
+    "kind": "timeline",
+    "stages": {
+      "before": "brows/01/before.jpg",
+      "fresh": "brows/01/fresh.jpg",
+      "healed": "brows/01/healed.jpg"
+    },
+    "collage": null,
+    "unknown": [],
+    "summary": null
+  },
+  {
+    "id": "brows-02",
+    "service": "brows",
+    "serviceTitle": "Брови",
+    "number": 2,
+    "kind": "timeline",
+    "stages": {
+      "before": "brows/02/before.jpg",
+      "fresh": "brows/02/fresh.jpg",
+      "healed": "brows/02/healed.jpg"
+    },
+    "collage": null,
+    "unknown": [],
+    "summary": null
+  },
+  {
+    "id": "brows-03",
+    "service": "brows",
+    "serviceTitle": "Брови",
+    "number": 3,
+    "kind": "single",
+    "stages": {
+      "before": "brows/03/before.jpg"
+    },
+    "collage": null,
+    "unknown": [
+      "brows/03/unlabelled-01.jpg"
+    ],
+    "summary": null
+  },
+  {
+    "id": "brows-04",
+    "service": "brows",
+    "serviceTitle": "Брови",
+    "number": 4,
+    "kind": "pair",
+    "stages": {
+      "before": "brows/04/before.jpg",
+      "fresh": "brows/04/fresh.png"
+    },
+    "collage": null,
+    "unknown": [],
+    "summary": null
+  },
+  {
+    "id": "brows-05",
+    "service": "brows",
+    "serviceTitle": "Брови",
+    "number": 5,
+    "kind": "pair",
+    "stages": {
+      "fresh": "brows/05/fresh.jpg",
+      "healed": "brows/05/healed.jpg"
+    },
+    "collage": null,
+    "unknown": [],
+    "summary": null
+  },
+  {
+    "id": "brows-06",
+    "service": "brows",
+    "serviceTitle": "Брови",
+    "number": 6,
+    "kind": "pair",
+    "stages": {
+      "fresh": "brows/06/fresh.png",
+      "healed": "brows/06/healed.png"
+    },
+    "collage": null,
+    "unknown": [],
+    "summary": null
+  },
+  {
+    "id": "brows-07",
+    "service": "brows",
+    "serviceTitle": "Брови",
+    "number": 7,
+    "kind": "pair",
+    "stages": {
+      "before": "brows/07/before.jpg",
+      "fresh": "brows/07/fresh.jpg"
+    },
+    "collage": null,
+    "unknown": [],
+    "summary": null
+  },
+  {
+    "id": "brows-08",
+    "service": "brows",
+    "serviceTitle": "Брови",
+    "number": 8,
+    "kind": "collage",
+    "stages": {},
+    "collage": "brows/08/collage.jpg",
+    "unknown": [],
+    "summary": null
+  },
+  {
+    "id": "brows-09",
+    "service": "brows",
+    "serviceTitle": "Брови",
+    "number": 9,
+    "kind": "unknown",
+    "stages": {},
+    "collage": null,
+    "unknown": [
+      "brows/09/unlabelled-01.jpg"
+    ],
+    "summary": null
+  },
+  {
+    "id": "brows-10",
+    "service": "brows",
+    "serviceTitle": "Брови",
+    "number": 10,
+    "kind": "unknown",
+    "stages": {},
+    "collage": null,
+    "unknown": [
+      "brows/10/unlabelled-01.jpg"
+    ],
+    "summary": null
+  },
+  {
+    "id": "brows-11",
+    "service": "brows",
+    "serviceTitle": "Брови",
+    "number": 11,
+    "kind": "pair",
+    "stages": {
+      "before": "brows/11/before.png",
+      "fresh": "brows/11/fresh.png"
+    },
+    "collage": null,
+    "unknown": [],
+    "summary": null
+  },
+  {
+    "id": "correction-01",
+    "service": "correction",
+    "serviceTitle": "Перекрытие",
+    "number": 1,
+    "kind": "timeline",
+    "stages": {
+      "before": "correction/01/before.jpg",
+      "fresh": "correction/01/fresh.jpg",
+      "healed": "correction/01/healed.jpg"
+    },
+    "collage": null,
+    "unknown": [],
+    "summary": null
+  },
+  {
+    "id": "correction-02",
+    "service": "correction",
+    "serviceTitle": "Перекрытие",
+    "number": 2,
+    "kind": "unknown",
+    "stages": {},
+    "collage": null,
+    "unknown": [
+      "correction/02/unlabelled-01.png"
+    ],
+    "summary": null
+  },
+  {
+    "id": "correction-03",
+    "service": "correction",
+    "serviceTitle": "Перекрытие",
+    "number": 3,
+    "kind": "unknown",
+    "stages": {},
+    "collage": null,
+    "unknown": [
+      "correction/03/unlabelled-01.jpg"
+    ],
+    "summary": null
+  },
+  {
+    "id": "correction-04",
+    "service": "correction",
+    "serviceTitle": "Перекрытие",
+    "number": 4,
+    "kind": "unknown",
+    "stages": {},
+    "collage": null,
+    "unknown": [
+      "correction/04/unlabelled-01.png"
+    ],
+    "summary": null
+  },
+  {
+    "id": "correction-05",
+    "service": "correction",
+    "serviceTitle": "Перекрытие",
+    "number": 5,
+    "kind": "unknown",
+    "stages": {},
+    "collage": null,
+    "unknown": [
+      "correction/05/unlabelled-01.jpg"
+    ],
+    "summary": null
+  },
+  {
+    "id": "correction-06",
+    "service": "correction",
+    "serviceTitle": "Перекрытие",
+    "number": 6,
+    "kind": "unknown",
+    "stages": {},
+    "collage": null,
+    "unknown": [
+      "correction/06/unlabelled-01.jpg"
+    ],
+    "summary": null
+  },
+  {
+    "id": "correction-07",
+    "service": "correction",
+    "serviceTitle": "Перекрытие",
+    "number": 7,
+    "kind": "unknown",
+    "stages": {},
+    "collage": null,
+    "unknown": [
+      "correction/07/unlabelled-01.png"
+    ],
+    "summary": null
+  },
+  {
+    "id": "correction-08",
+    "service": "correction",
+    "serviceTitle": "Перекрытие",
+    "number": 8,
+    "kind": "unknown",
+    "stages": {},
+    "collage": null,
+    "unknown": [
+      "correction/08/unlabelled-01.png"
+    ],
+    "summary": null
+  }
+]
