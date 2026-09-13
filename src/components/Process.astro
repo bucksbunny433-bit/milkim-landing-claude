@@ -1,0 +1,161 @@
+---
+import { Image } from "astro:assets";
+import consult from "../assets/process/consult.png";
+import sketch from "../assets/process/sketch.png";
+import procedure from "../assets/process/procedure.png";
+
+// Numbered because this genuinely is a sequence - each step only makes sense after
+// the one before it. Wording is the master's own, from the studio's answers.
+const steps = [
+  {
+    n: "01",
+    title: "Консультация",
+    text: "Выясняю, чего вы хотите: форма, желаемый цвет, результат. Собираю анамнез. Рассказываю про все этапы и про то, как будет идти заживление.",
+    image: consult,
+    alt: "Консультация в студии Milkim перед процедурой",
+  },
+  {
+    n: "02",
+    title: "Эскиз",
+    text: "Форма строится по геометрическим точкам вашего лица. Эскиз я отрисовываю до внесения пигмента — форму вы видите заранее.",
+    image: sketch,
+    alt: "Мастер размечает форму бровей перед процедурой",
+  },
+  {
+    n: "03",
+    title: "Процедура",
+    text: "Тонкая игла в верхнем слое дермы, движения похожи на выщипывание бровей. Использую анестетик. Около двух часов на любую зону, инструмент и расходники — индивидуальные и стерильные.",
+    image: procedure,
+    alt: "Мастер выполняет процедуру перманентного макияжа",
+  },
+  {
+    n: "04",
+    title: "Заживление",
+    text: "Корочка сходит за неделю, а дерма восстанавливается целый месяц. Через две недели я сама связываюсь и спрашиваю, как идёт. Полную картину видно только через месяц.",
+    image: null,
+    alt: "",
+  },
+  {
+    n: "05",
+    title: "Коррекция",
+    text: "Через 1–1,5 месяца. Закрывает пробелы, которые иногда остаются после первого раза, добавляет второй слой пигмента для более долгой носки и позволяет поправить оттенок.",
+    image: null,
+    alt: "",
+  },
+];
+---
+
+<section class="mk-on-light mk-section process" id="process">
+  <div class="mk-container">
+    <header class="process__head">
+      <p class="mk-eyebrow">Как это проходит</p>
+      <h2 class="process__title">От разговора до зажившего результата</h2>
+      <p class="mk-lead process__lead">
+        Два визита и месяц между ними. Ниже — что происходит на каждом шаге, чтобы в
+        кабинете не было ничего неожиданного.
+      </p>
+    </header>
+
+    <ol class="steps" role="list">
+      {
+        steps.map((s, i) => (
+          <li class="step" data-reveal style={`--i:${i % 3}`}>
+            <div class="step__meta">
+              <span class="step__n" aria-hidden="true">
+                {s.n}
+              </span>
+              <h3 class="step__title">{s.title}</h3>
+              <p class="step__text">{s.text}</p>
+            </div>
+            {s.image && (
+              <div class="step__media">
+                <Image
+                  src={s.image}
+                  alt={s.alt}
+                  widths={[320, 520, 760]}
+                  width={760}
+                  sizes="(min-width: 760px) 30vw, 88vw"
+                  format="avif"
+                  quality={60}
+                  loading="lazy"
+                  decoding="async"
+                  class="step__img"
+                />
+              </div>
+            )}
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .process__head {
+    max-width: 44rem;
+    margin-bottom: var(--mk-space-8);
+  }
+
+  .process__title {
+    margin-block: var(--mk-space-4) var(--mk-space-5);
+  }
+
+  .steps {
+    display: grid;
+    gap: var(--mk-space-7);
+    counter-reset: none;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .step {
+    display: grid;
+    gap: var(--mk-space-4);
+    padding-top: var(--mk-space-5);
+    border-top: 1px solid var(--mk-rule);
+  }
+
+  .step__meta {
+    display: grid;
+    gap: var(--mk-space-3);
+  }
+
+  .step__n {
+    font-family: var(--mk-font-display);
+    font-size: var(--mk-step-small);
+    letter-spacing: 0.18em;
+    color: var(--mk-accent);
+  }
+
+  .step__title {
+    font-size: var(--mk-step-h3);
+  }
+
+  .step__text {
+    font-size: var(--mk-step-small);
+    color: var(--mk-muted);
+    max-width: var(--mk-measure);
+  }
+
+  .step__img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+  }
+
+  @media (min-width: 760px) {
+    .steps {
+      gap: var(--mk-space-8);
+    }
+
+    /* Text left, photo right - and the steps without a photo simply keep the left
+       column, which lets the rhythm break rather than forcing filler imagery in. */
+    .step {
+      grid-template-columns: 1fr minmax(0, 38%);
+      align-items: start;
+      gap: var(--mk-space-7);
+    }
+  }
+</style>

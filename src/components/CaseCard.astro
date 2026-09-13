@@ -5,6 +5,8 @@ interface Frame {
   file: string;
   label: string;
   mode: "stage" | "collage";
+  w: number;
+  h: number;
   marked?: boolean;
 }
 
@@ -61,9 +63,11 @@ const alt = `${data.serviceTitle}, работа ${data.number}`;
             /* Collages are shown at their own proportions. Cropping one to the card
                ratio would cut into the halves being compared - which is the whole
                content of the image. */
-            style={
-              f.mode === "collage" ? `aspect-ratio:${f.src!.width}/${f.src!.height}` : undefined
-            }
+            /* Ratio comes from the data file, not from the imported image object.
+               Reading .width off ImageMetadata inside the template makes Astro emit
+               the untouched original alongside the derivatives - that turned a 3.4 MB
+               build into 53 MB of full-size PNGs nobody would ever download. */
+            style={f.mode === "collage" ? `aspect-ratio:${f.w}/${f.h}` : undefined}
           />
           <figcaption class={`case__label${f.marked ? " case__label--marked" : ""}`}>
             {f.label}

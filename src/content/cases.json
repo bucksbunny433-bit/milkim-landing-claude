@@ -9,17 +9,23 @@
       {
         "file": "brows/01/before.jpg",
         "label": "До",
-        "mode": "stage"
+        "mode": "stage",
+        "w": 768,
+        "h": 1024
       },
       {
         "file": "brows/01/fresh.jpg",
         "label": "Сразу после",
-        "mode": "stage"
+        "mode": "stage",
+        "w": 960,
+        "h": 1280
       },
       {
         "file": "brows/01/healed.jpg",
         "label": "Через месяц, зажившее",
-        "mode": "stage"
+        "mode": "stage",
+        "w": 960,
+        "h": 1280
       }
     ]
   },
@@ -33,17 +39,23 @@
       {
         "file": "brows/02/before.jpg",
         "label": "До",
-        "mode": "stage"
+        "mode": "stage",
+        "w": 670,
+        "h": 1024
       },
       {
         "file": "brows/02/fresh.jpg",
         "label": "Сразу после",
-        "mode": "stage"
+        "mode": "stage",
+        "w": 838,
+        "h": 1280
       },
       {
         "file": "brows/02/healed.jpg",
         "label": "Через месяц, зажившее",
-        "mode": "stage"
+        "mode": "stage",
+        "w": 949,
+        "h": 1089
       }
     ]
   },
@@ -57,12 +69,16 @@
       {
         "file": "brows/03/before.jpg",
         "label": "До",
-        "mode": "stage"
+        "mode": "stage",
+        "w": 1024,
+        "h": 1024
       },
       {
         "file": "brows/03/unlabelled-01.jpg",
         "label": "После",
-        "mode": "stage"
+        "mode": "stage",
+        "w": 2145,
+        "h": 2145
       }
     ]
   },
@@ -76,12 +92,16 @@
       {
         "file": "brows/04/before.jpg",
         "label": "До",
-        "mode": "stage"
+        "mode": "stage",
+        "w": 1024,
+        "h": 1024
       },
       {
         "file": "brows/04/fresh.png",
         "label": "Сразу после",
-        "mode": "stage"
+        "mode": "stage",
+        "w": 1159,
+        "h": 1159
       }
     ]
   },
@@ -95,12 +115,16 @@
       {
         "file": "brows/05/fresh.jpg",
         "label": "Сразу после",
-        "mode": "stage"
+        "mode": "stage",
+        "w": 576,
+        "h": 1024
       },
       {
         "file": "brows/05/healed.jpg",
         "label": "Через месяц, зажившее",
-        "mode": "stage"
+        "mode": "stage",
+        "w": 2172,
+        "h": 2172
       }
     ]
   },
@@ -114,12 +138,16 @@
       {
         "file": "brows/06/fresh.png",
         "label": "Сразу после",
-        "mode": "stage"
+        "mode": "stage",
+        "w": 2181,
+        "h": 2181
       },
       {
         "file": "brows/06/healed.png",
         "label": "Через месяц, зажившее",
-        "mode": "stage"
+        "mode": "stage",
+        "w": 2268,
+        "h": 2268
       }
     ]
   },
@@ -133,12 +161,16 @@
       {
         "file": "brows/07/before.jpg",
         "label": "До",
-        "mode": "stage"
+        "mode": "stage",
+        "w": 1024,
+        "h": 1024
       },
       {
         "file": "brows/07/fresh.jpg",
         "label": "Сразу после",
-        "mode": "stage"
+        "mode": "stage",
+        "w": 2268,
+        "h": 2268
       }
     ]
   },
@@ -152,7 +184,9 @@
       {
         "file": "brows/08/collage.jpg",
         "label": "До и после, одним кадром",
-        "mode": "collage"
+        "mode": "collage",
+        "w": 3782,
+        "h": 3782
       }
     ]
   },
@@ -166,7 +200,9 @@
       {
         "file": "brows/09/unlabelled-01.jpg",
         "label": "До и после, одним кадром",
-        "mode": "collage"
+        "mode": "collage",
+        "w": 3499,
+        "h": 3499
       }
     ]
   },
@@ -180,7 +216,9 @@
       {
         "file": "brows/10/unlabelled-01.jpg",
         "label": "До и после, одним кадром",
-        "mode": "collage"
+        "mode": "collage",
+        "w": 4809,
+        "h": 4809
       }
     ]
   },
@@ -194,12 +232,16 @@
       {
         "file": "brows/11/before.png",
         "label": "До",
-        "mode": "stage"
+        "mode": "stage",
+        "w": 1757,
+        "h": 2560
       },
       {
         "file": "brows/11/fresh.png",
         "label": "Сразу после",
-        "mode": "stage"
+        "mode": "stage",
+        "w": 1169,
+        "h": 1860
       }
     ]
   },
@@ -213,17 +255,23 @@
       {
         "file": "correction/01/before.jpg",
         "label": "До",
-        "mode": "stage"
+        "mode": "stage",
+        "w": 576,
+        "h": 1024
       },
       {
         "file": "correction/01/fresh.jpg",
         "label": "Сразу после",
-        "mode": "stage"
+        "mode": "stage",
+        "w": 2268,
+        "h": 4032
       },
       {
         "file": "correction/01/healed.jpg",
         "label": "Через месяц, зажившее",
-        "mode": "stage"
+        "mode": "stage",
+        "w": 4032,
+        "h": 2268
       }
     ]
   },
@@ -237,7 +285,9 @@
       {
         "file": "correction/02/unlabelled-01.png",
         "label": "До и после, одним кадром",
-        "mode": "collage"
+        "mode": "collage",
+        "w": 2366,
+        "h": 2366
       }
     ]
   },
@@ -251,7 +301,9 @@
       {
         "file": "correction/03/unlabelled-01.jpg",
         "label": "До и после, одним кадром",
-        "mode": "collage"
+        "mode": "collage",
+        "w": 4446,
+        "h": 4446
       }
     ]
   },
@@ -265,7 +317,9 @@
       {
         "file": "correction/04/unlabelled-01.png",
         "label": "До и после, одним кадром",
-        "mode": "collage"
+        "mode": "collage",
+        "w": 1254,
+        "h": 1254
       }
     ]
   },
@@ -279,7 +333,9 @@
       {
         "file": "correction/05/unlabelled-01.jpg",
         "label": "До и после, одним кадром",
-        "mode": "collage"
+        "mode": "collage",
+        "w": 3547,
+        "h": 3547
       }
     ]
   },
@@ -293,7 +349,9 @@
       {
         "file": "correction/06/unlabelled-01.jpg",
         "label": "До и после, одним кадром",
-        "mode": "collage"
+        "mode": "collage",
+        "w": 2687,
+        "h": 2687
       }
     ]
   },
@@ -307,7 +365,9 @@
       {
         "file": "correction/07/unlabelled-01.png",
         "label": "До и после, одним кадром",
-        "mode": "collage"
+        "mode": "collage",
+        "w": 2560,
+        "h": 2560
       }
     ]
   },
@@ -321,7 +381,9 @@
       {
         "file": "correction/08/unlabelled-01.png",
         "label": "До и после, одним кадром",
-        "mode": "collage"
+        "mode": "collage",
+        "w": 2560,
+        "h": 2560
       }
     ]
   }
