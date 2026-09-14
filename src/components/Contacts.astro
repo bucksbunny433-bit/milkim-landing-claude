@@ -106,7 +106,7 @@ const year = new Date().getFullYear();
             {
               site.links.max ? (
                 <a class="details__link" href={site.links.max} rel="noopener">
-                  MAX — написать
+                  MAX — открыть чат
                 </a>
               ) : (
                 /* Deliberately not a link. A tel: href under a MAX label would place
@@ -114,10 +114,7 @@ const year = new Date().getFullYear();
                 <span class="details__max">MAX — по номеру {primary.display}</span>
               )
             }
-            <span class="details__sub">
-              Оба мессенджера — на основном номере. В MAX собеседника находят по номеру
-              телефона, прямой ссылки на чат в нём нет.
-            </span>
+            <span class="details__sub">Оба мессенджера — на основном номере.</span>
           </dd>
         </div>
 

@@ -39,7 +39,7 @@ Nothing in here is a suggestion.
 | Hours | 10:00–19:00, Mon–Sun, by appointment, usually booked a few days ahead |
 | Phone, primary | +7 901 006-93-11 — also carries Telegram and MAX. This is the site owner |
 | Telegram | `@ananas_ananasovich` — supplied 2026-09-14. A `t.me/<phone>` link does not open a chat, so the handle is the only usable form |
-| MAX | No chat link exists for a phone number: a personal link is `https://max.ru/u/<hash>` and only the app can produce it (profile → «Пригласить друзей» → «Скопировать ссылку»). Until the studio sends theirs, `site.links.max` stays empty and the page names the number instead of inventing a URL. Filling that one field makes the MAX button appear in the hero and in contacts |
+| MAX | Profile link supplied 2026-09-14, in `site.links.max`. MAX has no chat link for a phone number — a personal link is `https://max.ru/u/<hash>` and only the app produces it (profile → «Пригласить друзей» → «Скопировать ссылку»), so it can never be derived from the number. Clearing that one field removes the MAX button from the hero and contacts again |
 | Phone, secondary | +7 906 197-70-77 — publish both |
 | Online booking | DIKIDI — https://dikidi.net/833342 |
 | VK | https://vk.ru/milvicpm |
