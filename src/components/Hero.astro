@@ -4,8 +4,6 @@ import site from "../data/site.json";
 import Logo from "./Logo.astro";
 import heroImage from "../assets/images/hero-master.png";
 
-// The studio's own handle. A t.me/<phone> link does not open a chat.
-const telegram = site.links.telegram;
 ---
 
 <section class="mk-on-dark hero">
@@ -71,7 +69,8 @@ const telegram = site.links.telegram;
         <a class="mk-btn mk-btn--primary" href={site.booking.dikidi} rel="noopener">
           Записаться онлайн
         </a>
-        <a class="mk-btn mk-btn--ghost" href={telegram} rel="noopener">Написать в Telegram</a>
+        {/* One messenger above the fold, by the studio's call: MAX. Telegram keeps
+            its own button and its handle in the contacts block. */}
         {
           site.links.max && (
             <a class="mk-btn mk-btn--ghost" href={site.links.max} rel="noopener">
