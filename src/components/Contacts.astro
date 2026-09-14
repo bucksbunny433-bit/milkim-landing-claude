@@ -9,8 +9,7 @@ const interior = Object.entries(
   .sort(([a], [b]) => a.localeCompare(b))
   .map(([, m]) => m.default);
 
-const primary = site.phones.find((p) => p.primary)!;
-const telegram = `https://t.me/${primary.href.replace("tel:", "")}`;
+const telegram = site.links.telegram;
 const year = new Date().getFullYear();
 ---
 

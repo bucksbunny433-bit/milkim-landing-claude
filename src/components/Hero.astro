@@ -4,8 +4,8 @@ import site from "../data/site.json";
 import Logo from "./Logo.astro";
 import heroImage from "../assets/images/hero-master.png";
 
-const tel = site.phones.find((p) => p.primary)!;
-const telegram = `https://t.me/${tel.href.replace("tel:", "")}`;
+// The studio's own handle. A t.me/<phone> link does not open a chat.
+const telegram = site.links.telegram;
 ---
 
 <section class="mk-on-dark hero">
