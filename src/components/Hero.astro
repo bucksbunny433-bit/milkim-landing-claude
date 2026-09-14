@@ -13,15 +13,17 @@ const telegram = `https://t.me/${tel.href.replace("tel:", "")}`;
 
   <div class="mk-container hero__inner">
     <div class="hero__copy">
-      {/* The wordmark carries the studio name, so it is the h-level brand mark,
-          not decoration. Inline so it can take the section's gold via currentColor. */}
-      <Logo class="hero__logo" label={`${site.name} — ${site.tagline}`} />
+      <div class="hero__intro">
+        {/* The wordmark carries the studio name, so it is the h-level brand mark,
+            not decoration. Inline so it can take the section's gold via currentColor. */}
+        <Logo class="hero__logo" label={`${site.name} — ${site.tagline}`} />
 
-      <p class="mk-eyebrow hero__where">
-        {site.city} · {site.address.street}
-      </p>
+        <p class="mk-eyebrow hero__where">
+          {site.city} · {site.address.street}
+        </p>
 
-      <h1 class="hero__title">Брови, которые выглядят как ваши</h1>
+        <h1 class="hero__title">Брови, которые выглядят как ваши</h1>
+      </div>
 
     <div class="hero__portrait">
       {/*
@@ -43,6 +45,7 @@ const telegram = `https://t.me/${tel.href.replace("tel:", "")}`;
       />
     </div>
 
+      <div class="hero__rest">
       <p class="mk-lead hero__lead">
         Форма строится по геометрии вашего лица, а не по шаблону. Цвет подбираю под ваш
         типаж. Эскиз отрисовываю до внесения пигмента — вы видите форму заранее.
@@ -72,6 +75,7 @@ const telegram = `https://t.me/${tel.href.replace("tel:", "")}`;
       </div>
 
       <p class="hero__note">{site.booking.depositNote}</p>
+      </div>
     </div>
 
   </div>
@@ -117,7 +121,17 @@ const telegram = `https://t.me/${tel.href.replace("tel:", "")}`;
     flex-direction: column;
   }
 
-  .hero__logo {
+  /* On a phone the two wrappers dissolve, so the children flow in DOM order and the
+     portrait sits between the headline and the lead. On a wide screen they become
+     real blocks and the portrait moves to its own column. */
+  .hero__intro,
+  .hero__rest {
+    display: contents;
+  }
+
+  /* :global because Astro scopes styles per component - a class handed to a child
+     component lands on an element that carries the child's scope, not this one's. */
+  :global(.hero__logo) {
     width: 148px;
     margin-bottom: var(--mk-space-6);
     color: var(--mk-gold);
@@ -209,33 +223,44 @@ const telegram = `https://t.me/${tel.href.replace("tel:", "")}`;
       padding-block: var(--mk-space-8) 0;
     }
 
-    /* The portrait now lives inside .hero__copy, so the outer grid is a single
-       column - a 46% track here would leave an empty gutter on the right. */
     .hero__copy {
       display: grid;
-      grid-template-columns: 1fr 46%;
+      grid-template-columns: 1fr 44%;
       column-gap: var(--mk-space-8);
       align-items: start;
       padding-bottom: var(--mk-space-9);
     }
 
-    /* On a wide screen the portrait moves into its own column and spans the block,
-       so the copy reads down the left and the photo holds the right. */
+    .hero__intro,
+    .hero__rest {
+      display: block;
+      grid-column: 1;
+    }
+
+    .hero__intro {
+      grid-row: 1;
+    }
+
+    .hero__rest {
+      grid-row: 2;
+    }
+
     .hero__portrait {
       grid-column: 2;
-      grid-row: 1 / -1;
-      align-self: end;
+      grid-row: 1 / span 2;
+      align-self: start;
       margin-inline: 0;
       margin-bottom: 0;
     }
 
-    .hero__copy > :not(.hero__portrait) {
-      grid-column: 1;
-    }
-
+    /* A fixed height rather than a ratio. A spanning grid item still sizes the rows
+       it spans, so a 3:4 portrait 560px wide came out 750px tall and pushed the
+       headline off the first screen. Cropping to a set height keeps the hero on one
+       screen and lets the copy define the rhythm. */
     .hero__img {
-      aspect-ratio: 3 / 4;
-      object-position: 50% 18%;
+      aspect-ratio: auto;
+      height: 604px;
+      object-position: 50% 16%;
     }
   }
 </style>

@@ -65,8 +65,15 @@ const schema = {
       crossorigin
     />
 
+    {/*
+      The emblem is fine-line art and turns to mud below about 48px - rendered and
+      compared before choosing. The small icons use the M from the studio's own
+      wordmark instead; the emblem returns at 180px where it reads. The SVG carries
+      its own dark ground because gold on a light tab measures 1.49:1.
+    */}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon-32.png" sizes="32x32" />
+    <link rel="icon" href="/favicon-16.png" sizes="16x16" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
     <meta property="og:type" content="website" />

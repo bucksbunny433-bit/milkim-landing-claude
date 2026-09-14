@@ -271,18 +271,20 @@ right register for correcting other artists' failed work. The cost is that "luxu
 signalled quietly, so it survives only on disciplined spacing — see the `milkim-visual`
 skill.
 
-**Not yet downloaded.** Nothing font-related exists in the repo. The next session must show
-these commands before running them:
+**Downloaded and in the repo** since 2026-09-13, with the client's approval: six woff2
+files in `public/fonts/`, 66.7 KB total, generated into `src/styles/fonts.css` from
+`public/fonts/_subsets.json` rather than typed by hand.
 
-```bash
-# Tenor Sans 400, Golos Text 400/500 - Cyrillic + Basic Latin subsets, woff2
-npx --yes google-font-installer download "Tenor Sans" -d public/fonts
-npx --yes google-font-installer download "Golos Text" -d public/fonts
-```
+Request each weight in its own call. Asking for two weights at once returns the variable
+font, which cost 146.6 KB instead of 66.7 KB for the same two faces.
 
-Both faces are published on Google Fonts under the SIL Open Font License 1.1, so
-self-hosting is permitted — keep the `OFL.txt` that ships with the download inside
-`public/fonts/`.
+Google's `unicode-range` values are copied verbatim and must not be widened: a character
+declared in range but absent from the file renders as `.notdef`, a tofu box, instead of
+falling back. **The rouble sign U+20BD is in no subset of either family** and always comes
+from a fallback face — verified against the served CSS. It renders acceptably at price
+sizes; re-check if the price type ever gets much larger.
+
+Both faces are SIL Open Font License 1.1; see `public/fonts/OFL.txt`.
 
 Rules that still apply: `woff2` only, self-hosted in `public/fonts/`, subset to
 Cyrillic + Basic Latin + punctuation, `font-display: swap`, and `<link rel="preload">` for
@@ -398,11 +400,16 @@ the Ubuntu archives and the npm registry are reachable.
 ## 9. Commands
 
 ```bash
-npm run dev                       # dev server on :4321
-npm run build                     # static build into dist/
-npm run check                     # astro + TypeScript diagnostics
-npm run verify http://localhost:4321   # budgets, reduced-motion, no-JS, screenshots
+npm run dev        # dev server on :4321
+npm run build      # static build into dist/
+npm run check      # astro + TypeScript diagnostics
+npm run serve      # serves dist/ WITH GZIP on :4173 - required before verify
+npm run verify     # budgets, reduced-motion, no-JS, screenshots into .verify/
 ```
+
+**Never measure against `http-server`, `serve` or `python -m http.server`.** None of them
+compress, and the budgets in §4 are stated for compressed bytes. Measured uncompressed, the
+HTML read 44.2 KB against a 25 KB budget; served the way real hosting serves it, 20.6 KB.
 
 `dist/` is the deployable folder: upload its contents to the host's web root.
 

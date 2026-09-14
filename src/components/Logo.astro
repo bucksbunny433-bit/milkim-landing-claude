@@ -7,15 +7,19 @@ const { label, class: className } = Astro.props;
 ---
 
 <span class={`logo ${className ?? ""}`} role="img" aria-label={label}>
-  <svg viewBox="260 993 748 210" focusable="false" aria-hidden="true">
+  {/* 0 0 on purpose. The symbol carries the source viewBox and maps its own
+      coordinates; repeating "260 993 ..." here places the <use> viewport outside
+      the visible area and nothing paints. */}
+  <svg viewBox="0 0 748 210" focusable="false" aria-hidden="true">
     <use href="#mk-wordmark"></use>
   </svg>
 </span>
 
 <style>
+  /* No colour here on purpose: a scoped .logo rule outranks the :global class the
+     parent hands down, and colour inherits by default anyway. */
   .logo {
     display: block;
-    color: inherit;
   }
 
   .logo svg {
