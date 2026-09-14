@@ -9,6 +9,7 @@ const interior = Object.entries(
   .sort(([a], [b]) => a.localeCompare(b))
   .map(([, m]) => m.default);
 
+const primary = site.phones.find((p) => p.primary)!;
 const telegram = site.links.telegram;
 const year = new Date().getFullYear();
 ---
@@ -52,6 +53,13 @@ const year = new Date().getFullYear();
             Записаться онлайн
           </a>
           <a class="mk-btn mk-btn--ghost" href={telegram} rel="noopener">Написать в Telegram</a>
+          {
+            site.links.max && (
+              <a class="mk-btn mk-btn--ghost" href={site.links.max} rel="noopener">
+                Написать в MAX
+              </a>
+            )
+          }
         </div>
 
         <p class="contacts__note">{site.booking.depositNote}</p>
@@ -86,7 +94,30 @@ const year = new Date().getFullYear();
                 </a>
               ))
             }
-            <span class="details__sub">Telegram и MAX — на основном номере</span>
+          </dd>
+        </div>
+
+        <div class="details__row">
+          <dt>Мессенджеры</dt>
+          <dd>
+            <a class="details__link" href={telegram} rel="noopener">
+              Telegram — @{telegram.split("/").pop()}
+            </a>
+            {
+              site.links.max ? (
+                <a class="details__link" href={site.links.max} rel="noopener">
+                  MAX — написать
+                </a>
+              ) : (
+                /* Deliberately not a link. A tel: href under a MAX label would place
+                   a call, which is not what the label promises. */
+                <span class="details__max">MAX — по номеру {primary.display}</span>
+              )
+            }
+            <span class="details__sub">
+              Оба мессенджера — на основном номере. В MAX собеседника находят по номеру
+              телефона, прямой ссылки на чат в нём нет.
+            </span>
           </dd>
         </div>
 
@@ -213,6 +244,11 @@ const year = new Date().getFullYear();
     font-size: var(--mk-step-body);
     display: grid;
     gap: var(--mk-space-1);
+  }
+
+  .details__max {
+    font-size: var(--mk-step-body);
+    font-variant-numeric: tabular-nums;
   }
 
   .details__sub {

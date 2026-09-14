@@ -72,6 +72,13 @@ const telegram = site.links.telegram;
           Записаться онлайн
         </a>
         <a class="mk-btn mk-btn--ghost" href={telegram} rel="noopener">Написать в Telegram</a>
+        {
+          site.links.max && (
+            <a class="mk-btn mk-btn--ghost" href={site.links.max} rel="noopener">
+              Написать в MAX
+            </a>
+          )
+        }
       </div>
 
       <p class="hero__note">{site.booking.depositNote}</p>
