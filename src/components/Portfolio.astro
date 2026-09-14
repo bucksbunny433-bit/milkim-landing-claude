@@ -1,12 +1,17 @@
 ---
 import CaseCard from "./CaseCard.astro";
-import cases from "../content/cases.json";
+import casesJson from "../content/cases.json";
+import type { CaseData } from "../types";
+
+// JSON widens every string, so "mode" arrives as string rather than the two values
+// the card accepts. One cast here keeps the data file plain JSON a CMS can write.
+const cases = casesJson as CaseData[];
 
 // Strongest proof first. A full before -> fresh -> healed set is the only thing
 // that answers "how will this look once it settles", which the studio's research
 // names as the decisive question. Pairs come next, then everything else.
 const RANK: Record<string, number> = { timeline: 0, pair: 1, collage: 2 };
-const byRank = (a: (typeof cases)[number], b: (typeof cases)[number]) =>
+const byRank = (a: CaseData, b: CaseData) =>
   RANK[a.kind] - RANK[b.kind] || a.number - b.number;
 
 const groups = [

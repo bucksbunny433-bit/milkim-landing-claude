@@ -1,23 +1,6 @@
 ---
 import { Image } from "astro:assets";
-
-interface Frame {
-  file: string;
-  label: string;
-  mode: "stage" | "collage";
-  w: number;
-  h: number;
-  marked?: boolean;
-}
-
-interface CaseData {
-  id: string;
-  service: string;
-  serviceTitle: string;
-  number: number;
-  kind: string;
-  frames: Frame[];
-}
+import type { CaseData } from "../types";
 
 interface Props {
   data: CaseData;
@@ -34,8 +17,23 @@ const files = import.meta.glob<{ default: ImageMetadata }>(
   { eager: true },
 );
 
+// A collage is shown at its own proportions: cropping one to the card ratio would
+// cut into the halves being compared, which is the entire content of the image.
+// The ratio is read from the data file, never from the imported image object -
+// touching .width on ImageMetadata inside the template makes Astro emit the
+// untouched original alongside the derivatives, which turned a 3.4 MB build into
+// 53 MB of full-size PNGs nobody would ever download.
 const frames = data.frames
-  .map((f) => ({ ...f, src: files[`../assets/portfolio/${f.file}`]?.default }))
+  .map((f) => ({
+    ...f,
+    src: files[`../assets/portfolio/${f.file}`]?.default,
+    ratio: f.mode === "collage" ? `aspect-ratio:${f.w}/${f.h}` : undefined,
+    // A collage packs two to four faces into one square, so it needs more pixels
+    // than a single portrait to stay readable at the same card width.
+    widths: f.mode === "collage" ? [340, 680, 1020] : [220, 340, 680],
+    width: f.mode === "collage" ? 1020 : 680,
+    quality: f.mode === "collage" ? 64 : 58,
+  }))
   .filter((f) => f.src);
 
 const stageCount = frames.filter((f) => f.mode === "stage").length;
@@ -50,24 +48,15 @@ const alt = `${data.serviceTitle}, работа ${data.number}`;
           <Image
             src={f.src!}
             alt={`${alt} — ${f.label.toLowerCase()}`}
-            /* A collage packs two to four faces into one square, so it needs more
-               pixels than a single portrait to stay readable at the same card width. */
-            widths={f.mode === "collage" ? [340, 680, 1020] : [220, 340, 680]}
-            width={f.mode === "collage" ? 1020 : 680}
+            widths={f.widths}
+            width={f.width}
             sizes="(min-width: 680px) 20vw, 85vw"
             format="avif"
-            quality={f.mode === "collage" ? 64 : 58}
+            quality={f.quality}
             loading="lazy"
             decoding="async"
             class={`case__img case__img--${f.mode}`}
-            /* Collages are shown at their own proportions. Cropping one to the card
-               ratio would cut into the halves being compared - which is the whole
-               content of the image. */
-            /* Ratio comes from the data file, not from the imported image object.
-               Reading .width off ImageMetadata inside the template makes Astro emit
-               the untouched original alongside the derivatives - that turned a 3.4 MB
-               build into 53 MB of full-size PNGs nobody would ever download. */
-            style={f.mode === "collage" ? `aspect-ratio:${f.w}/${f.h}` : undefined}
+            style={f.ratio}
           />
           <figcaption class={`case__label${f.marked ? " case__label--marked" : ""}`}>
             {f.label}
@@ -76,7 +65,6 @@ const alt = `${data.serviceTitle}, работа ${data.number}`;
       ))
     }
   </div>
-
 </article>
 
 <style>

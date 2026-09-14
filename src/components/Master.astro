@@ -173,13 +173,31 @@ const certs = Object.entries(
     gap: var(--mk-space-2);
   }
 
+  /* A square cell keeps the grid aligned; the document sits inside it whole. These
+     are proof, and a cover crop cut straight through the name and the title on
+     every one of them - which is the only part anyone looks at. */
+  .certs__item {
+    position: relative;
+    /* Square, because the seven documents arrived in both orientations - a portrait
+       cell left the landscape ones floating in half a cell of nothing. */
+    aspect-ratio: 1 / 1;
+    background-color: color-mix(in oklab, var(--mk-text) 4%, transparent);
+    border: 1px solid var(--mk-rule);
+  }
+
+  /* Taken out of flow on purpose: in flow the image's own height is the grid item's
+     automatic minimum size, so the tallest certificate sized its row and the square
+     never applied. Out of flow, the cell keeps its ratio and margin:auto centres the
+     document inside it, whole - these are proof, and a crop cut through the name on
+     every one of them. */
   .certs__img {
-    width: 100%;
+    position: absolute;
+    inset: var(--mk-space-2);
+    margin: auto;
+    width: auto;
     height: auto;
-    aspect-ratio: 3 / 4;
-    object-fit: cover;
-    object-position: 50% 20%;
-    background-color: color-mix(in oklab, var(--mk-text) 5%, transparent);
+    max-width: 100%;
+    max-height: 100%;
   }
 
   @media (min-width: 760px) {

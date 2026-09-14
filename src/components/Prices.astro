@@ -70,33 +70,37 @@ const COPY: Record<string, { lead: string; body: string; anchor: string }> = {
     <div class="table" data-reveal>
       <h3 class="table__title">Полный прайс</h3>
 
-      <ul class="rows" role="list">
-        {
-          main.map((p) => (
-            <li class="row">
-              <span class="row__name">{p.title}</span>
-              <span class="row__dots" aria-hidden="true" />
-              <span class="row__price">{rub(p.base)}</span>
-              {p.correction && <span class="row__sub">коррекция {rub(p.correction)}</span>}
-              {p.note && <span class="row__sub">{p.note}</span>}
-            </li>
-          ))
-        }
-      </ul>
+      <div class="table__cols">
+        <ul class="rows" role="list">
+          {
+            main.map((p) => (
+              <li class="row">
+                <span class="row__name">{p.title}</span>
+                <span class="row__dots" aria-hidden="true" />
+                <span class="row__price">{rub(p.base)}</span>
+                {p.correction && <span class="row__sub">коррекция {rub(p.correction)}</span>}
+                {p.note && <span class="row__sub">{p.note}</span>}
+              </li>
+            ))
+          }
+        </ul>
 
-      <h4 class="rows__group">Комплексы</h4>
-      <ul class="rows" role="list">
-        {
-          combos.map((p) => (
-            <li class="row">
-              <span class="row__name">{p.title}</span>
-              <span class="row__dots" aria-hidden="true" />
-              <span class="row__price">{rub(p.base)}</span>
-              {p.correction && <span class="row__sub">коррекция {rub(p.correction)}</span>}
-            </li>
-          ))
-        }
-      </ul>
+        <div class="table__combos">
+          <h4 class="rows__group">Комплексы</h4>
+          <ul class="rows" role="list">
+            {
+              combos.map((p) => (
+                <li class="row">
+                  <span class="row__name">{p.title}</span>
+                  <span class="row__dots" aria-hidden="true" />
+                  <span class="row__price">{rub(p.base)}</span>
+                  {p.correction && <span class="row__sub">коррекция {rub(p.correction)}</span>}
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
     </div>
 
     <div class="notes">
@@ -217,6 +221,11 @@ const COPY: Record<string, { lead: string; body: string; anchor: string }> = {
   /* ---- price list ---- */
   .table {
     margin-bottom: var(--mk-space-8);
+  }
+
+  .table__cols {
+    display: grid;
+    gap: 0;
   }
 
   .table__title,
@@ -344,8 +353,14 @@ const COPY: Record<string, { lead: string; body: string; anchor: string }> = {
       gap: var(--mk-space-8);
     }
 
-    .table {
-      max-width: 44rem;
+    .table__cols {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--mk-space-8);
+      align-items: start;
+    }
+
+    .table__combos .rows__group {
+      margin-top: 0;
     }
   }
 </style>

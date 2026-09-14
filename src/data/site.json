@@ -21,8 +21,21 @@
     "note": "Приём по предварительной записи, обычно за несколько дней."
   },
   "phones": [
-    { "display": "+7 901 006-93-11", "href": "tel:+79010069311", "primary": true, "messengers": ["telegram", "max"] },
-    { "display": "+7 906 197-70-77", "href": "tel:+79061977077", "primary": false, "messengers": [] }
+    {
+      "display": "+7 901 006-93-11",
+      "href": "tel:+79010069311",
+      "primary": true,
+      "messengers": [
+        "telegram",
+        "max"
+      ]
+    },
+    {
+      "display": "+7 906 197-70-77",
+      "href": "tel:+79061977077",
+      "primary": false,
+      "messengers": []
+    }
   ],
   "booking": {
     "dikidi": "https://dikidi.net/833342",
@@ -43,7 +56,7 @@
   },
   "promo": {
     "active": true,
-    "title": "Приведи подругу",
+    "title": "Приведи друга",
     "text": "Скидка 15% на коррекцию."
   }
 }

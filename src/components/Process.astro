@@ -157,5 +157,11 @@ const steps = [
       align-items: start;
       gap: var(--mk-space-7);
     }
+
+    /* The shared measure is set for a full-width paragraph; in a 700px column beside
+       a photo it left a third of the row empty between the text and the image. */
+    .step__text {
+      max-width: 46ch;
+    }
   }
 </style>
