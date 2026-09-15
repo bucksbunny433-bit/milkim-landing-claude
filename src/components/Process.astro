@@ -45,97 +45,111 @@ const steps = [
 ];
 ---
 
-<section class="mk-on-light mk-section process" id="process">
+<section class="mk-on-light process" id="process">
   <div class="mk-container">
-    <header class="process__head" data-reveal="stagger">
-      <p class="mk-eyebrow">Как это проходит</p>
-      <h2 class="process__title">От разговора до зажившего результата</h2>
-      <p class="mk-lead process__lead">
-        Два визита и месяц между ними. Ниже — что происходит на каждом шаге, чтобы в
-        кабинете не было ничего неожиданного.
+    <div class="process__head">
+      <h2 class="process__title" data-reveal="lines">
+        <span class="line"><span>От разговора</span></span>
+        <span class="line"><span>до зажившего</span></span>
+        <span class="line"><span>результата</span></span>
+      </h2>
+      <p class="process__lead">
+        Два визита и месяц между ними. Ничего неожиданного в кабинете не будет.
       </p>
-    </header>
+    </div>
+  </div>
 
-    <ol class="steps" role="list">
-      {
-        steps.map((s, i) => (
-          <li class="step" data-reveal="stagger" style={`--i:${i % 3}`}>
-            <div class="step__meta">
-              <span class="step__n" aria-hidden="true">
-                {s.n}
-              </span>
-              <h3 class="step__title">{s.title}</h3>
-              <p class="step__text">{s.text}</p>
-            </div>
-            {s.image && (
-              <div class="step__media">
+  {/*
+    Each step owns a screen and its photograph pins for the length of that step's text,
+    then hands over to the next one. It is position: sticky and nothing else - no script,
+    no scroll library, and it behaves the same in every browser.
+  */}
+  <ol class="steps" role="list">
+    {
+      steps.map((s) => (
+        <li class="step">
+          <div class="mk-container step__grid">
+            <div class="step__media">
+              {s.image ? (
                 <Image
                   src={s.image}
                   alt={s.alt}
                   widths={[320, 520, 760]}
                   width={760}
-                  sizes="(min-width: 760px) 30vw, 88vw"
+                  sizes="(min-width: 900px) 44vw, 92vw"
                   format="avif"
-                  quality={60}
+                  quality={58}
                   loading="lazy"
                   decoding="async"
                   class="step__img"
                 />
-              </div>
-            )}
-          </li>
-        ))
-      }
-    </ol>
-  </div>
+              ) : (
+                <span class="step__numeral" aria-hidden="true">
+                  {s.n}
+                </span>
+              )}
+            </div>
+
+            <div class="step__copy">
+              <p class="step__n" aria-hidden="true">
+                {s.n}
+              </p>
+              <h3 class="step__title">{s.title}</h3>
+              <p class="step__text">{s.text}</p>
+            </div>
+          </div>
+        </li>
+      ))
+    }
+  </ol>
 </section>
 
 <style>
+  .process {
+    padding-block: var(--mk-section-y) 0;
+  }
+
   .process__head {
-    max-width: 44rem;
     margin-bottom: var(--mk-space-8);
   }
 
   .process__title {
-    margin-block: var(--mk-space-4) var(--mk-space-5);
+    font-size: var(--mk-step-h2);
+    line-height: 1.02;
+    letter-spacing: var(--mk-tracking-display);
+    font-weight: 400;
+    margin-bottom: var(--mk-space-5);
+  }
+
+  .process__title .line {
+    display: block;
+  }
+
+  .process__lead {
+    font-size: var(--mk-step-lead);
+    line-height: var(--mk-leading-body);
+    color: var(--mk-muted);
+    max-width: 30rem;
   }
 
   .steps {
-    display: grid;
-    gap: var(--mk-space-7);
-    counter-reset: none;
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
   .step {
-    display: grid;
-    gap: var(--mk-space-4);
-    padding-top: var(--mk-space-5);
+    padding-block: var(--mk-space-7);
     border-top: 1px solid var(--mk-rule);
   }
 
-  .step__meta {
+  .step__grid {
     display: grid;
-    gap: var(--mk-space-3);
+    gap: var(--mk-space-5);
   }
 
-  .step__n {
-    font-family: var(--mk-font-display);
-    font-size: var(--mk-step-small);
-    letter-spacing: 0.18em;
-    color: var(--mk-accent);
-  }
-
-  .step__title {
-    font-size: var(--mk-step-h3);
-  }
-
-  .step__text {
-    font-size: var(--mk-step-small);
-    color: var(--mk-muted);
-    max-width: var(--mk-measure);
+  .step__media {
+    position: relative;
   }
 
   .step__img {
@@ -145,23 +159,74 @@ const steps = [
     object-fit: cover;
   }
 
-  @media (min-width: 760px) {
-    .steps {
-      gap: var(--mk-space-8);
-    }
+  /* Steps four and five have no photograph - healing and the correction visit happen
+     away from the studio. Rather than borrow an unrelated picture, the step number
+     stands in at display scale. */
+  .step__numeral {
+    display: block;
+    font-family: var(--mk-font-display);
+    font-size: clamp(7rem, 30vw, 14rem);
+    line-height: 0.8;
+    color: color-mix(in oklab, var(--mk-accent) 22%, transparent);
+  }
 
-    /* Text left, photo right - and the steps without a photo simply keep the left
-       column, which lets the rhythm break rather than forcing filler imagery in. */
+  .step__n {
+    font-family: var(--mk-font-display);
+    font-size: var(--mk-step-small);
+    letter-spacing: 0.2em;
+    color: var(--mk-accent);
+    margin-bottom: var(--mk-space-3);
+  }
+
+  .step__title {
+    font-size: var(--mk-step-h3);
+    font-weight: 400;
+    margin-bottom: var(--mk-space-3);
+  }
+
+  .step__text {
+    font-size: var(--mk-step-small);
+    line-height: var(--mk-leading-body);
+    color: var(--mk-muted);
+    max-width: 34rem;
+  }
+
+  @media (min-width: 900px) {
     .step {
-      grid-template-columns: 1fr minmax(0, 38%);
-      align-items: start;
-      gap: var(--mk-space-7);
+      padding-block: var(--mk-space-9);
     }
 
-    /* The shared measure is set for a full-width paragraph; in a 700px column beside
-       a photo it left a third of the row empty between the text and the image. */
+    .step__grid {
+      grid-template-columns: 44% 1fr;
+      gap: var(--mk-space-9);
+      align-items: start;
+    }
+
+    /* The photograph pins while its own text passes, then releases as the next step
+       arrives. One property, no script. */
+    .step__media {
+      position: sticky;
+      top: 18vh;
+    }
+
+    .step__copy {
+      padding-top: var(--mk-space-5);
+      min-height: 46vh;
+    }
+
+    .step__title {
+      font-size: var(--mk-step-h2);
+      line-height: 1.05;
+      letter-spacing: var(--mk-tracking-display);
+      margin-bottom: var(--mk-space-5);
+    }
+
     .step__text {
-      max-width: 46ch;
+      font-size: var(--mk-step-body);
+    }
+
+    .step__numeral {
+      font-size: clamp(12rem, 18vw, 20rem);
     }
   }
 </style>

@@ -117,6 +117,9 @@ const groups = [
                       />
                     ))}
 
+                  {/* Every frame is lazy: the deck sits well below the fold, and
+                      eager-loading the first case's three stages put 332 KB of portfolio
+                      into the first view for pictures nobody had scrolled to yet. */}
                   <div class="case__frame">
                     {c.frames.map((f, i) => (
                       <Image
@@ -127,10 +130,6 @@ const groups = [
                         sizes="(min-width: 900px) 46vw, 92vw"
                         format="avif"
                         quality={f.mode === "collage" ? 58 : 54}
-                        {/* Every frame is lazy: the deck sits well below the fold, and
-                            eager-loading the first case's three stages put 332 KB of
-                            portfolio into the first view for pictures nobody had
-                            scrolled to yet. */}
                         loading="lazy"
                         decoding="async"
                         class="case__img"

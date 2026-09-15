@@ -4,114 +4,106 @@ import included from "../content/included.json";
 import site from "../data/site.json";
 
 // Non-breaking space between number and sign, per the project's typography rules.
-const rub = (n: number) => `${n.toLocaleString("ru-RU")} ₽`;
+const rub = (n: number) => `${n.toLocaleString("ru-RU")} ₽`;
 
 const featured = prices.filter((p) => p.presented).sort((a, b) => a.order - b.order);
 const main = prices.filter((p) => !p.combo).sort((a, b) => a.order - b.order);
 const combos = prices.filter((p) => p.combo).sort((a, b) => a.order - b.order);
 
-// Copy below is the master's own wording from the studio's answers document.
+// Copy below is the master's own wording from the studio's answers.
 const COPY: Record<string, { lead: string; body: string; anchor: string }> = {
   brows: {
-    anchor: "#brows",
+    anchor: "#works",
     lead: "Форма строится по геометрическим точкам вашего лица и зависит только от его пропорций. Цвет подбираю по вашему типажу.",
     body: "Можно сделать очень натурально — более лёгкими и воздушными штрихами. Нужно понимать обратную сторону: чем легче работа, тем меньше пигмента в коже и тем короче она носится. Это обсуждаем до процедуры, а не после.",
   },
   coverup: {
-    anchor: "#coverup",
+    anchor: "#works",
     lead: "Работа поверх чужого пигмента. Беру не любой случай, и это принципиально.",
     body: "В работу иду, когда оттенок подлежит перекрытию: сероватые, светло-серые, рыжеватые, иногда с зеленцой или голубизной. Неправильную форму поправлю. А тёмно-серые, чёрные и очень широкие брови сначала требуют осветления или удаления — перекрывать их сразу значит сделать хуже. До диагностики по фото я не обещаю, что работу можно исправить.",
   },
 };
 ---
 
-<section class="mk-on-light mk-section prices" id="prices">
+<section class="mk-on-light prices" id="prices">
   <div class="mk-container">
-    <header class="prices__head" data-reveal="stagger">
-      <p class="mk-eyebrow">Услуги</p>
-      <h2 class="prices__title">Что я делаю и сколько это стоит</h2>
-    </header>
-
-    <div class="services">
-      {
-        featured.map((s) => {
-          const copy = COPY[s.id === "coverup" ? "coverup" : "brows"];
-          return (
-            <article class="service" data-reveal>
-              <div class="service__top">
-                <h3 class="service__name">{s.title}</h3>
-                <p class="service__price">{rub(s.base)}</p>
-              </div>
-              <p class="service__lead">{copy.lead}</p>
-              <p class="service__body">{copy.body}</p>
-              <dl class="service__facts">
-                <div>
-                  <dt>Длительность</dt>
-                  <dd>около 2 часов</dd>
-                </div>
-                <div>
-                  <dt>Визитов</dt>
-                  <dd>основной и коррекция</dd>
-                </div>
-                <div>
-                  <dt>Коррекция</dt>
-                  <dd>{s.correction ? rub(s.correction) : "—"}</dd>
-                </div>
-              </dl>
-              <a class="service__link" href={copy.anchor}>
-                Смотреть работы
-              </a>
-            </article>
-          );
-        })
-      }
+    <div class="prices__head">
+      <h2 class="prices__title" data-reveal="lines">
+        <span class="line"><span>Что я делаю</span></span>
+        <span class="line"><span>и сколько это стоит</span></span>
+      </h2>
     </div>
 
-    <div class="table" data-reveal>
-      <h3 class="table__title">Полный прайс</h3>
+    {/*
+      The two services the studio actually presents get a spread each: the price is the
+      largest thing in it, because the price is what the visitor came down here for.
+    */}
+    {
+      featured.map((s) => {
+        const copy = COPY[s.id === "coverup" ? "coverup" : "brows"];
+        return (
+          <article class="service" data-reveal="stagger">
+            <p class="service__price">
+              {rub(s.base)}
+              {s.correction && <span class="service__corr">коррекция {rub(s.correction)}</span>}
+            </p>
+            <h3 class="service__name">{s.title}</h3>
+            <p class="service__lead">{copy.lead}</p>
+            <p class="service__body">{copy.body}</p>
+            <p class="service__facts">
+              <span>около 2 часов</span>
+              <span>основной визит и коррекция</span>
+            </p>
+            <a class="service__link" href={copy.anchor}>
+              Смотреть работы
+            </a>
+          </article>
+        );
+      })
+    }
 
-      <div class="table__cols">
-        <ul class="rows" role="list" data-reveal="stagger">
-          {
-            main.map((p) => (
-              <li class="row">
-                <span class="row__name">{p.title}</span>
-                <span class="row__dots" aria-hidden="true" />
-                <span class="row__price">{rub(p.base)}</span>
-                {p.correction && <span class="row__sub">коррекция {rub(p.correction)}</span>}
-                {p.note && <span class="row__sub">{p.note}</span>}
-              </li>
-            ))
-          }
-        </ul>
+    <div class="table">
+      <h3 class="table__title">Весь прайс</h3>
 
-        <div class="table__combos">
-          <h4 class="rows__group">Комплексы</h4>
-          <ul class="rows" role="list">
-            {
-              combos.map((p) => (
-                <li class="row">
-                  <span class="row__name">{p.title}</span>
-                  <span class="row__dots" aria-hidden="true" />
-                  <span class="row__price">{rub(p.base)}</span>
-                  {p.correction && <span class="row__sub">коррекция {rub(p.correction)}</span>}
-                </li>
-              ))
-            }
-          </ul>
-        </div>
-      </div>
+      <ul class="rows" role="list">
+        {
+          main.map((p) => (
+            <li class="row">
+              <span class="row__name">{p.title}</span>
+              <span class="row__price">{rub(p.base)}</span>
+              <span class="row__sub">
+                {p.correction ? `коррекция ${rub(p.correction)}` : (p.note ?? "")}
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+
+      <h4 class="rows__group">Комплексы</h4>
+      <ul class="rows" role="list">
+        {
+          combos.map((p) => (
+            <li class="row">
+              <span class="row__name">{p.title}</span>
+              <span class="row__price">{rub(p.base)}</span>
+              <span class="row__sub">
+                {p.correction ? `коррекция ${rub(p.correction)}` : ""}
+              </span>
+            </li>
+          ))
+        }
+      </ul>
     </div>
 
     <div class="notes">
-      <div class="note" data-reveal>
+      <div class="note" data-reveal="stagger">
         <h3 class="note__title">В стоимость входит</h3>
         <ul class="note__list" role="list">
           {included.map((i) => <li>{i}</li>)}
         </ul>
       </div>
 
-      <div class="note" data-reveal>
+      <div class="note" data-reveal="stagger">
         <h3 class="note__title">Запись</h3>
         <p class="note__text">{site.booking.depositNote}</p>
         <p class="note__text">
@@ -130,102 +122,98 @@ const COPY: Record<string, { lead: string; body: string; anchor: string }> = {
 </section>
 
 <style>
+  .prices {
+    padding-block: var(--mk-section-y);
+  }
+
   .prices__head {
     margin-bottom: var(--mk-space-8);
   }
 
   .prices__title {
-    margin-top: var(--mk-space-4);
+    font-size: var(--mk-step-h2);
+    line-height: 1.02;
+    letter-spacing: var(--mk-tracking-display);
+    font-weight: 400;
   }
 
-  .services {
-    display: grid;
-    gap: var(--mk-space-7);
-    margin-bottom: var(--mk-space-9);
+  .prices__title .line {
+    display: block;
   }
 
+  /* ---- the two presented services ---- */
   .service {
-    display: grid;
-    gap: var(--mk-space-4);
-    padding-top: var(--mk-space-5);
-    border-top: 2px solid var(--mk-text);
+    padding-top: var(--mk-space-6);
+    border-top: 2px solid var(--mk-accent);
+    margin-bottom: var(--mk-space-8);
   }
 
-  .service__top {
+  /* The figure leads, at display scale. A price set in body type inside a ruled table
+     is how a document lists costs; this is how a studio states them. */
+  .service__price {
     display: flex;
+    flex-wrap: wrap;
     align-items: baseline;
-    justify-content: space-between;
     gap: var(--mk-space-4);
+    font-family: var(--mk-font-display);
+    font-size: clamp(3rem, 12vw, 5.5rem);
+    line-height: 1;
+    letter-spacing: var(--mk-tracking-display);
+    font-variant-numeric: lining-nums;
+    margin-bottom: var(--mk-space-4);
+  }
+
+  .service__corr {
+    font-family: var(--mk-font-body);
+    font-size: var(--mk-step-small);
+    letter-spacing: 0;
+    color: var(--mk-faint);
   }
 
   .service__name {
     font-size: var(--mk-step-h3);
-  }
-
-  .service__price {
-    font-family: var(--mk-font-display);
-    font-size: var(--mk-step-h3);
-    white-space: nowrap;
-    font-variant-numeric: tabular-nums;
+    font-weight: 400;
+    margin-bottom: var(--mk-space-4);
   }
 
   .service__lead {
     font-size: var(--mk-step-lead);
-    max-width: var(--mk-measure);
+    line-height: var(--mk-leading-body);
+    margin-bottom: var(--mk-space-4);
+    max-width: 34rem;
   }
 
   .service__body {
     font-size: var(--mk-step-small);
+    line-height: var(--mk-leading-body);
     color: var(--mk-muted);
-    max-width: var(--mk-measure);
+    max-width: 36rem;
+    margin-bottom: var(--mk-space-5);
   }
 
   .service__facts {
-    display: grid;
-    gap: var(--mk-space-3);
-    margin: 0;
-    padding-top: var(--mk-space-4);
-    border-top: 1px solid var(--mk-rule);
-  }
-
-  .service__facts > div {
     display: flex;
-    justify-content: space-between;
-    gap: var(--mk-space-4);
-  }
-
-  .service__facts dt {
+    flex-wrap: wrap;
+    gap: var(--mk-space-2) var(--mk-space-5);
     font-size: var(--mk-step-label);
     letter-spacing: var(--mk-tracking-label);
     text-transform: uppercase;
     color: var(--mk-faint);
-  }
-
-  .service__facts dd {
-    margin: 0;
-    font-size: var(--mk-step-small);
-    font-variant-numeric: tabular-nums;
+    margin-bottom: var(--mk-space-5);
   }
 
   .service__link {
-    justify-self: start;
-    min-height: var(--mk-hit);
     display: inline-flex;
     align-items: center;
+    min-height: var(--mk-hit);
     font-size: var(--mk-step-small);
     color: var(--mk-accent);
-    text-decoration-thickness: 1px;
-    text-underline-offset: 4px;
+    text-underline-offset: 6px;
   }
 
-  /* ---- price list ---- */
+  /* ---- the full list ---- */
   .table {
     margin-bottom: var(--mk-space-8);
-  }
-
-  .table__cols {
-    display: grid;
-    gap: 0;
   }
 
   .table__title,
@@ -245,122 +233,135 @@ const COPY: Record<string, { lead: string; body: string; anchor: string }> = {
     display: grid;
   }
 
+  /* No leader dots. The price is set large and right-aligned, which is what actually
+     makes a list of figures scannable. */
   .row {
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: 1fr auto;
     align-items: baseline;
-    gap: var(--mk-space-2);
+    gap: var(--mk-space-2) var(--mk-space-4);
     padding-block: var(--mk-space-4);
+    border-top: 1px solid var(--mk-rule);
+  }
+
+  .row:last-child {
     border-bottom: 1px solid var(--mk-rule);
   }
 
   .row__name {
-    font-size: var(--mk-step-body);
-  }
-
-  /* A leader line, the way a printed price list sets it - it ties the name to the
-     figure across the gap without a table's rigidity. */
-  .row__dots {
-    align-self: center;
-    height: 1px;
-    background-image: linear-gradient(
-      to right,
-      color-mix(in oklab, var(--mk-text) 28%, transparent) 0 2px,
-      transparent 2px 6px
-    );
-    background-size: 6px 1px;
-    background-repeat: repeat-x;
+    font-size: var(--mk-step-lead);
   }
 
   .row__price {
     font-family: var(--mk-font-display);
-    font-size: var(--mk-step-lead);
+    font-size: var(--mk-step-h3);
+    font-variant-numeric: tabular-nums lining-nums;
     white-space: nowrap;
-    font-variant-numeric: tabular-nums;
   }
 
   .row__sub {
     grid-column: 1 / -1;
     font-size: var(--mk-step-small);
     color: var(--mk-faint);
-    font-variant-numeric: tabular-nums;
   }
 
   /* ---- notes ---- */
   .notes {
     display: grid;
-    gap: var(--mk-space-6);
-  }
-
-  .note {
-    padding-top: var(--mk-space-5);
-    border-top: 1px solid var(--mk-rule);
+    gap: var(--mk-space-7);
   }
 
   .note__title {
     font-family: var(--mk-font-display);
-    font-size: var(--mk-step-lead);
+    font-size: var(--mk-step-h3);
     font-weight: 400;
     margin-bottom: var(--mk-space-4);
   }
 
   .note__list {
     display: grid;
-    gap: var(--mk-space-2);
+    gap: var(--mk-space-3);
     font-size: var(--mk-step-small);
     color: var(--mk-muted);
-    max-width: var(--mk-measure);
   }
 
   .note__list li {
-    padding-left: var(--mk-space-4);
+    padding-left: var(--mk-space-5);
     position: relative;
   }
 
   .note__list li::before {
-    content: "—";
+    content: "";
     position: absolute;
     left: 0;
-    color: var(--mk-accent);
+    top: 0.7em;
+    width: var(--mk-space-3);
+    height: 1px;
+    background-color: var(--mk-accent);
   }
 
   .note__text {
     font-size: var(--mk-step-small);
     color: var(--mk-muted);
+    margin-bottom: var(--mk-space-3);
     max-width: var(--mk-measure);
-  }
-
-  .note__text + .note__text {
-    margin-top: var(--mk-space-3);
   }
 
   .note__promo {
     margin-top: var(--mk-space-4);
-    padding: var(--mk-space-3) var(--mk-space-4);
+    padding-top: var(--mk-space-4);
+    border-top: 2px solid var(--mk-accent);
     font-size: var(--mk-step-small);
-    background-color: color-mix(in oklab, var(--mk-gold) 30%, var(--mk-ground));
-    border-radius: var(--mk-radius);
+    color: var(--mk-text);
+    max-width: var(--mk-measure);
   }
 
-  @media (min-width: 760px) {
-    .services {
-      grid-template-columns: 1fr 1fr;
-      gap: var(--mk-space-8);
+  @media (hover: hover) and (pointer: fine) {
+    .service__link:hover {
+      color: var(--mk-gold-deep);
+    }
+  }
+
+  @media (min-width: 900px) {
+    .service {
+      display: grid;
+      grid-template-columns: minmax(0, 26rem) 1fr;
+      column-gap: var(--mk-space-8);
+      align-items: start;
+      margin-bottom: var(--mk-space-9);
+    }
+
+    .service__price {
+      grid-column: 1;
+      grid-row: 1 / span 2;
+      flex-direction: column;
+      gap: var(--mk-space-3);
+      font-size: clamp(3.5rem, 5vw, 5rem);
+    }
+
+    .service__name {
+      grid-column: 2;
+      grid-row: 1;
+      font-size: var(--mk-step-h2);
+      letter-spacing: var(--mk-tracking-display);
+      line-height: 1.05;
+      margin-bottom: var(--mk-space-5);
+    }
+
+    .service__lead,
+    .service__body,
+    .service__facts,
+    .service__link {
+      grid-column: 2;
+    }
+
+    .table {
+      max-width: 52rem;
     }
 
     .notes {
       grid-template-columns: 1fr 1fr;
       gap: var(--mk-space-8);
-    }
-
-    .table__cols {
-      grid-template-columns: 1fr 1fr;
-      gap: var(--mk-space-8);
-      align-items: start;
-    }
-
-    .table__combos .rows__group {
-      margin-top: 0;
     }
   }
 </style>
