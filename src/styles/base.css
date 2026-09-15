@@ -123,6 +123,88 @@
 }
 
 @layer components {
+  /* ---- pointer effects ----
+     Both are desktop-only and both are driven by two custom properties a tiny script
+     sets; the browser does the rest. Nothing here runs on a phone. */
+  @media (hover: hover) and (pointer: fine) {
+    .mk-btn,
+    .mk-dock {
+      /* The pull is small on purpose: a button that leaps at the cursor reads as a toy. */
+      transform: translate(calc(var(--mk-pull-x, 0) * 1px), calc(var(--mk-pull-y, 0) * 1px));
+      transition:
+        transform 420ms var(--mk-ease-out),
+        background-color var(--mk-dur-fast) var(--mk-ease-out),
+        color var(--mk-dur-fast) var(--mk-ease-out),
+        border-color var(--mk-dur-fast) var(--mk-ease-out);
+    }
+
+    .mk-btn.is-pulled,
+    .mk-dock.is-pulled {
+      transition-duration: 120ms;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mk-btn,
+    .mk-dock {
+      --mk-pull-x: 0;
+      --mk-pull-y: 0;
+    }
+  }
+
+  /* ---- the booking dock ---- */
+  .mk-dock {
+    position: fixed;
+    z-index: 190;
+    /* Anchored to the right rather than centred. Centring needs translateX(-50%), and
+       the build's minifier folds the `translate` property into `transform`, where the
+       magnetic pull and the show/hide state both already live - the -50% was dropped and
+       the button hung off the screen edge. */
+    right: var(--mk-gutter);
+    bottom: max(var(--mk-space-4), env(safe-area-inset-bottom));
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 52px;
+    padding-inline: var(--mk-space-6);
+    white-space: nowrap;
+    font-family: var(--mk-font-body);
+    font-size: var(--mk-step-small);
+    font-weight: 500;
+    color: var(--mk-on-gold);
+    background-color: var(--mk-gold);
+    text-decoration: none;
+    box-shadow: 0 10px 40px color-mix(in srgb, #000 62%, transparent);
+    /* Out of the flow AND out of the tab order until it is actually on screen. */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(14px);
+    transition:
+      opacity var(--mk-dur-base) var(--mk-ease-out),
+      transform var(--mk-dur-base) var(--mk-ease-out),
+      visibility 0s linear var(--mk-dur-base);
+  }
+
+  .mk-dock.is-on {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition-delay: 0s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mk-dock {
+      transition-duration: 1ms;
+    }
+  }
+
+  @media (min-width: 900px) {
+    .mk-dock {
+      right: var(--mk-space-6);
+      bottom: var(--mk-space-6);
+    }
+  }
+
   /* ---- the opening ---- */
   .mk-intro {
     position: fixed;
@@ -210,22 +292,22 @@
   /* ---- photographs ----
      Two utilities that carry the whole picture language.
 
-     .mk-arch  gives an image the studio's arch. Applied to the element, not a wrapper,
-               so the curve follows the picture itself.
-     .mk-melt  fades the bottom edge into the ground with a mask, so the photograph ends
-               in the page rather than against a line. Masking is composited, costs no
-               layout, and degrades to a plain image where it is unsupported. */
-  .mk-arch {
-    border-radius: var(--mk-arch);
-  }
-
-  .mk-arch-soft {
-    border-radius: var(--mk-arch-soft);
-  }
-
+     .mk-melt  feathers the edges into the ground, so the photograph ends in the page
+               rather than against a line.
+     .mk-halo  gathers the ground's own warmth behind a picture so it sits in the dark
+               instead of on top of it. */
+  /* The edge dissolves instead of stopping. Two linear masks intersect, which feathers
+     all four sides evenly and leaves the picture its own rectangle - composited, no
+     layout cost, and where mask is unsupported the image simply has hard edges. */
   .mk-melt {
-    -webkit-mask-image: linear-gradient(to bottom, #000 var(--mk-feather), transparent 100%);
-    mask-image: linear-gradient(to bottom, #000 var(--mk-feather), transparent 100%);
+    -webkit-mask-image:
+      linear-gradient(to bottom, transparent 0, #000 7%, #000 92%, transparent 100%),
+      linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%);
+    mask-image:
+      linear-gradient(to bottom, transparent 0, #000 7%, #000 92%, transparent 100%),
+      linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
   }
 
   /* A halo of the ground's own warmth behind a photograph, so it sits in the dark

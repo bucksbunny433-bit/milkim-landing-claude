@@ -55,12 +55,13 @@ const groups = [
   <div class="mk-container">
     <div class="works__head">
       <h2 class="works__title" data-reveal="lines">
-        <span class="line"><span>Одна работа</span></span>
-        <span class="line"><span>— один экран</span></span>
+        <span class="line"><span>Мои работы</span></span>
       </h2>
+      {/* No claim about stages here: a third of the cases are a single collage, so
+          "both stages on every case" would simply be untrue. */}
       <p class="works__lead">
-        Сразу после процедуры цвет ярче, через месяц он уходит на 40–50%. Поэтому у каждой
-        работы обе стадии.
+        Сразу после процедуры цвет ярче — через месяц он уходит на 40–50%. Где есть оба
+        кадра, их можно переключить.
       </p>
     </div>
   </div>
@@ -91,15 +92,10 @@ const groups = [
             {g.items.map((c) => (
               <article class="case" id={`case-${c.id}`}>
                 <div class="case__inner">
-                  {/* The case number as a piece of art, not a label: it sits behind the
-                      photograph at display scale and drifts against it. */}
-                  <span class="case__ghost" aria-hidden="true">
-                    {String(c.position).padStart(2, "0")}
-                  </span>
-
                   <p class="case__meta">
                     <span class="case__count">
-                      <b>{String(c.position).padStart(2, "0")}</b> / {c.total}
+                      <span class="case__roll"><b>{String(c.position).padStart(2, "0")}</b></span> /{" "}
+                      {c.total}
                     </span>
                     <span class="case__service">{c.serviceTitle}</span>
                   </p>
@@ -132,7 +128,7 @@ const groups = [
                         quality={f.mode === "collage" ? 58 : 54}
                         loading="lazy"
                         decoding="async"
-                        class="case__img mk-arch-soft"
+                        class="case__img mk-melt"
                         data-i={i}
                       />
                     ))}
@@ -302,21 +298,6 @@ const groups = [
     gap: var(--mk-space-4);
   }
 
-  .case__ghost {
-    position: absolute;
-    z-index: 2;
-    left: -0.06em;
-    bottom: 3.6rem;
-    font-family: var(--mk-font-display);
-    font-size: clamp(6.5rem, 26vw, 11rem);
-    line-height: 0.78;
-    color: var(--mk-gold);
-    opacity: 0.5;
-    mix-blend-mode: overlay;
-    pointer-events: none;
-    user-select: none;
-  }
-
   .case__meta {
     position: relative;
     z-index: 1;
@@ -336,6 +317,37 @@ const groups = [
   .case__count b {
     font-weight: 500;
     color: var(--mk-text);
+  }
+
+  /* The number rolls up into place as its case arrives, so a swipe reads as a counter
+     ticking over rather than text being replaced. */
+  .case__roll {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: bottom;
+  }
+
+  .case__roll b {
+    display: block;
+  }
+
+  @supports (animation-timeline: view(inline)) {
+    @media (prefers-reduced-motion: no-preference) {
+      .case__roll b {
+        animation: mk-roll linear both;
+        animation-timeline: view(inline);
+        animation-range: entry 30% cover 46%;
+      }
+    }
+  }
+
+  @keyframes mk-roll {
+    from {
+      transform: translateY(105%);
+    }
+    to {
+      transform: translateY(0);
+    }
   }
 
   /* The group tab right above already says which service this is. */
@@ -517,18 +529,13 @@ const groups = [
   @supports (animation-timeline: view(inline)) {
     @media (prefers-reduced-motion: no-preference) {
       .case__frame,
-      .case__stages,
+      .case__side,
       .case__meta {
         animation: mk-case-in linear both;
         animation-timeline: view(inline);
         animation-range: entry 10% cover 40%;
       }
 
-      .case__ghost {
-        animation: mk-ghost-drift linear both;
-        animation-timeline: view(inline);
-        animation-range: entry 0% exit 100%;
-      }
     }
   }
 
@@ -536,15 +543,6 @@ const groups = [
     from {
       opacity: 0.2;
       transform: translateY(22px);
-    }
-  }
-
-  @keyframes mk-ghost-drift {
-    from {
-      transform: translateX(38%);
-    }
-    to {
-      transform: translateX(-38%);
     }
   }
 
@@ -613,19 +611,6 @@ const groups = [
       flex-direction: column;
       align-items: flex-start;
       gap: var(--mk-space-3);
-    }
-
-    /* On a wide screen there is real empty space beside the photograph, so the numeral
-       goes back behind everything at full size instead of sitting on a face. */
-    .case__ghost {
-      z-index: 0;
-      left: auto;
-      right: 3%;
-      bottom: auto;
-      top: 26%;
-      font-size: clamp(11rem, 17vw, 19rem);
-      opacity: 0.15;
-      mix-blend-mode: normal;
     }
 
     .case__service {

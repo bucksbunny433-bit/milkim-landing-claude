@@ -30,6 +30,9 @@ const { max } = site.links;
     />
   </div>
   <div class="hero__scrim" aria-hidden="true"></div>
+  {/* A soft gold light that follows the pointer across the photograph. Desktop only:
+      on a touch screen there is no pointer to follow. */}
+  <div class="hero__light" aria-hidden="true"></div>
 
   <div class="mk-container hero__inner">
     <div class="hero__top">
@@ -143,6 +146,31 @@ const { max } = site.links;
         color-mix(in oklab, var(--mk-gold) 12%, transparent) 0%,
         transparent 62%
       );
+  }
+
+  .hero__light {
+    display: none;
+  }
+
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .hero__light {
+      display: block;
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0;
+      background: radial-gradient(
+        22rem 22rem at var(--mk-x, 50%) var(--mk-y, 40%),
+        color-mix(in oklab, var(--mk-gold) 26%, transparent) 0%,
+        transparent 70%
+      );
+      transition: opacity var(--mk-dur-base) var(--mk-ease-out);
+    }
+
+    .hero:hover .hero__light {
+      opacity: 1;
+    }
   }
 
   .hero__inner {
@@ -412,7 +440,32 @@ const { max } = site.links;
       min-height: min(100svh, 860px);
     }
 
-    .hero__inner {
+    .hero__light {
+    display: none;
+  }
+
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .hero__light {
+      display: block;
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0;
+      background: radial-gradient(
+        22rem 22rem at var(--mk-x, 50%) var(--mk-y, 40%),
+        color-mix(in oklab, var(--mk-gold) 26%, transparent) 0%,
+        transparent 70%
+      );
+      transition: opacity var(--mk-dur-base) var(--mk-ease-out);
+    }
+
+    .hero:hover .hero__light {
+      opacity: 1;
+    }
+  }
+
+  .hero__inner {
       min-height: min(100svh, 860px);
     }
 
@@ -445,13 +498,75 @@ const { max } = site.links;
       max-width: 34rem;
     }
 
-    .hero__inner {
+    .hero__light {
+    display: none;
+  }
+
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .hero__light {
+      display: block;
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0;
+      background: radial-gradient(
+        22rem 22rem at var(--mk-x, 50%) var(--mk-y, 40%),
+        color-mix(in oklab, var(--mk-gold) 26%, transparent) 0%,
+        transparent 70%
+      );
+      transition: opacity var(--mk-dur-base) var(--mk-ease-out);
+    }
+
+    .hero:hover .hero__light {
+      opacity: 1;
+    }
+  }
+
+  .hero__inner {
       padding-block: var(--mk-space-7) var(--mk-space-9);
     }
   }
 </style>
 
 <script>
+  // Pointer effects, desktop only. Both write a custom property and let CSS animate;
+  // the handlers are passive and do no layout reads beyond one cached rect.
+  const fine = matchMedia("(hover: hover) and (pointer: fine)").matches;
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (fine && !still) {
+    const hero = document.querySelector<HTMLElement>(".hero");
+    hero?.addEventListener(
+      "pointermove",
+      (e) => {
+        const r = hero.getBoundingClientRect();
+        hero.style.setProperty("--mk-x", `${e.clientX - r.left}px`);
+        hero.style.setProperty("--mk-y", `${e.clientY - r.top}px`);
+      },
+      { passive: true },
+    );
+
+    // Magnetic pull: a button leans toward the cursor while it is near.
+    for (const el of document.querySelectorAll<HTMLElement>(".mk-btn, .mk-dock")) {
+      el.addEventListener(
+        "pointermove",
+        (e) => {
+          const r = el.getBoundingClientRect();
+          el.classList.add("is-pulled");
+          el.style.setProperty("--mk-pull-x", String(((e.clientX - (r.left + r.width / 2)) / r.width) * 10));
+          el.style.setProperty("--mk-pull-y", String(((e.clientY - (r.top + r.height / 2)) / r.height) * 8));
+        },
+        { passive: true },
+      );
+      el.addEventListener("pointerleave", () => {
+        el.classList.remove("is-pulled");
+        el.style.setProperty("--mk-pull-x", "0");
+        el.style.setProperty("--mk-pull-y", "0");
+      });
+    }
+  }
+
   // Effect #1 only. Waiting on decode() keeps the settle strictly after the LCP paint.
   const media = document.querySelector<HTMLElement>("[data-settle]");
   const img = media?.querySelector("img");

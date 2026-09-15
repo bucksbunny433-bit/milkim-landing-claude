@@ -61,8 +61,10 @@
   /* Display type is the loudest thing on the page on purpose. The previous ceiling of
      72px read as a well-behaved template; a beauty page earns its presence with scale
      contrast between a very large heading and small, quiet body copy. */
-  --mk-step-display: clamp(2.75rem, 1.35rem + 5.95vw, 7rem); /* 44 → 112 */
-  --mk-step-h2: clamp(2.125rem, 1.45rem + 2.88vw, 4rem); /* 34 → 64 */
+  /* 112px read as shouting rather than confident. This still carries the page against
+     small body copy without taking the whole first screen. */
+  --mk-step-display: clamp(2.25rem, 1.45rem + 3.4vw, 4.25rem); /* 36 → 68 */
+  --mk-step-h2: clamp(1.875rem, 1.35rem + 2.24vw, 3.25rem); /* 30 → 52 */
   --mk-step-h3: clamp(1.25rem, 1.09rem + 0.67vw, 1.625rem); /* 20 → 26 */
   --mk-step-lead: clamp(1.0625rem, 1.01rem + 0.24vw, 1.1875rem); /* 17 → 19 */
   --mk-step-body: 1.0625rem; /* 17 — fixed: body text should not grow with the window */
@@ -101,14 +103,10 @@
      "generated page" tell. Photographs are a different problem - a hard rectangle on a
      black ground reads as a sticker - so they get a shape language of their own.
 
-     The arch echoes the concentric rings in the studio's own mark. It is not the 12px
-     rounded card every template ships; it is a top that curves like a salon mirror. */
+     No shape is imposed on the picture at all - an arch read as a monument. The edge
+     is simply dissolved into the ground with a mask, so a photograph ends in the page
+     instead of against a line, and keeps its own rectangle. */
   --mk-radius: 0px;
-  --mk-arch: 50% 50% 0 0 / 26% 26% 0 0;
-  --mk-arch-soft: 46% 46% 6% 6% / 22% 22% 3% 3%;
-
-  /* How far a photograph dissolves into the ground at its bottom edge. */
-  --mk-feather: 86%;
   --mk-hit: 44px; /* minimum touch target, WCAG 2.2 */
 
   /* ---------- motion ----------

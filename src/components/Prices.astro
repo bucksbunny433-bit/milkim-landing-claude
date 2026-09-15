@@ -79,7 +79,10 @@ const COPY: Record<string, { lead: string; body: string; anchor: string }> = {
         }
       </ul>
 
-      <h4 class="rows__group">Комплексы</h4>
+      <div class="rows__break">
+        <h4 class="rows__group">Комплексы</h4>
+        <p class="rows__note">Две зоны за один визит — дешевле, чем по отдельности</p>
+      </div>
       <ul class="rows" role="list">
         {
           combos.map((p) => (
@@ -224,9 +227,23 @@ const COPY: Record<string, { lead: string; body: string; anchor: string }> = {
     margin-bottom: var(--mk-space-5);
   }
 
+  /* The combos were reading as one more price row without a price. A rule, a shift in
+     the label and a line of explanation make the change of category visible. */
+  .rows__break {
+    margin-top: var(--mk-space-8);
+    padding-top: var(--mk-space-5);
+    border-top: 2px solid var(--mk-accent);
+    margin-bottom: var(--mk-space-5);
+  }
+
   .rows__group {
-    font-size: var(--mk-step-lead);
-    margin-top: var(--mk-space-7);
+    font-size: var(--mk-step-h3);
+    margin-bottom: var(--mk-space-2);
+  }
+
+  .rows__note {
+    font-size: var(--mk-step-small);
+    color: var(--mk-faint);
   }
 
   .rows {
