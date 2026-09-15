@@ -10,18 +10,127 @@ const interior = Object.entries(
   .map(([, m]) => m.default);
 
 const primary = site.phones.find((p) => p.primary)!;
-const telegram = site.links.telegram;
+const { telegram, max } = site.links;
 const year = new Date().getFullYear();
+
+// The old footer was one column of everything. These are the four questions a person
+// actually asks before booking, each answered on its own card.
+const facts = [
+  {
+    label: "Адрес",
+    lines: [`${site.address.city}, ${site.address.street}`, site.address.floor],
+    note: "Есть парковка. Как пройти — подскажу по телефону, когда будете рядом.",
+    link: { href: site.links.yandexMaps, text: "Открыть в Яндекс Картах" },
+  },
+  {
+    label: "Часы",
+    lines: [site.hours.time, site.hours.days],
+    note: site.hours.note,
+  },
+  {
+    label: "Телефон",
+    lines: site.phones.map((p) => p.display),
+    note: "Оба номера — мои, отвечаю сама.",
+    tels: site.phones,
+  },
+  {
+    label: "Мессенджеры",
+    lines: [],
+    note: "Оба — на основном номере.",
+    messengers: [
+      { href: telegram, text: `Telegram — @${telegram.split("/").pop()}` },
+      max
+        ? { href: max, text: "MAX — открыть чат" }
+        : { href: null, text: `MAX — по номеру ${primary.display}` },
+    ],
+  },
+];
 ---
 
 <section class="mk-on-dark contacts" id="contacts">
   <div class="contacts__ambient" aria-hidden="true"></div>
 
   <div class="mk-container">
+    <div class="contacts__call" data-reveal="stagger">
+      <p class="mk-eyebrow">Запись</p>
+      <h2 class="contacts__title">Приходите — разберёмся с вашим случаем</h2>
+      <p class="mk-lead contacts__lead">
+        Если у вас старый перманент, пришлите фото при дневном свете. По фото скажу, что
+        можно сделать, и не буду обещать заранее того, чего не увижу.
+      </p>
+
+      <div class="contacts__actions">
+        <a class="mk-btn mk-btn--primary" href={site.booking.dikidi} rel="noopener">
+          Записаться онлайн
+        </a>
+        <a class="mk-btn mk-btn--ghost" href={telegram} rel="noopener">Написать в Telegram</a>
+        {
+          max && (
+            <a class="mk-btn mk-btn--ghost" href={max} rel="noopener">
+              Написать в MAX
+            </a>
+          )
+        }
+      </div>
+
+      <p class="contacts__note">{site.booking.depositNote}</p>
+    </div>
+
+    {/* Four cards, one question each, instead of one column holding everything. */}
+    <ul class="facts" role="list">
+      {
+        facts.map((f, i) => (
+          <li class="fact" data-reveal style={`--i:${i % 4}`}>
+            <p class="fact__label">{f.label}</p>
+
+            {f.tels ? (
+              <p class="fact__lines">
+                {f.tels.map((t) => (
+                  <a class="fact__link fact__link--tel" href={t.href}>
+                    {t.display}
+                  </a>
+                ))}
+              </p>
+            ) : (
+              f.lines.length > 0 && (
+                <p class="fact__lines">
+                  {f.lines.map((l) => (
+                    <span>{l}</span>
+                  ))}
+                </p>
+              )
+            )}
+
+            {f.messengers && (
+              <p class="fact__lines">
+                {f.messengers.map((m) =>
+                  m.href ? (
+                    <a class="fact__link" href={m.href} rel="noopener">
+                      {m.text}
+                    </a>
+                  ) : (
+                    <span>{m.text}</span>
+                  ),
+                )}
+              </p>
+            )}
+
+            <p class="fact__note">{f.note}</p>
+
+            {f.link && (
+              <a class="fact__link fact__link--out" href={f.link.href} rel="noopener nofollow">
+                {f.link.text}
+              </a>
+            )}
+          </li>
+        ))
+      }
+    </ul>
+
     <ul class="interior" role="list">
       {
         interior.map((img, i) => (
-          <li>
+          <li data-reveal="wipe" style={`--i:${i % 3}`}>
             <Image
               src={img}
               alt={`Студия Milkim в Омске, интерьер ${i + 1}`}
@@ -38,113 +147,33 @@ const year = new Date().getFullYear();
         ))
       }
     </ul>
-
-    <div class="contacts__grid">
-      <div class="contacts__main">
-        <p class="mk-eyebrow">Запись</p>
-        <h2 class="contacts__title">Приходите — разберёмся с вашим случаем</h2>
-        <p class="mk-lead contacts__lead">
-          Если у вас старый перманент, пришлите фото при дневном свете. По фото я скажу,
-          что можно сделать, и не буду обещать заранее того, чего не увижу.
-        </p>
-
-        <div class="contacts__actions">
-          <a class="mk-btn mk-btn--primary" href={site.booking.dikidi} rel="noopener">
-            Записаться онлайн
-          </a>
-          <a class="mk-btn mk-btn--ghost" href={telegram} rel="noopener">Написать в Telegram</a>
-          {
-            site.links.max && (
-              <a class="mk-btn mk-btn--ghost" href={site.links.max} rel="noopener">
-                Написать в MAX
-              </a>
-            )
-          }
-        </div>
-
-        <p class="contacts__note">{site.booking.depositNote}</p>
-      </div>
-
-      <dl class="details">
-        <div class="details__row">
-          <dt>Адрес</dt>
-          <dd>
-            {site.address.city}, {site.address.street}, {site.address.floor}
-            <span class="details__sub">
-              {site.address.parking && "Есть парковка. "}{site.address.note}
-            </span>
-          </dd>
-        </div>
-
-        <div class="details__row">
-          <dt>Часы</dt>
-          <dd>
-            {site.hours.days}, {site.hours.time}
-            <span class="details__sub">{site.hours.note}</span>
-          </dd>
-        </div>
-
-        <div class="details__row">
-          <dt>Телефон</dt>
-          <dd>
-            {
-              site.phones.map((p) => (
-                <a class="details__link" href={p.href}>
-                  {p.display}
-                </a>
-              ))
-            }
-          </dd>
-        </div>
-
-        <div class="details__row">
-          <dt>Мессенджеры</dt>
-          <dd>
-            <a class="details__link" href={telegram} rel="noopener">
-              Telegram — @{telegram.split("/").pop()}
-            </a>
-            {
-              site.links.max ? (
-                <a class="details__link" href={site.links.max} rel="noopener">
-                  MAX — открыть чат
-                </a>
-              ) : (
-                /* Deliberately not a link. A tel: href under a MAX label would place
-                   a call, which is not what the label promises. */
-                <span class="details__max">MAX — по номеру {primary.display}</span>
-              )
-            }
-            <span class="details__sub">Оба мессенджера — на основном номере.</span>
-          </dd>
-        </div>
-
-        <div class="details__row">
-          <dt>Карточки</dt>
-          <dd class="details__cards">
-            <a class="details__link" href={site.links.yandexMaps} rel="noopener nofollow">
-              Яндекс Карты
-            </a>
-            <a class="details__link" href={site.links.twogis} rel="noopener nofollow">2ГИС</a>
-            <a class="details__link" href={site.links.avito} rel="noopener nofollow">Авито</a>
-            <a class="details__link" href={site.links.vk} rel="noopener nofollow">ВКонтакте</a>
-          </dd>
-        </div>
-      </dl>
-    </div>
   </div>
 
   <footer class="mk-container foot">
-    <Logo class="foot__brand" label={`${site.name} — ${site.tagline}`} />
-    <p class="foot__legal">
-      {site.legal.entity}<br />
-      ОГРНИП {site.legal.ogrnip} · ИНН {site.legal.inn}
-    </p>
-    <p class="foot__legal">
-      Перманентный макияж — косметологическая процедура. Есть противопоказания,
-      <a class="details__link" href="#faq">ознакомьтесь с ними</a> и при сомнениях
-      проконсультируйтесь со специалистом.
-    </p>
-    <p class="foot__legal foot__legal--year">© {year} {site.name}, {site.city}</p>
+    <div class="foot__brand-row">
+      <Logo class="foot__brand" label={`${site.name} — ${site.tagline}`} />
+      <p class="foot__cards">
+        <a class="fact__link" href={site.links.yandexMaps} rel="noopener nofollow">
+          Яндекс Карты
+        </a>
+        <a class="fact__link" href={site.links.twogis} rel="noopener nofollow">2ГИС</a>
+        <a class="fact__link" href={site.links.avito} rel="noopener nofollow">Авито</a>
+        <a class="fact__link" href={site.links.vk} rel="noopener nofollow">ВКонтакте</a>
+      </p>
+    </div>
+
+    <div class="foot__legal-row">
+      <p class="foot__legal">
+        {site.legal.entity}<br />
+        ОГРНИП {site.legal.ogrnip} · ИНН {site.legal.inn}
+      </p>
+      <p class="foot__legal">
+        Перманентный макияж — косметологическая процедура. Есть противопоказания,{" "}
+        <a class="fact__link" href="#faq">ознакомьтесь с ними</a>{" "}и при сомнениях
+        проконсультируйтесь со специалистом.
+      </p>
+      <p class="foot__legal foot__legal--year">© {year} {site.name}, {site.city}</p>
+    </div>
   </footer>
 </section>
 
@@ -156,8 +185,9 @@ const year = new Date().getFullYear();
     padding-block: var(--mk-section-y) var(--mk-space-6);
   }
 
-  /* Same concentric motif as the hero, mirrored to the other corner so the page
-     closes the way it opened. */
+  /* The hero's concentric motif, mirrored to the far corner so the page closes the way
+     it opened. It drifts, but only where there is a real pointer and real motion
+     appetite: on a phone an endless loop in view is battery and reads as a banner. */
   .contacts__ambient {
     position: absolute;
     inset: auto -30% -30% -30%;
@@ -176,23 +206,21 @@ const year = new Date().getFullYear();
       );
   }
 
-  .interior {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--mk-space-2);
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .contacts__ambient {
+      animation: mk-drift 48s linear infinite alternate;
+    }
+  }
+
+  @keyframes mk-drift {
+    to {
+      transform: translate3d(3%, -2%, 0) scale(1.06);
+    }
+  }
+
+  .contacts__call {
+    max-width: 44rem;
     margin-bottom: var(--mk-space-8);
-  }
-
-  .interior__img {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 1 / 1;
-    object-fit: cover;
-  }
-
-  .contacts__grid {
-    display: grid;
-    gap: var(--mk-space-8);
   }
 
   .contacts__title {
@@ -216,65 +244,87 @@ const year = new Date().getFullYear();
     max-width: var(--mk-measure);
   }
 
-  .details {
+  /* ---- the four cards ---- */
+  .facts {
     display: grid;
-    gap: 0;
-    margin: 0;
+    gap: var(--mk-space-4);
+    margin-bottom: var(--mk-space-8);
   }
 
-  .details__row {
+  .fact {
     display: grid;
-    gap: var(--mk-space-1);
-    padding-block: var(--mk-space-4);
-    border-top: 1px solid var(--mk-rule);
+    gap: var(--mk-space-2);
+    align-content: start;
+    padding: var(--mk-space-5);
+    background-color: color-mix(in oklab, var(--mk-dark-raised) 76%, transparent);
+    border: 1px solid var(--mk-rule);
+    border-radius: var(--mk-radius);
   }
 
-  .details dt {
+  .fact__label {
     font-size: var(--mk-step-label);
     letter-spacing: var(--mk-tracking-label);
     text-transform: uppercase;
     color: var(--mk-faint);
   }
 
-  .details dd {
-    margin: 0;
-    font-size: var(--mk-step-body);
+  .fact__lines {
     display: grid;
     gap: var(--mk-space-1);
-  }
-
-  .details__max {
     font-size: var(--mk-step-body);
     font-variant-numeric: tabular-nums;
   }
 
-  .details__sub {
+  .fact__note {
     font-size: var(--mk-step-small);
     color: var(--mk-faint);
   }
 
-  .details__cards {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--mk-space-2) var(--mk-space-5);
-  }
-
-  .details__link {
+  .fact__link {
     color: var(--mk-gold);
     text-decoration-thickness: 1px;
     text-underline-offset: 4px;
     min-height: var(--mk-hit);
     display: inline-flex;
     align-items: center;
+  }
+
+  .fact__link--tel {
+    font-size: var(--mk-step-body);
     font-variant-numeric: tabular-nums;
+  }
+
+  .fact__link--out {
+    font-size: var(--mk-step-small);
+  }
+
+  .interior {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--mk-space-2);
+    margin-bottom: var(--mk-space-8);
+  }
+
+  .interior__img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
   }
 
   /* ---- footer ---- */
   .foot {
-    margin-top: var(--mk-space-9);
     padding-top: var(--mk-space-6);
     border-top: 1px solid var(--mk-rule);
     display: grid;
+    gap: var(--mk-space-6);
+  }
+
+  .foot__brand-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
     gap: var(--mk-space-4);
   }
 
@@ -283,26 +333,48 @@ const year = new Date().getFullYear();
     color: var(--mk-gold);
   }
 
+  .foot__cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--mk-space-2) var(--mk-space-5);
+  }
+
+  .foot__legal-row {
+    display: grid;
+    gap: var(--mk-space-4);
+  }
+
   .foot__legal {
     font-size: var(--mk-step-small);
     color: var(--mk-faint);
-    max-width: 46rem;
+    max-width: 34rem;
   }
 
   .foot__legal--year {
     font-size: var(--mk-step-label);
   }
 
-  @media (min-width: 900px) {
-    .contacts__grid {
-      grid-template-columns: 1fr minmax(0, 26rem);
-      gap: var(--mk-space-9);
-      align-items: start;
+  @media (hover: hover) and (pointer: fine) {
+    .fact__link:hover {
+      color: var(--mk-dark-text);
+    }
+  }
+
+  @media (min-width: 640px) {
+    .facts {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (min-width: 1000px) {
+    .facts {
+      grid-template-columns: repeat(4, 1fr);
     }
 
-    .details__row:first-child {
-      border-top: 0;
-      padding-top: 0;
+    .foot__legal-row {
+      grid-template-columns: 1fr 1fr auto;
+      align-items: start;
+      gap: var(--mk-space-6);
     }
   }
 </style>

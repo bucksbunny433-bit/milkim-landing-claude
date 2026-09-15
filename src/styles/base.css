@@ -135,6 +135,21 @@
   }
 
   /* Uppercase micro-label. Tracking is what keeps it from reading as shouting. */
+  /* Visually hidden, still focusable and still announced. Used for the radios that
+     drive the portfolio: the control must reach the keyboard even though the label is
+     what you see. */
+  .mk-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
   .mk-eyebrow {
     font-family: var(--mk-font-body);
     font-size: var(--mk-step-label);
@@ -235,9 +250,15 @@
   }
 
   /* ---- reveal on enter ----
-     Resting state is VISIBLE. The observer adds .is-armed only when JS runs, so a
-     page without JS - or before the script loads - shows everything. Nothing is
-     ever parked at opacity 0 waiting for an observer that may never come. */
+     Resting state is VISIBLE. The observer adds .is-armed only when JS runs, so a page
+     without JS - or before the script loads - shows everything. Nothing is ever parked
+     at opacity 0 waiting for an observer that may never come.
+
+     Three flavours, all driven by the same single observer and the same attribute:
+       data-reveal            copy and cards rise
+       data-reveal="wipe"     a photograph is uncovered from the bottom edge
+       data-reveal="stagger"  the element's own children arrive one after another
+     Only transform, opacity and clip-path are touched, so every one of them composites. */
   [data-reveal].is-armed {
     opacity: 0;
     transform: translateY(24px);
@@ -252,9 +273,84 @@
     transition-delay: calc(var(--i, 0) * var(--mk-stagger));
   }
 
+  /* A photograph deserves better than a fade: a curtain in the section's own colour
+     slides off it while the image settles out of a slight push-in.
+
+     The curtain is a pseudo-element on purpose. The obvious way to do this is
+     clip-path on the element itself - but an IntersectionObserver measures the
+     visible area AFTER clipping, so an element clipped to zero height never reports
+     itself as intersecting, never gets .is-in, and sits there invisible forever,
+     with its lazy image never fetched. The curtain covers without clipping. */
+  [data-reveal="wipe"].is-armed {
+    opacity: 1;
+    transform: none;
+    position: relative;
+  }
+
+  [data-reveal="wipe"].is-armed::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background-color: var(--mk-ground);
+    transform-origin: bottom;
+    transition: transform var(--mk-dur-slow) var(--mk-ease-out);
+    transition-delay: calc(var(--i, 0) * var(--mk-stagger));
+  }
+
+  [data-reveal="wipe"].is-armed > * {
+    transform: scale(1.05);
+    transition: transform var(--mk-dur-slow) var(--mk-ease-out);
+    transition-delay: calc(var(--i, 0) * var(--mk-stagger));
+  }
+
+  [data-reveal="wipe"].is-armed.is-in::after {
+    transform: scaleY(0);
+  }
+
+  [data-reveal="wipe"].is-armed.is-in > * {
+    transform: none;
+  }
+
+  /* The children carry the movement so the parent keeps its layout role. */
+  [data-reveal="stagger"].is-armed {
+    opacity: 1;
+    transform: none;
+  }
+
+  [data-reveal="stagger"].is-armed > * {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  [data-reveal="stagger"].is-armed.is-in > * {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity var(--mk-dur-base) var(--mk-ease-out),
+      transform var(--mk-dur-base) var(--mk-ease-out);
+  }
+
+  [data-reveal="stagger"].is-armed.is-in > *:nth-child(1) { transition-delay: 0ms; }
+  [data-reveal="stagger"].is-armed.is-in > *:nth-child(2) { transition-delay: 70ms; }
+  [data-reveal="stagger"].is-armed.is-in > *:nth-child(3) { transition-delay: 140ms; }
+  [data-reveal="stagger"].is-armed.is-in > *:nth-child(4) { transition-delay: 210ms; }
+  [data-reveal="stagger"].is-armed.is-in > *:nth-child(5) { transition-delay: 280ms; }
+  [data-reveal="stagger"].is-armed.is-in > *:nth-child(6) { transition-delay: 350ms; }
+  [data-reveal="stagger"].is-armed.is-in > *:nth-child(n + 7) { transition-delay: 420ms; }
+
   @media (prefers-reduced-motion: reduce) {
-    [data-reveal].is-armed {
+    [data-reveal].is-armed,
+    [data-reveal="stagger"].is-armed > * {
       opacity: 1;
+      transform: none;
+    }
+
+    [data-reveal="wipe"].is-armed::after {
+      display: none;
+    }
+
+    [data-reveal="wipe"].is-armed > * {
       transform: none;
     }
   }

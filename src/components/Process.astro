@@ -47,7 +47,7 @@ const steps = [
 
 <section class="mk-on-light mk-section process" id="process">
   <div class="mk-container">
-    <header class="process__head">
+    <header class="process__head" data-reveal="stagger">
       <p class="mk-eyebrow">Как это проходит</p>
       <h2 class="process__title">От разговора до зажившего результата</h2>
       <p class="mk-lead process__lead">
@@ -59,7 +59,7 @@ const steps = [
     <ol class="steps" role="list">
       {
         steps.map((s, i) => (
-          <li class="step" data-reveal style={`--i:${i % 3}`}>
+          <li class="step" data-reveal="stagger" style={`--i:${i % 3}`}>
             <div class="step__meta">
               <span class="step__n" aria-hidden="true">
                 {s.n}

@@ -1,0 +1,552 @@
+---
+import { Image } from "astro:assets";
+import casesJson from "../content/cases.json";
+import type { CaseData } from "../types";
+
+const cases = casesJson as CaseData[];
+
+// One glob for every portfolio source: adding a case stays a folder plus a data entry,
+// never a markup change.
+const files = import.meta.glob<{ default: ImageMetadata }>(
+  "../assets/portfolio/**/*.{jpg,jpeg,png,JPG,PNG}",
+  { eager: true },
+);
+
+// Strongest proof first: a full before → fresh → healed set answers the question the
+// studio's research calls decisive. Pairs next, single collages last.
+const RANK: Record<string, number> = { timeline: 0, pair: 1, collage: 2 };
+
+const groups = [
+  {
+    id: "brows",
+    title: "Брови",
+    note: "Форма по геометрии лица, цвет под типаж.",
+    items: cases.filter((c) => c.service === "brows"),
+  },
+  {
+    id: "coverup",
+    title: "Перекрытие",
+    note: "Работа поверх чужого пигмента. Берётся не любой случай.",
+    items: cases.filter((c) => c.service === "correction"),
+  },
+].map((g) => ({
+  ...g,
+  items: g.items
+    .sort((a, b) => RANK[a.kind] - RANK[b.kind] || a.number - b.number)
+    .map((c, i) => ({
+      ...c,
+      position: i + 1,
+      total: g.items.length,
+      // Only frames whose file actually resolved, so a missing photo can never render
+      // an empty stage tab.
+      frames: c.frames
+        .map((f) => ({
+          ...f,
+          src: files[`../assets/portfolio/${f.file}`]?.default,
+          // "Через месяц, зажившее" is right in the alt text and too long for a chip.
+          short: f.label.split(",")[0],
+        }))
+        .filter((f) => f.src),
+    })),
+}));
+---
+
+<section class="mk-on-light works" id="works">
+  <div class="mk-container">
+    <div class="works__head" data-reveal="stagger">
+      <p class="mk-eyebrow">Работы</p>
+      <h2 class="works__title">Один случай — один экран</h2>
+      <p class="mk-lead works__lead">
+        Сразу после процедуры цвет ярче, через месяц он уходит на 40–50%. Поэтому у каждой
+        работы обе стадии — переключайте их под фотографией.
+      </p>
+    </div>
+  </div>
+
+  {/*
+    Radios, not buttons: the group switch and the stage switch both work with JavaScript
+    off, are operable from the keyboard, and are announced as a real choice.
+  */}
+  <input class="mk-sr" type="radio" name="works-group" id="works-tab-brows" checked />
+  <input class="mk-sr" type="radio" name="works-group" id="works-tab-coverup" />
+
+  <div class="mk-container works__tabs" role="presentation">
+    {
+      groups.map((g) => (
+        <label class="works__tab" for={`works-tab-${g.id}`}>
+          {g.title}
+          <span class="works__tab-n">{g.items.length}</span>
+        </label>
+      ))
+    }
+  </div>
+
+  <div class="works__decks">
+    {
+      groups.map((g) => (
+        <div class="deck" data-deck={g.id}>
+          <p class="mk-container deck__note"><span>{g.note}</span></p>
+
+          <div class="deck__track" data-track tabindex="0" role="group" aria-label={`Работы: ${g.title}`}>
+            {g.items.map((c) => (
+              <article class="case" id={`case-${c.id}`}>
+                <div class="case__inner">
+                  <p class="case__meta">
+                    <span class="case__count">
+                      <b>{String(c.position).padStart(2, "0")}</b> / {c.total}
+                    </span>
+                    <span class="case__service">{c.serviceTitle}</span>
+                  </p>
+
+                  {/* Stage state lives in radios that sit before the frames, which is
+                      what lets a sibling selector cross-fade them with no script. */}
+                  {c.frames.length > 1 &&
+                    c.frames.map((_f, i) => (
+                      <input
+                        class="mk-sr case__state"
+                        type="radio"
+                        name={`stage-${c.id}`}
+                        id={`stage-${c.id}-${i}`}
+                        checked={i === 0}
+                      />
+                    ))}
+
+                  <div class="case__frame">
+                    {c.frames.map((f, i) => (
+                      <Image
+                        src={f.src!}
+                        alt={`${c.serviceTitle}, работа ${c.number} — ${f.label.toLowerCase()}`}
+                        widths={[340, 560, 760]}
+                        width={760}
+                        sizes="(min-width: 900px) 46vw, 92vw"
+                        format="avif"
+                        quality={f.mode === "collage" ? 58 : 54}
+                        {/* Every frame is lazy: the deck sits well below the fold, and
+                            eager-loading the first case's three stages put 332 KB of
+                            portfolio into the first view for pictures nobody had
+                            scrolled to yet. */}
+                        loading="lazy"
+                        decoding="async"
+                        class="case__img"
+                        data-i={i}
+                      />
+                    ))}
+                  </div>
+
+                  {c.frames.length > 1 ? (
+                    <div class="case__stages">
+                      {c.frames.map((f, i) => (
+                        <label class="case__stage" for={`stage-${c.id}-${i}`}>
+                          {f.short}
+                        </label>
+                      ))}
+                    </div>
+                  ) : (
+                    <p class="case__single">{c.frames[0]?.label}</p>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <div class="mk-container deck__controls">
+            <button class="deck__arrow" type="button" data-dir="-1" aria-label="Предыдущая работа">
+              ←
+            </button>
+            <button class="deck__arrow" type="button" data-dir="1" aria-label="Следующая работа">
+              →
+            </button>
+            <span class="deck__hint">Листайте вбок</span>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .works {
+    padding-block: var(--mk-section-y);
+    overflow: clip;
+  }
+
+  .works__head {
+    max-width: 46rem;
+    margin-bottom: var(--mk-space-6);
+  }
+
+  .works__title {
+    margin-block: var(--mk-space-4) var(--mk-space-5);
+  }
+
+  .works__lead {
+    max-width: 40rem;
+  }
+
+  /* ---- group tabs ---- */
+  .works__tabs {
+    display: flex;
+    gap: var(--mk-space-5);
+    border-bottom: 1px solid var(--mk-rule);
+    margin-bottom: var(--mk-space-5);
+  }
+
+  .works__tab {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--mk-space-2);
+    min-height: var(--mk-hit);
+    padding-block: var(--mk-space-2);
+    font-family: var(--mk-font-display);
+    font-size: var(--mk-step-h3);
+    color: var(--mk-muted);
+    cursor: pointer;
+    position: relative;
+    transition: color var(--mk-dur-fast) var(--mk-ease-out);
+  }
+
+  .works__tab-n {
+    font-family: var(--mk-font-body);
+    font-size: var(--mk-step-label);
+    letter-spacing: var(--mk-tracking-label);
+    color: var(--mk-faint);
+  }
+
+  /* The underline slides in rather than blinking on. */
+  .works__tab::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 -1px 0;
+    height: 2px;
+    background-color: var(--mk-accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--mk-dur-base) var(--mk-ease-out);
+  }
+
+  #works-tab-brows:checked ~ .works__tabs .works__tab:nth-child(1),
+  #works-tab-coverup:checked ~ .works__tabs .works__tab:nth-child(2) {
+    color: var(--mk-text);
+  }
+
+  #works-tab-brows:checked ~ .works__tabs .works__tab:nth-child(1)::after,
+  #works-tab-coverup:checked ~ .works__tabs .works__tab:nth-child(2)::after {
+    transform: scaleX(1);
+  }
+
+  #works-tab-brows:checked ~ .works__decks [data-deck="coverup"],
+  #works-tab-coverup:checked ~ .works__decks [data-deck="brows"] {
+    display: none;
+  }
+
+  /* A focused radio is invisible, so the label it controls carries the focus ring. */
+  #works-tab-brows:focus-visible ~ .works__tabs .works__tab:nth-child(1),
+  #works-tab-coverup:focus-visible ~ .works__tabs .works__tab:nth-child(2) {
+    outline: 2px solid var(--mk-focus);
+    outline-offset: 2px;
+  }
+
+  .deck__note {
+    font-size: var(--mk-step-small);
+    color: var(--mk-muted);
+    margin-bottom: var(--mk-space-5);
+  }
+
+  .deck__note span {
+    display: block;
+    max-width: var(--mk-measure);
+  }
+
+  /* ---- the deck: exactly one case in view ---- */
+  .deck__track {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    padding-bottom: var(--mk-space-4);
+  }
+
+  .deck__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .case {
+    flex: 0 0 100%;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+  }
+
+  .case__inner {
+    width: min(100% - 2 * var(--mk-gutter), var(--mk-max-width));
+    margin-inline: auto;
+    display: grid;
+    gap: var(--mk-space-4);
+  }
+
+  .case__meta {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--mk-space-4);
+    font-size: var(--mk-step-label);
+    letter-spacing: var(--mk-tracking-label);
+    text-transform: uppercase;
+    color: var(--mk-faint);
+  }
+
+  .case__count b {
+    font-weight: 500;
+    color: var(--mk-text);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* One fixed box for every case. The photographs differ wildly in shape - 1:1 collages,
+     3:4 portraits, one 16:9 - so they are contained, never cropped, and centred. The box
+     is what makes the deck read as one rhythm; the picture inside keeps its own shape. */
+  .case__frame {
+    position: relative;
+    height: min(58svh, 460px);
+  }
+
+  /* display, not opacity, for the stage that is not showing: a lazy image that is
+     merely transparent is still fetched, and the two unselected stages of the first
+     case alone put ~100 KB into the first view. Hidden this way they are fetched when
+     they are chosen. The arrival is an animation rather than a transition, because a
+     transition cannot run on an element that has just come back into display. */
+  .case__img {
+    display: none;
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  .case__img:only-child,
+  .case__state:nth-of-type(1):checked ~ .case__frame .case__img[data-i="0"],
+  .case__state:nth-of-type(2):checked ~ .case__frame .case__img[data-i="1"],
+  .case__state:nth-of-type(3):checked ~ .case__frame .case__img[data-i="2"] {
+    display: block;
+    animation: mk-stage-in var(--mk-dur-base) var(--mk-ease-out) both;
+  }
+
+  @keyframes mk-stage-in {
+    from {
+      opacity: 0;
+      transform: scale(1.015);
+    }
+  }
+
+  .case__stages {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--mk-space-2);
+  }
+
+  .case__stage {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--mk-hit);
+    padding-inline: var(--mk-space-4);
+    font-size: var(--mk-step-small);
+    color: var(--mk-muted);
+    border: 1px solid var(--mk-rule);
+    border-radius: var(--mk-radius);
+    cursor: pointer;
+    transition:
+      color var(--mk-dur-fast) var(--mk-ease-out),
+      border-color var(--mk-dur-fast) var(--mk-ease-out),
+      background-color var(--mk-dur-fast) var(--mk-ease-out);
+  }
+
+  .case__state:nth-of-type(1):checked ~ .case__stages .case__stage:nth-child(1),
+  .case__state:nth-of-type(2):checked ~ .case__stages .case__stage:nth-child(2),
+  .case__state:nth-of-type(3):checked ~ .case__stages .case__stage:nth-child(3) {
+    color: var(--mk-on-gold);
+    background-color: var(--mk-gold);
+    border-color: var(--mk-gold-ink);
+  }
+
+  .case__state:nth-of-type(1):focus-visible ~ .case__stages .case__stage:nth-child(1),
+  .case__state:nth-of-type(2):focus-visible ~ .case__stages .case__stage:nth-child(2),
+  .case__state:nth-of-type(3):focus-visible ~ .case__stages .case__stage:nth-child(3) {
+    outline: 2px solid var(--mk-focus);
+    outline-offset: 2px;
+  }
+
+  .case__single {
+    font-size: var(--mk-step-small);
+    color: var(--mk-faint);
+  }
+
+  /* ---- controls ---- */
+  .deck__controls {
+    display: flex;
+    align-items: center;
+    gap: var(--mk-space-3);
+    margin-top: var(--mk-space-5);
+  }
+
+  .deck__arrow {
+    width: var(--mk-hit);
+    height: var(--mk-hit);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    color: var(--mk-text);
+    background: none;
+    border: 1px solid var(--mk-rule);
+    border-radius: 50%;
+    cursor: pointer;
+    transition:
+      border-color var(--mk-dur-fast) var(--mk-ease-out),
+      transform var(--mk-dur-fast) var(--mk-ease-out);
+  }
+
+  /* Arrows are a scripted convenience; swiping and the keyboard work without them. */
+  :global(html.js) .deck__arrow {
+    display: inline-flex;
+  }
+
+  .deck__hint {
+    font-size: var(--mk-step-label);
+    letter-spacing: var(--mk-tracking-label);
+    text-transform: uppercase;
+    color: var(--mk-faint);
+  }
+
+  /* Scroll-driven, so the movement follows the finger instead of firing on a timer.
+     Chromium only today; everywhere else the case is simply already in place. */
+  @supports (animation-timeline: view(inline)) {
+    @media (prefers-reduced-motion: no-preference) {
+      .case__inner {
+        animation: mk-case-in linear both;
+        animation-timeline: view(inline);
+        animation-range: entry 15% cover 42%;
+      }
+    }
+  }
+
+  @keyframes mk-case-in {
+    from {
+      opacity: 0.25;
+      transform: scale(0.965);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .works__tab:hover {
+      color: var(--mk-text);
+    }
+
+    .case__stage:hover {
+      border-color: var(--mk-text);
+      color: var(--mk-text);
+    }
+
+    .deck__arrow:hover {
+      border-color: var(--mk-text);
+      transform: translateY(-2px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .case__stage,
+    .works__tab,
+    .works__tab::after,
+    .deck__arrow {
+      transition-duration: 1ms;
+    }
+
+    .case__img:only-child,
+    .case__state:checked ~ .case__frame .case__img {
+      animation-duration: 1ms;
+    }
+  }
+
+  @media (min-width: 900px) {
+    /* A lone centred portrait in a 1280px field wastes the screen. The photograph takes
+       the left column; the case's identity and its stage switch stand beside it. */
+    .case__inner {
+      /* Capped rather than 1fr: a contained portrait in a 900px column floats in the
+         middle of nowhere, and the stage switch ends up on the far side of the screen. */
+      grid-template-columns: minmax(0, 40rem) 17rem;
+      grid-template-rows: auto 1fr;
+      justify-content: start;
+      column-gap: var(--mk-space-8);
+      align-items: start;
+    }
+
+    .case__frame {
+      grid-column: 1;
+      grid-row: 1 / span 2;
+      height: 560px;
+    }
+
+    .case__meta {
+      grid-column: 2;
+      grid-row: 1;
+      display: grid;
+      gap: var(--mk-space-2);
+      justify-items: start;
+      padding-top: var(--mk-space-4);
+      border-top: 1px solid var(--mk-rule);
+    }
+
+    .case__count {
+      font-size: var(--mk-step-h3);
+      letter-spacing: 0;
+      font-family: var(--mk-font-display);
+      color: var(--mk-faint);
+    }
+
+    .case__stages {
+      grid-column: 2;
+      grid-row: 2;
+      flex-direction: column;
+      align-items: stretch;
+      align-self: start;
+      gap: var(--mk-space-2);
+    }
+
+    .case__stage {
+      justify-content: flex-start;
+    }
+
+    .case__single {
+      grid-column: 2;
+      grid-row: 2;
+    }
+
+    .deck__hint {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  // Two jobs only: let the arrows page the deck, and mark that JS is present so they
+  // are shown at all. Everything else in this section is CSS.
+  document.documentElement.classList.add("js");
+
+  for (const deck of document.querySelectorAll<HTMLElement>("[data-deck]")) {
+    const track = deck.querySelector<HTMLElement>("[data-track]");
+    if (!track) continue;
+
+    for (const btn of deck.querySelectorAll<HTMLButtonElement>(".deck__arrow")) {
+      btn.addEventListener("click", () => {
+        const dir = Number(btn.dataset.dir ?? 1);
+        track.scrollBy({ left: dir * track.clientWidth, behavior: "smooth" });
+      });
+    }
+  }
+</script>

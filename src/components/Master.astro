@@ -15,7 +15,7 @@ const certs = Object.entries(
 
 <section class="mk-on-light mk-section master" id="master">
   <div class="mk-container master__inner">
-    <div class="master__media">
+    <div class="master__media" data-reveal="wipe">
       <Image
         src={portrait}
         alt={`${site.master.fullName}, ${site.master.role}`}
@@ -70,7 +70,7 @@ const certs = Object.entries(
   <div class="mk-container">
     <div class="certs" data-reveal>
       <h3 class="certs__title">Документы об обучении</h3>
-      <ul class="certs__list" role="list">
+      <ul class="certs__list" role="list" data-reveal="stagger">
         {
           certs.map((c, i) => (
             <li class="certs__item">

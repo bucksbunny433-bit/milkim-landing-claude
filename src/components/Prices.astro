@@ -27,7 +27,7 @@ const COPY: Record<string, { lead: string; body: string; anchor: string }> = {
 
 <section class="mk-on-light mk-section prices" id="prices">
   <div class="mk-container">
-    <header class="prices__head">
+    <header class="prices__head" data-reveal="stagger">
       <p class="mk-eyebrow">Услуги</p>
       <h2 class="prices__title">Что я делаю и сколько это стоит</h2>
     </header>
@@ -71,7 +71,7 @@ const COPY: Record<string, { lead: string; body: string; anchor: string }> = {
       <h3 class="table__title">Полный прайс</h3>
 
       <div class="table__cols">
-        <ul class="rows" role="list">
+        <ul class="rows" role="list" data-reveal="stagger">
           {
             main.map((p) => (
               <li class="row">
