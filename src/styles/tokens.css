@@ -58,8 +58,11 @@
   /* Mobile-first scale. 375px is the design baseline; the clamp upper bounds are
      reached around 1280px. Display sizes stay large on purpose — timid headings are
      what make a beauty page read as a template. */
-  --mk-step-display: clamp(2.375rem, 1.45rem + 3.95vw, 4.5rem); /* 38 → 72 */
-  --mk-step-h2: clamp(1.75rem, 1.3rem + 1.92vw, 2.75rem); /* 28 → 44 */
+  /* Display type is the loudest thing on the page on purpose. The previous ceiling of
+     72px read as a well-behaved template; a beauty page earns its presence with scale
+     contrast between a very large heading and small, quiet body copy. */
+  --mk-step-display: clamp(2.75rem, 1.35rem + 5.95vw, 7rem); /* 44 → 112 */
+  --mk-step-h2: clamp(2.125rem, 1.45rem + 2.88vw, 4rem); /* 34 → 64 */
   --mk-step-h3: clamp(1.25rem, 1.09rem + 0.67vw, 1.625rem); /* 20 → 26 */
   --mk-step-lead: clamp(1.0625rem, 1.01rem + 0.24vw, 1.1875rem); /* 17 → 19 */
   --mk-step-body: 1.0625rem; /* 17 — fixed: body text should not grow with the window */
@@ -69,7 +72,7 @@
   --mk-leading-display: 1.08;
   --mk-leading-heading: 1.18;
   --mk-leading-body: 1.62;
-  --mk-tracking-display: -0.015em;
+  --mk-tracking-display: -0.025em;
   --mk-tracking-label: 0.2em;
   --mk-measure: 34ch; /* ~62 characters at body size */
 
@@ -94,7 +97,9 @@
 
   /* ---------- form ----------
      Near-zero radii. Editorial, and it avoids the 4px default that reads unfinished. */
-  --mk-radius: 2px;
+  /* No radius anywhere. A 2px corner on every card was the single loudest "generated
+     page" tell: everything became a bordered tile. Separation is now space and image. */
+  --mk-radius: 0px;
   --mk-radius-media: 0px;
   --mk-hit: 44px; /* minimum touch target, WCAG 2.2 */
 

@@ -51,14 +51,16 @@ const groups = [
 }));
 ---
 
-<section class="mk-on-light works" id="works">
+<section class="mk-on-dark works" id="works">
   <div class="mk-container">
-    <div class="works__head" data-reveal="stagger">
-      <p class="mk-eyebrow">Работы</p>
-      <h2 class="works__title">Один случай — один экран</h2>
-      <p class="mk-lead works__lead">
+    <div class="works__head">
+      <h2 class="works__title" data-reveal="lines">
+        <span class="line"><span>Одна работа</span></span>
+        <span class="line"><span>— один экран</span></span>
+      </h2>
+      <p class="works__lead">
         Сразу после процедуры цвет ярче, через месяц он уходит на 40–50%. Поэтому у каждой
-        работы обе стадии — переключайте их под фотографией.
+        работы обе стадии.
       </p>
     </div>
   </div>
@@ -74,7 +76,7 @@ const groups = [
     {
       groups.map((g) => (
         <label class="works__tab" for={`works-tab-${g.id}`}>
-          {g.title}
+          <span class="works__tab-name">{g.title}</span>
           <span class="works__tab-n">{g.items.length}</span>
         </label>
       ))
@@ -85,12 +87,16 @@ const groups = [
     {
       groups.map((g) => (
         <div class="deck" data-deck={g.id}>
-          <p class="mk-container deck__note"><span>{g.note}</span></p>
-
           <div class="deck__track" data-track tabindex="0" role="group" aria-label={`Работы: ${g.title}`}>
             {g.items.map((c) => (
               <article class="case" id={`case-${c.id}`}>
                 <div class="case__inner">
+                  {/* The case number as a piece of art, not a label: it sits behind the
+                      photograph at display scale and drifts against it. */}
+                  <span class="case__ghost" aria-hidden="true">
+                    {String(c.position).padStart(2, "0")}
+                  </span>
+
                   <p class="case__meta">
                     <span class="case__count">
                       <b>{String(c.position).padStart(2, "0")}</b> / {c.total}
@@ -166,58 +172,71 @@ const groups = [
 
 <style>
   .works {
+    position: relative;
     padding-block: var(--mk-section-y);
     overflow: clip;
   }
 
   .works__head {
-    max-width: 46rem;
-    margin-bottom: var(--mk-space-6);
+    margin-bottom: var(--mk-space-7);
   }
 
+  /* The heading arrives line by line from behind its own mask, the same gesture as the
+     hero, so the page has one vocabulary instead of a different effect per section. */
   .works__title {
-    margin-block: var(--mk-space-4) var(--mk-space-5);
+    font-size: var(--mk-step-h2);
+    line-height: 1.02;
+    letter-spacing: var(--mk-tracking-display);
+    font-weight: 400;
+    margin-bottom: var(--mk-space-5);
+  }
+
+  .works__title .line {
+    display: block;
   }
 
   .works__lead {
-    max-width: 40rem;
+    font-size: var(--mk-step-lead);
+    line-height: var(--mk-leading-body);
+    color: var(--mk-muted);
+    max-width: 32rem;
   }
 
-  /* ---- group tabs ---- */
+  /* ---- group switch: a rule that slides, not a pill ---- */
   .works__tabs {
     display: flex;
-    gap: var(--mk-space-5);
-    border-bottom: 1px solid var(--mk-rule);
-    margin-bottom: var(--mk-space-5);
+    gap: var(--mk-space-6);
+    margin-bottom: var(--mk-space-6);
   }
 
   .works__tab {
     display: inline-flex;
-    align-items: center;
+    align-items: baseline;
     gap: var(--mk-space-2);
     min-height: var(--mk-hit);
     padding-block: var(--mk-space-2);
-    font-family: var(--mk-font-display);
-    font-size: var(--mk-step-h3);
-    color: var(--mk-muted);
     cursor: pointer;
     position: relative;
-    transition: color var(--mk-dur-fast) var(--mk-ease-out);
+    color: color-mix(in oklab, var(--mk-text) 42%, transparent);
+    transition: color var(--mk-dur-base) var(--mk-ease-out);
+  }
+
+  .works__tab-name {
+    font-family: var(--mk-font-display);
+    font-size: var(--mk-step-h3);
   }
 
   .works__tab-n {
-    font-family: var(--mk-font-body);
     font-size: var(--mk-step-label);
     letter-spacing: var(--mk-tracking-label);
-    color: var(--mk-faint);
+    color: var(--mk-accent);
   }
 
-  /* The underline slides in rather than blinking on. */
   .works__tab::after {
     content: "";
     position: absolute;
-    inset: auto 0 -1px 0;
-    height: 2px;
+    inset: auto 0 6px 0;
+    height: 1px;
     background-color: var(--mk-accent);
     transform: scaleX(0);
     transform-origin: left;
@@ -239,33 +258,19 @@ const groups = [
     display: none;
   }
 
-  /* A focused radio is invisible, so the label it controls carries the focus ring. */
   #works-tab-brows:focus-visible ~ .works__tabs .works__tab:nth-child(1),
   #works-tab-coverup:focus-visible ~ .works__tabs .works__tab:nth-child(2) {
     outline: 2px solid var(--mk-focus);
-    outline-offset: 2px;
+    outline-offset: 4px;
   }
 
-  .deck__note {
-    font-size: var(--mk-step-small);
-    color: var(--mk-muted);
-    margin-bottom: var(--mk-space-5);
-  }
-
-  .deck__note span {
-    display: block;
-    max-width: var(--mk-measure);
-  }
-
-  /* ---- the deck: exactly one case in view ---- */
+  /* ---- the deck ---- */
   .deck__track {
     display: flex;
-    gap: 0;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     overscroll-behavior-x: contain;
     scrollbar-width: none;
-    padding-bottom: var(--mk-space-4);
   }
 
   .deck__track::-webkit-scrollbar {
@@ -279,42 +284,67 @@ const groups = [
   }
 
   .case__inner {
+    position: relative;
     width: min(100% - 2 * var(--mk-gutter), var(--mk-max-width));
     margin-inline: auto;
     display: grid;
     gap: var(--mk-space-4);
   }
 
+  .case__ghost {
+    position: absolute;
+    z-index: 2;
+    left: -0.06em;
+    bottom: 3.6rem;
+    font-family: var(--mk-font-display);
+    font-size: clamp(6.5rem, 26vw, 11rem);
+    line-height: 0.78;
+    color: var(--mk-gold);
+    opacity: 0.5;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+    user-select: none;
+  }
+
   .case__meta {
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: baseline;
-    justify-content: space-between;
-    gap: var(--mk-space-4);
+    gap: var(--mk-space-3);
     font-size: var(--mk-step-label);
     letter-spacing: var(--mk-tracking-label);
     text-transform: uppercase;
     color: var(--mk-faint);
   }
 
-  .case__count b {
-    font-weight: 500;
-    color: var(--mk-text);
+  .case__count {
     font-variant-numeric: tabular-nums;
   }
 
-  /* One fixed box for every case. The photographs differ wildly in shape - 1:1 collages,
-     3:4 portraits, one 16:9 - so they are contained, never cropped, and centred. The box
-     is what makes the deck read as one rhythm; the picture inside keeps its own shape. */
-  .case__frame {
-    position: relative;
-    height: min(58svh, 460px);
+  .case__count b {
+    font-weight: 500;
+    color: var(--mk-text);
   }
 
-  /* display, not opacity, for the stage that is not showing: a lazy image that is
-     merely transparent is still fetched, and the two unselected stages of the first
-     case alone put ~100 KB into the first view. Hidden this way they are fetched when
-     they are chosen. The arrival is an animation rather than a transition, because a
-     transition cannot run on an element that has just come back into display. */
+  /* The group tab right above already says which service this is. */
+  .case__service {
+    display: none;
+  }
+
+  /* One fixed box for every case. The photographs differ wildly in shape - 1:1 collages,
+     3:4 portraits, one 16:9 - so they are contained, never cropped, and centred. */
+  .case__frame {
+    position: relative;
+    z-index: 1;
+    height: min(62svh, 520px);
+  }
+
+  /* display, not opacity, for the stage that is not showing: a lazy image that is merely
+     transparent is still fetched, and the two unselected stages of the first case alone
+     put ~100 KB into the first view. The arrival is an animation rather than a
+     transition, because a transition cannot run on an element that just came back into
+     display. */
   .case__img {
     display: none;
     position: absolute;
@@ -326,59 +356,94 @@ const groups = [
     max-height: 100%;
   }
 
+  /* The "before" frame is the base layer and stays put. A later stage is a sheet that
+     wipes across it, so the change reads as the transformation itself rather than as two
+     pictures swapping places. That wipe is the one moment on this page that sells what
+     the studio actually does. */
   .case__img:only-child,
-  .case__state:nth-of-type(1):checked ~ .case__frame .case__img[data-i="0"],
+  .case__img[data-i="0"] {
+    display: block;
+  }
+
+  .case__img[data-i="0"] {
+    animation: mk-stage-in 720ms var(--mk-ease-out) both;
+  }
+
   .case__state:nth-of-type(2):checked ~ .case__frame .case__img[data-i="1"],
   .case__state:nth-of-type(3):checked ~ .case__frame .case__img[data-i="2"] {
     display: block;
-    animation: mk-stage-in var(--mk-dur-base) var(--mk-ease-out) both;
+    animation: mk-stage-wipe 900ms var(--mk-ease-inout) both;
   }
 
   @keyframes mk-stage-in {
     from {
       opacity: 0;
-      transform: scale(1.015);
+      transform: translateY(14px) scale(1.02);
     }
   }
 
+  @keyframes mk-stage-wipe {
+    from {
+      clip-path: inset(0 100% 0 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  /* ---- stage switch: rules under words, no chips ---- */
   .case__stages {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-wrap: wrap;
-    gap: var(--mk-space-2);
+    gap: var(--mk-space-5);
   }
 
   .case__stage {
+    position: relative;
     display: inline-flex;
     align-items: center;
     min-height: var(--mk-hit);
-    padding-inline: var(--mk-space-4);
     font-size: var(--mk-step-small);
-    color: var(--mk-muted);
-    border: 1px solid var(--mk-rule);
-    border-radius: var(--mk-radius);
+    color: color-mix(in oklab, var(--mk-text) 46%, transparent);
     cursor: pointer;
-    transition:
-      color var(--mk-dur-fast) var(--mk-ease-out),
-      border-color var(--mk-dur-fast) var(--mk-ease-out),
-      background-color var(--mk-dur-fast) var(--mk-ease-out);
+    transition: color var(--mk-dur-fast) var(--mk-ease-out);
+  }
+
+  .case__stage::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 8px 0;
+    height: 1px;
+    background-color: var(--mk-accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--mk-dur-base) var(--mk-ease-out);
   }
 
   .case__state:nth-of-type(1):checked ~ .case__stages .case__stage:nth-child(1),
   .case__state:nth-of-type(2):checked ~ .case__stages .case__stage:nth-child(2),
   .case__state:nth-of-type(3):checked ~ .case__stages .case__stage:nth-child(3) {
-    color: var(--mk-on-gold);
-    background-color: var(--mk-gold);
-    border-color: var(--mk-gold-ink);
+    color: var(--mk-text);
+  }
+
+  .case__state:nth-of-type(1):checked ~ .case__stages .case__stage:nth-child(1)::after,
+  .case__state:nth-of-type(2):checked ~ .case__stages .case__stage:nth-child(2)::after,
+  .case__state:nth-of-type(3):checked ~ .case__stages .case__stage:nth-child(3)::after {
+    transform: scaleX(1);
   }
 
   .case__state:nth-of-type(1):focus-visible ~ .case__stages .case__stage:nth-child(1),
   .case__state:nth-of-type(2):focus-visible ~ .case__stages .case__stage:nth-child(2),
   .case__state:nth-of-type(3):focus-visible ~ .case__stages .case__stage:nth-child(3) {
     outline: 2px solid var(--mk-focus);
-    outline-offset: 2px;
+    outline-offset: 4px;
   }
 
   .case__single {
+    position: relative;
+    z-index: 1;
     font-size: var(--mk-step-small);
     color: var(--mk-faint);
   }
@@ -387,28 +452,28 @@ const groups = [
   .deck__controls {
     display: flex;
     align-items: center;
-    gap: var(--mk-space-3);
-    margin-top: var(--mk-space-5);
+    gap: var(--mk-space-4);
+    margin-top: var(--mk-space-6);
   }
 
   .deck__arrow {
-    width: var(--mk-hit);
-    height: var(--mk-hit);
+    width: 52px;
+    height: 52px;
     display: none;
     align-items: center;
     justify-content: center;
     font-size: 1.1rem;
     color: var(--mk-text);
     background: none;
-    border: 1px solid var(--mk-rule);
+    border: 1px solid color-mix(in oklab, var(--mk-text) 22%, transparent);
     border-radius: 50%;
     cursor: pointer;
     transition:
       border-color var(--mk-dur-fast) var(--mk-ease-out),
-      transform var(--mk-dur-fast) var(--mk-ease-out);
+      background-color var(--mk-dur-fast) var(--mk-ease-out),
+      color var(--mk-dur-fast) var(--mk-ease-out);
   }
 
-  /* Arrows are a scripted convenience; swiping and the keyboard work without them. */
   :global(html.js) .deck__arrow {
     display: inline-flex;
   }
@@ -421,25 +486,39 @@ const groups = [
   }
 
   /* Scroll-driven, so the movement follows the finger instead of firing on a timer.
-     Chromium only today; everywhere else the case is simply already in place. */
+     The photograph and its numeral travel at different speeds - that difference is what
+     makes a swipe feel like depth rather than a slideshow. */
   @supports (animation-timeline: view(inline)) {
     @media (prefers-reduced-motion: no-preference) {
-      .case__inner {
+      .case__frame,
+      .case__stages,
+      .case__meta {
         animation: mk-case-in linear both;
         animation-timeline: view(inline);
-        animation-range: entry 15% cover 42%;
+        animation-range: entry 10% cover 40%;
+      }
+
+      .case__ghost {
+        animation: mk-ghost-drift linear both;
+        animation-timeline: view(inline);
+        animation-range: entry 0% exit 100%;
       }
     }
   }
 
   @keyframes mk-case-in {
     from {
-      opacity: 0.25;
-      transform: scale(0.965);
+      opacity: 0.2;
+      transform: translateY(22px);
+    }
+  }
+
+  @keyframes mk-ghost-drift {
+    from {
+      transform: translateX(38%);
     }
     to {
-      opacity: 1;
-      transform: none;
+      transform: translateX(-38%);
     }
   }
 
@@ -449,36 +528,33 @@ const groups = [
     }
 
     .case__stage:hover {
-      border-color: var(--mk-text);
       color: var(--mk-text);
     }
 
     .deck__arrow:hover {
-      border-color: var(--mk-text);
-      transform: translateY(-2px);
+      border-color: var(--mk-gold);
+      background-color: var(--mk-gold);
+      color: var(--mk-on-gold);
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .case__stage,
+    .case__stage::after,
     .works__tab,
     .works__tab::after,
     .deck__arrow {
       transition-duration: 1ms;
     }
 
-    .case__img:only-child,
+    .case__img,
     .case__state:checked ~ .case__frame .case__img {
       animation-duration: 1ms;
     }
   }
 
   @media (min-width: 900px) {
-    /* A lone centred portrait in a 1280px field wastes the screen. The photograph takes
-       the left column; the case's identity and its stage switch stand beside it. */
     .case__inner {
-      /* Capped rather than 1fr: a contained portrait in a 900px column floats in the
-         middle of nowhere, and the stage switch ends up on the far side of the screen. */
       grid-template-columns: minmax(0, 40rem) 17rem;
       grid-template-rows: auto 1fr;
       justify-content: start;
@@ -489,42 +565,44 @@ const groups = [
     .case__frame {
       grid-column: 1;
       grid-row: 1 / span 2;
-      height: 560px;
+      height: 600px;
     }
 
     .case__meta {
       grid-column: 2;
       grid-row: 1;
-      display: grid;
-      gap: var(--mk-space-2);
-      justify-items: start;
       padding-top: var(--mk-space-4);
-      border-top: 1px solid var(--mk-rule);
-    }
-
-    .case__count {
-      font-size: var(--mk-step-h3);
-      letter-spacing: 0;
-      font-family: var(--mk-font-display);
-      color: var(--mk-faint);
     }
 
     .case__stages {
       grid-column: 2;
       grid-row: 2;
       flex-direction: column;
-      align-items: stretch;
+      align-items: flex-start;
       align-self: start;
-      gap: var(--mk-space-2);
-    }
-
-    .case__stage {
-      justify-content: flex-start;
+      gap: var(--mk-space-3);
     }
 
     .case__single {
       grid-column: 2;
       grid-row: 2;
+    }
+
+    /* On a wide screen there is real empty space beside the photograph, so the numeral
+       goes back behind everything at full size instead of sitting on a face. */
+    .case__ghost {
+      z-index: 0;
+      left: auto;
+      right: 3%;
+      bottom: auto;
+      top: 26%;
+      font-size: clamp(11rem, 17vw, 19rem);
+      opacity: 0.15;
+      mix-blend-mode: normal;
+    }
+
+    .case__service {
+      display: inline;
     }
 
     .deck__hint {

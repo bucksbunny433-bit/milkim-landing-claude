@@ -13,7 +13,7 @@ const certs = Object.entries(
   .map(([, m]) => m.default);
 ---
 
-<section class="mk-on-light mk-section master" id="master">
+<section class="mk-on-dark mk-section master" id="master">
   <div class="mk-container master__inner">
     <div class="master__media" data-reveal="wipe">
       <Image
@@ -181,8 +181,7 @@ const certs = Object.entries(
     /* Square, because the seven documents arrived in both orientations - a portrait
        cell left the landscape ones floating in half a cell of nothing. */
     aspect-ratio: 1 / 1;
-    background-color: color-mix(in oklab, var(--mk-text) 4%, transparent);
-    border: 1px solid var(--mk-rule);
+    background-color: color-mix(in oklab, var(--mk-text) 7%, transparent);
   }
 
   /* Taken out of flow on purpose: in flow the image's own height is the grid item's

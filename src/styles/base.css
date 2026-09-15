@@ -123,6 +123,20 @@
 }
 
 @layer components {
+  /* Film grain over everything. Flat CSS colour is what makes a page look printed by a
+     machine; a little noise is what print and photography actually look like. It is one
+     tiled SVG turbulence as a data URI - no request, no file, a few hundred bytes - and
+     it sits above the page but takes no pointer events. */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    pointer-events: none;
+    opacity: 0.055;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E");
+  }
+
   .mk-container {
     width: 100%;
     max-width: var(--mk-max-width);
@@ -150,13 +164,33 @@
     white-space: nowrap;
   }
 
+  /* A tracked caps line above every single heading is the loudest template tell there
+     is. It keeps its job as a label but earns it with a drawn rule instead. */
   .mk-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: var(--mk-space-3);
     font-family: var(--mk-font-body);
     font-size: var(--mk-step-label);
     font-weight: 500;
     letter-spacing: var(--mk-tracking-label);
     text-transform: uppercase;
-    color: var(--mk-muted);
+    color: var(--mk-faint);
+  }
+
+  .mk-eyebrow::before {
+    content: "";
+    width: 2.5rem;
+    height: 1px;
+    background-color: var(--mk-accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--mk-dur-slow) var(--mk-ease-out);
+  }
+
+  [data-reveal].is-in .mk-eyebrow::before,
+  .mk-eyebrow:first-child::before {
+    transform: scaleX(1);
   }
 
   .mk-lead {
@@ -312,6 +346,37 @@
     transform: none;
   }
 
+  /* A heading whose lines ride up from behind their own masks. Resting state is in
+     place, so with no JS the words are simply there. */
+  [data-reveal="lines"].is-armed {
+    opacity: 1;
+    transform: none;
+  }
+
+  [data-reveal="lines"].is-armed .line {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.08em;
+  }
+
+  [data-reveal="lines"].is-armed .line > span {
+    display: block;
+    transform: translateY(110%);
+  }
+
+  [data-reveal="lines"].is-armed.is-in .line > span {
+    transform: none;
+    transition: transform 1000ms var(--mk-ease-out);
+  }
+
+  [data-reveal="lines"].is-armed.is-in .line:nth-child(2) > span {
+    transition-delay: 90ms;
+  }
+
+  [data-reveal="lines"].is-armed.is-in .line:nth-child(3) > span {
+    transition-delay: 180ms;
+  }
+
   /* The children carry the movement so the parent keeps its layout role. */
   [data-reveal="stagger"].is-armed {
     opacity: 1;
@@ -348,6 +413,10 @@
 
     [data-reveal="wipe"].is-armed::after {
       display: none;
+    }
+
+    [data-reveal="lines"].is-armed .line > span {
+      transform: none;
     }
 
     [data-reveal="wipe"].is-armed > * {
