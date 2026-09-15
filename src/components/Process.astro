@@ -85,7 +85,7 @@ const steps = [
                   quality={58}
                   loading="lazy"
                   decoding="async"
-                  class="step__img"
+                  class="step__img mk-arch-soft"
                 />
               ) : (
                 <span class="step__numeral" aria-hidden="true">
@@ -154,13 +154,31 @@ const steps = [
 
   .step__media {
     position: relative;
+    isolation: isolate;
   }
 
   .step__img {
     width: 100%;
     height: auto;
-    aspect-ratio: 3 / 2;
+    /* 4:3, not a portrait crop: three of these five frames are landscape, and at 4:5
+       the consultation shot lost both people and kept the pot plant. The arch still
+       reads at this ratio - it is a doorway rather than a mirror. */
+    aspect-ratio: 4 / 3;
     object-fit: cover;
+    object-position: 50% 42%;
+  }
+
+  .step__media::before {
+    content: "";
+    position: absolute;
+    inset: -8% -6%;
+    z-index: -1;
+    background: radial-gradient(
+      58% 52% at 50% 44%,
+      color-mix(in oklab, var(--mk-gold) 10%, transparent) 0%,
+      transparent 74%
+    );
+    pointer-events: none;
   }
 
   /* Steps four and five have no photograph - healing and the correction visit happen

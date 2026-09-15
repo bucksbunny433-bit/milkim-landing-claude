@@ -97,10 +97,18 @@
 
   /* ---------- form ----------
      Near-zero radii. Editorial, and it avoids the 4px default that reads unfinished. */
-  /* No radius anywhere. A 2px corner on every card was the single loudest "generated
-     page" tell: everything became a bordered tile. Separation is now space and image. */
+  /* No radius on controls or panels: a 2px corner on every card was the loudest
+     "generated page" tell. Photographs are a different problem - a hard rectangle on a
+     black ground reads as a sticker - so they get a shape language of their own.
+
+     The arch echoes the concentric rings in the studio's own mark. It is not the 12px
+     rounded card every template ships; it is a top that curves like a salon mirror. */
   --mk-radius: 0px;
-  --mk-radius-media: 0px;
+  --mk-arch: 50% 50% 0 0 / 26% 26% 0 0;
+  --mk-arch-soft: 46% 46% 6% 6% / 22% 22% 3% 3%;
+
+  /* How far a photograph dissolves into the ground at its bottom edge. */
+  --mk-feather: 86%;
   --mk-hit: 44px; /* minimum touch target, WCAG 2.2 */
 
   /* ---------- motion ----------

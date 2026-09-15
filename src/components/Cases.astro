@@ -87,16 +87,6 @@ const groups = [
     {
       groups.map((g) => (
         <div class="deck" data-deck={g.id}>
-          <div class="mk-container deck__controls">
-            <span class="deck__hint">Листайте вбок</span>
-            <button class="deck__arrow" type="button" data-dir="-1" aria-label="Предыдущая работа">
-              ←
-            </button>
-            <button class="deck__arrow" type="button" data-dir="1" aria-label="Следующая работа">
-              →
-            </button>
-          </div>
-
           <div class="deck__track" data-track tabindex="0" role="group" aria-label={`Работы: ${g.title}`}>
             {g.items.map((c) => (
               <article class="case" id={`case-${c.id}`}>
@@ -142,23 +132,44 @@ const groups = [
                         quality={f.mode === "collage" ? 58 : 54}
                         loading="lazy"
                         decoding="async"
-                        class="case__img"
+                        class="case__img mk-arch-soft"
                         data-i={i}
                       />
                     ))}
                   </div>
 
-                  {c.frames.length > 1 ? (
-                    <div class="case__stages">
-                      {c.frames.map((f, i) => (
-                        <label class="case__stage" for={`stage-${c.id}-${i}`}>
-                          {f.short}
-                        </label>
-                      ))}
+                  <div class="case__side">
+                    {c.frames.length > 1 ? (
+                      <div class="case__stages">
+                        {c.frames.map((f, i) => (
+                          <label class="case__stage" for={`stage-${c.id}-${i}`}>
+                            {f.short}
+                          </label>
+                        ))}
+                      </div>
+                    ) : (
+                      <p class="case__single">{c.frames[0]?.label}</p>
+                    )}
+
+                    <div class="case__nav">
+                      <button
+                        class="deck__arrow"
+                        type="button"
+                        data-dir="-1"
+                        aria-label="Предыдущая работа"
+                      >
+                        ←
+                      </button>
+                      <button
+                        class="deck__arrow"
+                        type="button"
+                        data-dir="1"
+                        aria-label="Следующая работа"
+                      >
+                        →
+                      </button>
                     </div>
-                  ) : (
-                    <p class="case__single">{c.frames[0]?.label}</p>
-                  )}
+                  </div>
                 </div>
               </article>
             ))}
@@ -337,6 +348,8 @@ const groups = [
   .case__frame {
     position: relative;
     z-index: 1;
+    /* The halo sits behind the picture so the arch does not float in a void. */
+    isolation: isolate;
     height: min(62svh, 520px);
   }
 
@@ -363,6 +376,20 @@ const groups = [
   .case__img:only-child,
   .case__img[data-i="0"] {
     display: block;
+  }
+
+  /* The warmth of the ground gathers behind the picture. */
+  .case__frame::before {
+    content: "";
+    position: absolute;
+    inset: -6% -4%;
+    z-index: -1;
+    background: radial-gradient(
+      58% 54% at 50% 46%,
+      color-mix(in oklab, var(--mk-gold) 11%, transparent) 0%,
+      transparent 74%
+    );
+    pointer-events: none;
   }
 
   .case__img[data-i="0"] {
@@ -392,12 +419,27 @@ const groups = [
   }
 
   /* ---- stage switch: rules under words, no chips ---- */
-  .case__stages {
+  .case__side {
     position: relative;
     z-index: 1;
+    display: grid;
+    gap: var(--mk-space-4);
+  }
+
+  .case__stages {
     display: flex;
     flex-wrap: wrap;
     gap: var(--mk-space-5);
+  }
+
+  .case__nav {
+    display: none;
+    gap: var(--mk-space-3);
+  }
+
+  /* The arrows are a scripted convenience; swiping and the keyboard work without them. */
+  :global(html.js) .case__nav {
+    display: flex;
   }
 
   .case__stage {
@@ -422,21 +464,21 @@ const groups = [
     transition: transform var(--mk-dur-base) var(--mk-ease-out);
   }
 
-  .case__state:nth-of-type(1):checked ~ .case__stages .case__stage:nth-child(1),
-  .case__state:nth-of-type(2):checked ~ .case__stages .case__stage:nth-child(2),
-  .case__state:nth-of-type(3):checked ~ .case__stages .case__stage:nth-child(3) {
+  .case__state:nth-of-type(1):checked ~ .case__side .case__stages .case__stage:nth-child(1),
+  .case__state:nth-of-type(2):checked ~ .case__side .case__stages .case__stage:nth-child(2),
+  .case__state:nth-of-type(3):checked ~ .case__side .case__stages .case__stage:nth-child(3) {
     color: var(--mk-text);
   }
 
-  .case__state:nth-of-type(1):checked ~ .case__stages .case__stage:nth-child(1)::after,
-  .case__state:nth-of-type(2):checked ~ .case__stages .case__stage:nth-child(2)::after,
-  .case__state:nth-of-type(3):checked ~ .case__stages .case__stage:nth-child(3)::after {
+  .case__state:nth-of-type(1):checked ~ .case__side .case__stages .case__stage:nth-child(1)::after,
+  .case__state:nth-of-type(2):checked ~ .case__side .case__stages .case__stage:nth-child(2)::after,
+  .case__state:nth-of-type(3):checked ~ .case__side .case__stages .case__stage:nth-child(3)::after {
     transform: scaleX(1);
   }
 
-  .case__state:nth-of-type(1):focus-visible ~ .case__stages .case__stage:nth-child(1),
-  .case__state:nth-of-type(2):focus-visible ~ .case__stages .case__stage:nth-child(2),
-  .case__state:nth-of-type(3):focus-visible ~ .case__stages .case__stage:nth-child(3) {
+  .case__state:nth-of-type(1):focus-visible ~ .case__side .case__stages .case__stage:nth-child(1),
+  .case__state:nth-of-type(2):focus-visible ~ .case__side .case__stages .case__stage:nth-child(2),
+  .case__state:nth-of-type(3):focus-visible ~ .case__side .case__stages .case__stage:nth-child(3) {
     outline: 2px solid var(--mk-focus);
     outline-offset: 4px;
   }
@@ -449,22 +491,12 @@ const groups = [
   }
 
   /* ---- controls ---- */
-  .deck__controls {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: var(--mk-space-4);
-    margin-bottom: var(--mk-space-4);
-  }
 
-  .deck__hint {
-    margin-right: auto;
-  }
 
   .deck__arrow {
     width: 52px;
     height: 52px;
-    display: none;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     font-size: 1.1rem;
@@ -477,17 +509,6 @@ const groups = [
       border-color var(--mk-dur-fast) var(--mk-ease-out),
       background-color var(--mk-dur-fast) var(--mk-ease-out),
       color var(--mk-dur-fast) var(--mk-ease-out);
-  }
-
-  :global(html.js) .deck__arrow {
-    display: inline-flex;
-  }
-
-  .deck__hint {
-    font-size: var(--mk-step-label);
-    letter-spacing: var(--mk-tracking-label);
-    text-transform: uppercase;
-    color: var(--mk-faint);
   }
 
   /* Scroll-driven, so the movement follows the finger instead of firing on a timer.
@@ -581,18 +602,17 @@ const groups = [
       padding-top: var(--mk-space-4);
     }
 
-    .case__stages {
+    .case__side {
       grid-column: 2;
       grid-row: 2;
-      flex-direction: column;
-      align-items: flex-start;
       align-self: start;
-      gap: var(--mk-space-3);
+      gap: var(--mk-space-6);
     }
 
-    .case__single {
-      grid-column: 2;
-      grid-row: 2;
+    .case__stages {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--mk-space-3);
     }
 
     /* On a wide screen there is real empty space beside the photograph, so the numeral
@@ -612,9 +632,6 @@ const groups = [
       display: inline;
     }
 
-    .deck__hint {
-      display: none;
-    }
   }
 </style>
 

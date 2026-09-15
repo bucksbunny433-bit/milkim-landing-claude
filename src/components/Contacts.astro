@@ -141,7 +141,7 @@ const facts = [
               quality={60}
               loading="lazy"
               decoding="async"
-              class="interior__img"
+              class="interior__img mk-arch"
             />
           </li>
         ))
@@ -306,8 +306,11 @@ const facts = [
   .interior__img {
     width: 100%;
     height: auto;
-    aspect-ratio: 1 / 1;
+    /* Same lesson as the process strip: these are landscape frames of the room, and a
+       portrait crop throws the room away. 4:5 is as tall as they take. */
+    aspect-ratio: 4 / 5;
     object-fit: cover;
+    object-position: 50% 46%;
   }
 
   /* ---- footer ---- */
