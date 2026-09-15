@@ -3,6 +3,8 @@ import { Image } from "astro:assets";
 import consult from "../assets/process/consult.png";
 import sketch from "../assets/process/sketch.png";
 import procedure from "../assets/process/procedure.png";
+import healing from "../assets/process/healing.png";
+import correction from "../assets/process/correction.png";
 
 // Numbered because this genuinely is a sequence - each step only makes sense after
 // the one before it. Wording is the master's own, from the studio's answers.
@@ -32,20 +34,22 @@ const steps = [
     n: "04",
     title: "Заживление",
     text: "Корочка сходит за неделю, а дерма восстанавливается целый месяц. Через две недели я сама связываюсь и спрашиваю, как идёт. Полную картину видно только через месяц.",
-    image: null,
-    alt: "",
+    image: healing,
+    // Describes what is actually in the frame. The photograph illustrates the studio's
+    // work; it does not claim to be a picture of someone's healing.
+    alt: "Мастер осматривает брови клиентки в студии",
   },
   {
     n: "05",
     title: "Коррекция",
     text: "Через 1–1,5 месяца. Закрывает пробелы, которые иногда остаются после первого раза, добавляет второй слой пигмента для более долгой носки и позволяет поправить оттенок.",
-    image: null,
-    alt: "",
+    image: correction,
+    alt: "Мастер дорабатывает форму бровей на втором визите",
   },
 ];
 ---
 
-<section class="mk-on-light process" id="process">
+<section class="mk-on-dark process" id="process">
   <div class="mk-container">
     <div class="process__head">
       <h2 class="process__title" data-reveal="lines">

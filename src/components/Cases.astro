@@ -87,6 +87,16 @@ const groups = [
     {
       groups.map((g) => (
         <div class="deck" data-deck={g.id}>
+          <div class="mk-container deck__controls">
+            <span class="deck__hint">Листайте вбок</span>
+            <button class="deck__arrow" type="button" data-dir="-1" aria-label="Предыдущая работа">
+              ←
+            </button>
+            <button class="deck__arrow" type="button" data-dir="1" aria-label="Следующая работа">
+              →
+            </button>
+          </div>
+
           <div class="deck__track" data-track tabindex="0" role="group" aria-label={`Работы: ${g.title}`}>
             {g.items.map((c) => (
               <article class="case" id={`case-${c.id}`}>
@@ -154,15 +164,6 @@ const groups = [
             ))}
           </div>
 
-          <div class="mk-container deck__controls">
-            <button class="deck__arrow" type="button" data-dir="-1" aria-label="Предыдущая работа">
-              ←
-            </button>
-            <button class="deck__arrow" type="button" data-dir="1" aria-label="Следующая работа">
-              →
-            </button>
-            <span class="deck__hint">Листайте вбок</span>
-          </div>
         </div>
       ))
     }
@@ -177,7 +178,7 @@ const groups = [
   }
 
   .works__head {
-    margin-bottom: var(--mk-space-7);
+    margin-bottom: var(--mk-space-6);
   }
 
   /* The heading arrives line by line from behind its own mask, the same gesture as the
@@ -451,8 +452,13 @@ const groups = [
   .deck__controls {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: var(--mk-space-4);
-    margin-top: var(--mk-space-6);
+    margin-bottom: var(--mk-space-4);
+  }
+
+  .deck__hint {
+    margin-right: auto;
   }
 
   .deck__arrow {
@@ -564,7 +570,9 @@ const groups = [
     .case__frame {
       grid-column: 1;
       grid-row: 1 / span 2;
-      height: 600px;
+      /* Sized against the viewport, not a fixed 600px: on a 800px-tall laptop the case
+         ran past the fold and the controls with it. */
+      height: min(58vh, 560px);
     }
 
     .case__meta {
