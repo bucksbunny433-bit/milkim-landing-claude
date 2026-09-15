@@ -200,13 +200,13 @@ const { max } = site.links;
   }
 
   .hero__title .line:nth-child(1) > span {
-    animation-delay: 120ms;
+    animation-delay: 560ms;
   }
   .hero__title .line:nth-child(2) > span {
-    animation-delay: 210ms;
+    animation-delay: 650ms;
   }
   .hero__title .line:nth-child(3) > span {
-    animation-delay: 300ms;
+    animation-delay: 740ms;
   }
 
   @keyframes mk-line-rise {
@@ -255,10 +255,10 @@ const { max } = site.links;
   }
 
   .hero__path:nth-child(1)::before {
-    animation-delay: 620ms;
+    animation-delay: 960ms;
   }
   .hero__path:nth-child(2)::before {
-    animation-delay: 740ms;
+    animation-delay: 1060ms;
   }
 
   .hero__path:last-child::after {
@@ -269,7 +269,7 @@ const { max } = site.links;
     background-color: var(--mk-dark-rule);
     transform: scaleX(0);
     transform-origin: left;
-    animation: mk-rule-draw var(--mk-dur-slow) var(--mk-ease-out) 860ms forwards;
+    animation: mk-rule-draw var(--mk-dur-slow) var(--mk-ease-out) 1160ms forwards;
   }
 
   @keyframes mk-rule-draw {
@@ -309,13 +309,13 @@ const { max } = site.links;
   }
 
   .hero__top {
-    animation-delay: 80ms;
-  }
-  .hero__lead {
     animation-delay: 520ms;
   }
-  .hero__actions {
+  .hero__lead {
     animation-delay: 900ms;
+  }
+  .hero__actions {
+    animation-delay: 1080ms;
   }
 
   @keyframes mk-rise-in {
@@ -338,6 +338,39 @@ const { max } = site.links;
     }
     to {
       transform: scale(1);
+    }
+  }
+
+  /* The photograph stays behind while the page moves over it, and the copy leaves a
+     little faster than the picture. Scroll-driven, so it tracks the finger exactly and
+     costs no JavaScript. Chromium today; everywhere else the hero simply scrolls. */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .hero__media {
+        animation: mk-hero-sink linear both;
+        animation-timeline: view();
+        animation-range: exit 0% exit 100%;
+      }
+
+      .hero__copy {
+        animation: mk-hero-lift linear both;
+        animation-timeline: view();
+        animation-range: exit 0% exit 70%;
+      }
+    }
+  }
+
+  @keyframes mk-hero-sink {
+    to {
+      transform: translateY(14%) scale(1.08);
+      opacity: 0.45;
+    }
+  }
+
+  @keyframes mk-hero-lift {
+    to {
+      transform: translateY(-28%);
+      opacity: 0;
     }
   }
 

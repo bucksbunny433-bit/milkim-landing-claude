@@ -123,6 +123,90 @@
 }
 
 @layer components {
+  /* ---- the opening ---- */
+  .mk-intro {
+    position: fixed;
+    inset: 0;
+    z-index: 250;
+    pointer-events: none;
+    /* Out of the way for good once it has played: visibility, not opacity, so it can
+       never sit over a link and swallow a tap. */
+    animation: mk-intro-gone 1ms linear 700ms forwards;
+  }
+
+  .mk-intro__panel {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 50.2%;
+    background-color: var(--mk-dark-ground);
+    animation-duration: 520ms;
+    animation-timing-function: var(--mk-ease-inout);
+    animation-delay: 140ms;
+    animation-fill-mode: both;
+  }
+
+  .mk-intro__panel--top {
+    top: 0;
+    animation-name: mk-intro-up;
+  }
+
+  .mk-intro__panel--bottom {
+    bottom: 0;
+    animation-name: mk-intro-down;
+  }
+
+  /* Plain stylesheet: :global() is Astro component-scope syntax and a browser drops
+     the whole rule, which is why the wordmark never showed. */
+  .mk-intro__mark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: min(46vw, 260px);
+    translate: -50% -50%;
+    color: var(--mk-gold);
+    animation: mk-intro-mark 460ms var(--mk-ease-out) both;
+  }
+
+  @keyframes mk-intro-up {
+    to {
+      transform: translateY(-101%);
+    }
+  }
+
+  @keyframes mk-intro-down {
+    to {
+      transform: translateY(101%);
+    }
+  }
+
+  @keyframes mk-intro-mark {
+    0% {
+      opacity: 0;
+      scale: 0.94;
+    }
+    40% {
+      opacity: 1;
+      scale: 1;
+    }
+    100% {
+      opacity: 0;
+      scale: 1.05;
+    }
+  }
+
+  @keyframes mk-intro-gone {
+    to {
+      visibility: hidden;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mk-intro {
+      display: none;
+    }
+  }
+
   /* Film grain over everything. Flat CSS colour is what makes a page look printed by a
      machine; a little noise is what print and photography actually look like. It is one
      tiled SVG turbulence as a data URI - no request, no file, a few hundred bytes - and

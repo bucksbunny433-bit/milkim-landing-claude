@@ -1,6 +1,7 @@
 ---
 import site from "../data/site.json";
 import LogoSprite from "../components/LogoSprite.astro";
+import Logo from "../components/Logo.astro";
 import "../styles/tokens.css";
 import "../styles/fonts.css";
 import "../styles/base.css";
@@ -93,6 +94,19 @@ const schema = {
 
   <body>
     <LogoSprite />
+
+    {/*
+      The opening. Two panels in the brand's ground colour hold the wordmark, then split
+      and leave. It is pure CSS - no script, nothing to wait for - and the hero image is
+      loading and painting behind it the whole time, so the LCP is not pushed back by it.
+      Under prefers-reduced-motion the whole thing is simply not rendered.
+    */}
+    <div class="mk-intro" aria-hidden="true">
+      <span class="mk-intro__panel mk-intro__panel--top"></span>
+      <span class="mk-intro__panel mk-intro__panel--bottom"></span>
+      <Logo class="mk-intro__mark" label="" />
+    </div>
+
     <a class="mk-skip" href="#main">Перейти к содержанию</a>
     <slot />
 
