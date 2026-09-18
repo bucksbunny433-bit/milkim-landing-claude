@@ -15,12 +15,12 @@ const COPY: Record<string, { lead: string; body: string; anchor: string }> = {
   brows: {
     anchor: "#works",
     lead: "Форма строится по геометрическим точкам вашего лица и зависит только от его пропорций. Цвет подбираю по вашему типажу.",
-    body: "Можно сделать очень натурально — более лёгкими и воздушными штрихами. Нужно понимать обратную сторону: чем легче работа, тем меньше пигмента в коже и тем короче она носится. Это обсуждаем до процедуры, а не после.",
+    body: "Можно сделать очень натурально — более лёгкими и воздушными штрихами. Нужно понимать обратную сторону: чем легче работа, тем быстрее пигмент выходит из кожи. Это обсуждаем до процедуры, а не после.",
   },
   coverup: {
     anchor: "#works",
     lead: "Работа поверх чужого пигмента. Беру не любой случай, и это принципиально.",
-    body: "В работу иду, когда оттенок подлежит перекрытию: сероватые, светло-серые, рыжеватые, иногда с зеленцой или голубизной. Неправильную форму поправлю. А тёмно-серые, чёрные и очень широкие брови сначала требуют осветления или удаления — перекрывать их сразу значит сделать хуже. До диагностики по фото я не обещаю, что работу можно исправить.",
+    body: "В работу иду, когда оттенок подлежит перекрытию: сероватые, светло-серые, рыжеватые, иногда с зеленцой или голубизной. Неправильную форму поправлю. А тёмно-серые, чёрные и очень широкие брови сначала требуют осветления или удаления — перекрывать их сразу значит сделать хуже. Присылайте мне фото ваших бровей, а я подскажу, что с ними можно сделать.",
   },
 };
 ---
@@ -54,8 +54,8 @@ const COPY: Record<string, { lead: string; body: string; anchor: string }> = {
               <span>около 2 часов</span>
               <span>основной визит и коррекция</span>
             </p>
-            <a class="service__link" href={copy.anchor}>
-              Смотреть работы
+            <a class="mk-btn mk-btn--primary service__cta" href={copy.anchor}>
+              Смотреть мои работы
             </a>
           </article>
         );
@@ -205,13 +205,12 @@ const COPY: Record<string, { lead: string; body: string; anchor: string }> = {
     margin-bottom: var(--mk-space-5);
   }
 
-  .service__link {
-    display: inline-flex;
-    align-items: center;
-    min-height: var(--mk-hit);
-    font-size: var(--mk-step-small);
-    color: var(--mk-accent);
-    text-underline-offset: 6px;
+  /* This was a text link under a wall of copy and nobody saw it. It is the one route
+     from a price to the proof behind it, so it gets the same weight as "Записаться". */
+  .service__cta {
+    justify-self: start;
+    font-size: var(--mk-step-body);
+    padding-inline: var(--mk-space-6);
   }
 
   /* ---- the full list ---- */
@@ -333,12 +332,6 @@ const COPY: Record<string, { lead: string; body: string; anchor: string }> = {
     max-width: var(--mk-measure);
   }
 
-  @media (hover: hover) and (pointer: fine) {
-    .service__link:hover {
-      color: var(--mk-gold-deep);
-    }
-  }
-
   @media (min-width: 900px) {
     .service {
       display: grid;
@@ -368,7 +361,7 @@ const COPY: Record<string, { lead: string; body: string; anchor: string }> = {
     .service__lead,
     .service__body,
     .service__facts,
-    .service__link {
+    .service__cta {
       grid-column: 2;
     }
 

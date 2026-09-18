@@ -1,10 +1,10 @@
 ---
 import { Image } from "astro:assets";
-import consult from "../assets/process/consult.png";
-import sketch from "../assets/process/sketch.png";
-import procedure from "../assets/process/procedure.png";
-import healing from "../assets/process/healing.png";
-import correction from "../assets/process/correction.png";
+import consult from "../assets/process/consult.jpg";
+import sketch from "../assets/process/sketch.jpg";
+import procedure from "../assets/process/procedure.jpg";
+import healing from "../assets/process/healing.jpg";
+import correction from "../assets/process/correction.jpg";
 
 // Numbered because this genuinely is a sequence - each step only makes sense after
 // the one before it. Wording is the master's own, from the studio's answers.
@@ -28,16 +28,15 @@ const steps = [
     title: "Процедура",
     text: "Тонкая игла в верхнем слое дермы, движения похожи на выщипывание бровей. Использую анестетик. Около двух часов на любую зону, инструмент и расходники — индивидуальные и стерильные.",
     image: procedure,
-    alt: "Мастер выполняет процедуру перманентного макияжа",
+    alt: "Руки мастера с аппаратом для перманентного макияжа у брови клиентки",
   },
   {
     n: "04",
     title: "Заживление",
-    text: "Корочка сходит за неделю, а дерма восстанавливается целый месяц. Через две недели я сама связываюсь и спрашиваю, как идёт. Полную картину видно только через месяц.",
+    text: "Шелушение сходит за неделю, а дерма восстанавливается целый месяц. Через две недели я сама связываюсь и спрашиваю, как идёт. Полную картину видно только через месяц.",
     image: healing,
-    // Describes what is actually in the frame. The photograph illustrates the studio's
-    // work; it does not claim to be a picture of someone's healing.
-    alt: "Мастер осматривает брови клиентки в студии",
+    // Describes what is actually in the frame, nothing more.
+    alt: "Зажившая бровь после перманентного макияжа, крупный план",
   },
   {
     n: "05",
@@ -57,9 +56,7 @@ const steps = [
         <span class="line"><span>до зажившего</span></span>
         <span class="line"><span>результата</span></span>
       </h2>
-      <p class="process__lead">
-        Два визита и месяц между ними. Ничего неожиданного в кабинете не будет.
-      </p>
+      <p class="process__lead">Ничего неожиданного в кабинете не будет.</p>
     </div>
   </div>
 

@@ -12,42 +12,25 @@ const files = import.meta.glob<{ default: ImageMetadata }>(
   { eager: true },
 );
 
-// Strongest proof first: a full before → fresh → healed set answers the question the
-// studio's research calls decisive. Pairs next, single collages last.
-const RANK: Record<string, number> = { timeline: 0, pair: 1, collage: 2 };
+const ROLE_ALT: Record<string, string> = { before: "до процедуры", after: "после процедуры" };
 
 const groups = [
-  {
-    id: "brows",
-    title: "Брови",
-    note: "Форма по геометрии лица, цвет под типаж.",
-    items: cases.filter((c) => c.service === "brows"),
-  },
-  {
-    id: "coverup",
-    title: "Перекрытие",
-    note: "Работа поверх чужого пигмента. Берётся не любой случай.",
-    items: cases.filter((c) => c.service === "correction"),
-  },
+  { id: "brows", title: "Брови", items: cases.filter((c) => c.service === "brows") },
+  { id: "coverup", title: "Перекрытие", items: cases.filter((c) => c.service === "correction") },
 ].map((g) => ({
   ...g,
-  items: g.items
-    .sort((a, b) => RANK[a.kind] - RANK[b.kind] || a.number - b.number)
-    .map((c, i) => ({
-      ...c,
-      position: i + 1,
-      total: g.items.length,
-      // Only frames whose file actually resolved, so a missing photo can never render
-      // an empty stage tab.
-      frames: c.frames
-        .map((f) => ({
-          ...f,
-          src: files[`../assets/portfolio/${f.file}`]?.default,
-          // "Через месяц, зажившее" is right in the alt text and too long for a chip.
-          short: f.label.split(",")[0],
-        }))
-        .filter((f) => f.src),
-    })),
+  items: g.items.map((c, i) => ({
+    ...c,
+    position: i + 1,
+    total: g.items.length,
+    // The card takes the shape of its own photograph instead of forcing every case into
+    // one box: a supplied collage is never cropped, and a pair is exactly two frames wide.
+    // Only frames whose file actually resolved, so a missing photo can never render an
+    // empty card.
+    frames: c.frames
+      .map((f) => ({ ...f, src: files[`../assets/portfolio/${f.file}`]?.default }))
+      .filter((f) => f.src),
+  })),
 }));
 ---
 
@@ -57,18 +40,15 @@ const groups = [
       <h2 class="works__title" data-reveal="lines">
         <span class="line"><span>Мои работы</span></span>
       </h2>
-      {/* No claim about stages here: a third of the cases are a single collage, so
-          "both stages on every case" would simply be untrue. */}
       <p class="works__lead">
-        Сразу после процедуры цвет ярче — через месяц он уходит на 40–50%. Где есть оба
-        кадра, их можно переключить.
+        Сразу после процедуры цвет ярче — через месяц он уходит на 40–50%.
       </p>
     </div>
   </div>
 
   {/*
-    Radios, not buttons: the group switch and the stage switch both work with JavaScript
-    off, are operable from the keyboard, and are announced as a real choice.
+    Radios, not buttons: the group switch works with JavaScript off, is operable from the
+    keyboard, and is announced as a real choice.
   */}
   <input class="mk-sr" type="radio" name="works-group" id="works-tab-brows" checked />
   <input class="mk-sr" type="radio" name="works-group" id="works-tab-coverup" />
@@ -88,83 +68,56 @@ const groups = [
     {
       groups.map((g) => (
         <div class="deck" data-deck={g.id}>
-          <div class="deck__track" data-track tabindex="0" role="group" aria-label={`Работы: ${g.title}`}>
+          <div
+            class="deck__track"
+            data-track
+            tabindex="0"
+            role="group"
+            aria-label={`Работы: ${g.title}`}
+          >
             {g.items.map((c) => (
               <article class="case" id={`case-${c.id}`}>
                 <div class="case__inner">
                   <p class="case__meta">
                     <span class="case__count">
-                      <span class="case__roll"><b>{String(c.position).padStart(2, "0")}</b></span> /{" "}
-                      {c.total}
+                      <span class="case__roll">
+                        <b>{String(c.position).padStart(2, "0")}</b>
+                      </span>{" "}
+                      / {c.total}
                     </span>
-                    <span class="case__service">{c.serviceTitle}</span>
                   </p>
 
-                  {/* Stage state lives in radios that sit before the frames, which is
-                      what lets a sibling selector cross-fade them with no script. */}
-                  {c.frames.length > 1 &&
-                    c.frames.map((_f, i) => (
-                      <input
-                        class="mk-sr case__state"
-                        type="radio"
-                        name={`stage-${c.id}`}
-                        id={`stage-${c.id}-${i}`}
-                        checked={i === 0}
-                      />
-                    ))}
-
                   {/* Every frame is lazy: the deck sits well below the fold, and
-                      eager-loading the first case's three stages put 332 KB of portfolio
-                      into the first view for pictures nobody had scrolled to yet. */}
-                  <div class="case__frame">
-                    {c.frames.map((f, i) => (
+                      eager-loading the first cards put hundreds of KB into the first view
+                      for pictures nobody had scrolled to yet. */}
+                  <div class="case__frame" data-layout={c.layout}>
+                    {c.frames.map((f) => (
                       <Image
                         src={f.src!}
-                        alt={`${c.serviceTitle}, работа ${c.number} — ${f.label.toLowerCase()}`}
-                        widths={[340, 560, 760]}
-                        width={760}
-                        sizes="(min-width: 900px) 46vw, 92vw"
+                        alt={
+                          f.role
+                            ? `${c.serviceTitle}, работа ${c.number} — ${ROLE_ALT[f.role]}`
+                            : `${c.serviceTitle}, работа ${c.number} — до и после, одним кадром`
+                        }
+                        widths={[360, 560, 760, 1000]}
+                        width={1000}
+                        sizes={c.layout === "pair" ? "(min-width: 900px) 31vw, 47vw" : "(min-width: 900px) 62vw, 94vw"}
                         format="avif"
-                        quality={f.mode === "collage" ? 58 : 54}
+                        quality={60}
                         loading="lazy"
                         decoding="async"
-                        class="case__img mk-melt"
-                        data-i={i}
+                        class="case__img"
                       />
                     ))}
-                  </div>
 
-                  <div class="case__side">
-                    {c.frames.length > 1 ? (
-                      <div class="case__stages">
-                        {c.frames.map((f, i) => (
-                          <label class="case__stage" for={`stage-${c.id}-${i}`}>
-                            {f.short}
-                          </label>
-                        ))}
-                      </div>
-                    ) : (
-                      <p class="case__single">{c.frames[0]?.label}</p>
-                    )}
-
-                    <div class="case__nav">
-                      <button
-                        class="deck__arrow"
-                        type="button"
-                        data-dir="-1"
-                        aria-label="Предыдущая работа"
-                      >
-                        ←
-                      </button>
-                      <button
-                        class="deck__arrow"
-                        type="button"
-                        data-dir="1"
-                        aria-label="Следующая работа"
-                      >
-                        →
-                      </button>
-                    </div>
+                    {/* On the picture, not under it: on a phone nobody scrolled far enough
+                        to find them below, and nothing else said the cards move sideways. */}
+                    <button class="deck__arrow deck__arrow--prev" type="button" data-dir="-1" aria-label="Предыдущая работа">
+                      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 4 7 12l8 8" /></svg>
+                    </button>
+                    <button class="deck__arrow deck__arrow--next" type="button" data-dir="1" aria-label="Следующая работа">
+                      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 4 8 8-8 8" /></svg>
+                    </button>
                   </div>
                 </div>
               </article>
@@ -213,7 +166,7 @@ const groups = [
   .works__tabs {
     display: flex;
     gap: var(--mk-space-6);
-    margin-bottom: var(--mk-space-6);
+    margin-bottom: var(--mk-space-5);
   }
 
   .works__tab {
@@ -272,8 +225,13 @@ const groups = [
   }
 
   /* ---- the deck ---- */
+  .deck {
+    position: relative;
+  }
+
   .deck__track {
     display: flex;
+    align-items: start;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     overscroll-behavior-x: contain;
@@ -295,7 +253,7 @@ const groups = [
     width: min(100% - 2 * var(--mk-gutter), var(--mk-max-width));
     margin-inline: auto;
     display: grid;
-    gap: var(--mk-space-4);
+    gap: var(--mk-space-3);
   }
 
   .case__meta {
@@ -350,44 +308,45 @@ const groups = [
     }
   }
 
-  /* The group tab right above already says which service this is. */
-  .case__service {
-    display: none;
-  }
-
-  /* One fixed box for every case. The photographs differ wildly in shape - 1:1 collages,
-     3:4 portraits, one 16:9 - so they are contained, never cropped, and centred. */
+  /* One box per case, and it is the biggest thing on the page: this section is what the
+     visitor came for. The box takes the photograph's own shape rather than the other way
+     round - several of the supplied collages carry the studio's own baked captions along
+     their bottom edge, and any crop cuts straight through them. */
   .case__frame {
     position: relative;
-    z-index: 1;
-    /* The halo sits behind the picture so the arch does not float in a void. */
     isolation: isolate;
-    height: min(62svh, 520px);
+    /* One square stage for every card. Ten of the nineteen cases are the studio's own
+       square collages and the rest will be, so the deck keeps one height and the pictures
+       are placed inside it rather than the box being cut to fit them.
+       (A per-case ratio was tried first: the cards then differed by 200px and the deck
+       lurched on every swipe. A min-height is worse still - next to aspect-ratio it grows
+       the WIDTH to match and the card runs off the side of the phone.) */
+    aspect-ratio: 1 / 1;
+    width: 100%;
+    /* start, not the grid's default stretch: a stretched item gets a definite height from
+       its row and aspect-ratio is then ignored outright - the square never appeared. */
+    align-self: start;
+    display: grid;
+    /* stretch, not centre: with align-items:center the cell height goes auto, "height:100%"
+       on the image resolves against nothing and the picture sticks to the top of the
+       square instead of sitting in the middle of it. */
+    place-items: stretch;
   }
 
-  /* display, not opacity, for the stage that is not showing: a lazy image that is merely
-     transparent is still fetched, and the two unselected stages of the first case alone
-     put ~100 KB into the first view. The arrival is an animation rather than a
-     transition, because a transition cannot run on an element that just came back into
-     display. */
+  /* Two real frames side by side: the same comparison a collage makes, built in CSS, so a
+     case the studio has not collaged yet still shows both halves at once. */
+  .case__frame[data-layout="pair"] {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--mk-space-2);
+  }
+
+  /* contain, never cover: cropping a collage would cut into the two halves being
+     compared, which is the entire content of the image. */
   .case__img {
-    display: none;
-    position: absolute;
-    inset: 0;
-    margin: auto;
-    width: auto;
-    height: auto;
-    max-width: 100%;
-    max-height: 100%;
-  }
-
-  /* The "before" frame is the base layer and stays put. A later stage is a sheet that
-     wipes across it, so the change reads as the transformation itself rather than as two
-     pictures swapping places. That wipe is the one moment on this page that sells what
-     the studio actually does. */
-  .case__img:only-child,
-  .case__img[data-i="0"] {
-    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    animation: mk-stage-in 720ms var(--mk-ease-out) both;
   }
 
   /* The warmth of the ground gathers behind the picture. */
@@ -404,16 +363,6 @@ const groups = [
     pointer-events: none;
   }
 
-  .case__img[data-i="0"] {
-    animation: mk-stage-in 720ms var(--mk-ease-out) both;
-  }
-
-  .case__state:nth-of-type(2):checked ~ .case__frame .case__img[data-i="1"],
-  .case__state:nth-of-type(3):checked ~ .case__frame .case__img[data-i="2"] {
-    display: block;
-    animation: mk-stage-wipe 900ms var(--mk-ease-inout) both;
-  }
-
   @keyframes mk-stage-in {
     from {
       opacity: 0;
@@ -421,121 +370,66 @@ const groups = [
     }
   }
 
-  @keyframes mk-stage-wipe {
-    from {
-      clip-path: inset(0 100% 0 0);
-    }
-    to {
-      clip-path: inset(0 0 0 0);
-    }
-  }
-
-  /* ---- stage switch: rules under words, no chips ---- */
-  .case__side {
-    position: relative;
-    z-index: 1;
-    display: grid;
-    gap: var(--mk-space-4);
-  }
-
-  .case__stages {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--mk-space-5);
-  }
-
-  .case__nav {
-    display: none;
-    gap: var(--mk-space-3);
-  }
-
-  /* The arrows are a scripted convenience; swiping and the keyboard work without them. */
-  :global(html.js) .case__nav {
-    display: flex;
-  }
-
-  .case__stage {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    min-height: var(--mk-hit);
-    font-size: var(--mk-step-small);
-    color: color-mix(in oklab, var(--mk-text) 46%, transparent);
-    cursor: pointer;
-    transition: color var(--mk-dur-fast) var(--mk-ease-out);
-  }
-
-  .case__stage::after {
-    content: "";
-    position: absolute;
-    inset: auto 0 8px 0;
-    height: 1px;
-    background-color: var(--mk-accent);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform var(--mk-dur-base) var(--mk-ease-out);
-  }
-
-  .case__state:nth-of-type(1):checked ~ .case__side .case__stages .case__stage:nth-child(1),
-  .case__state:nth-of-type(2):checked ~ .case__side .case__stages .case__stage:nth-child(2),
-  .case__state:nth-of-type(3):checked ~ .case__side .case__stages .case__stage:nth-child(3) {
-    color: var(--mk-text);
-  }
-
-  .case__state:nth-of-type(1):checked ~ .case__side .case__stages .case__stage:nth-child(1)::after,
-  .case__state:nth-of-type(2):checked ~ .case__side .case__stages .case__stage:nth-child(2)::after,
-  .case__state:nth-of-type(3):checked ~ .case__side .case__stages .case__stage:nth-child(3)::after {
-    transform: scaleX(1);
-  }
-
-  .case__state:nth-of-type(1):focus-visible ~ .case__side .case__stages .case__stage:nth-child(1),
-  .case__state:nth-of-type(2):focus-visible ~ .case__side .case__stages .case__stage:nth-child(2),
-  .case__state:nth-of-type(3):focus-visible ~ .case__side .case__stages .case__stage:nth-child(3) {
-    outline: 2px solid var(--mk-focus);
-    outline-offset: 4px;
-  }
-
-  .case__single {
-    position: relative;
-    z-index: 1;
-    font-size: var(--mk-step-small);
-    color: var(--mk-faint);
-  }
-
-  /* ---- controls ---- */
-
-
+  /* ---- arrows, on the picture ---- */
   .deck__arrow {
+    display: none;
+    position: absolute;
+    top: 50%;
+    z-index: 2;
+    transform: translateY(-50%);
     width: 52px;
     height: 52px;
-    display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.1rem;
-    color: var(--mk-text);
-    background: none;
-    border: 1px solid color-mix(in oklab, var(--mk-text) 22%, transparent);
+    padding: 0;
+    color: var(--mk-dark-text);
+    background-color: color-mix(in oklab, var(--mk-dark-ground) 64%, transparent);
+    border: 1px solid color-mix(in oklab, var(--mk-gold) 55%, transparent);
     border-radius: 50%;
     cursor: pointer;
     transition:
-      border-color var(--mk-dur-fast) var(--mk-ease-out),
       background-color var(--mk-dur-fast) var(--mk-ease-out),
+      border-color var(--mk-dur-fast) var(--mk-ease-out),
       color var(--mk-dur-fast) var(--mk-ease-out);
   }
 
-  /* Scroll-driven, so the movement follows the finger instead of firing on a timer.
-     The photograph and its numeral travel at different speeds - that difference is what
-     makes a swipe feel like depth rather than a slideshow. */
+  .deck__arrow svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* The arrows are a scripted convenience; swiping and the keyboard work without them. */
+  :global(html.js) .deck__arrow {
+    display: inline-flex;
+  }
+
+  .deck__arrow--prev {
+    left: -6px;
+  }
+
+  .deck__arrow--next {
+    right: -6px;
+  }
+
+  .deck__arrow[disabled] {
+    opacity: 0.32;
+    cursor: default;
+  }
+
+  /* Scroll-driven, so the movement follows the finger instead of firing on a timer. */
   @supports (animation-timeline: view(inline)) {
     @media (prefers-reduced-motion: no-preference) {
       .case__frame,
-      .case__side,
       .case__meta {
         animation: mk-case-in linear both;
         animation-timeline: view(inline);
         animation-range: entry 10% cover 40%;
       }
-
     }
   }
 
@@ -551,89 +445,79 @@ const groups = [
       color: var(--mk-text);
     }
 
-    .case__stage:hover {
-      color: var(--mk-text);
-    }
-
-    .deck__arrow:hover {
-      border-color: var(--mk-gold);
+    .deck__arrow:not([disabled]):hover {
       background-color: var(--mk-gold);
+      border-color: var(--mk-gold);
       color: var(--mk-on-gold);
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .case__stage,
-    .case__stage::after,
     .works__tab,
     .works__tab::after,
     .deck__arrow {
       transition-duration: 1ms;
     }
 
-    .case__img,
-    .case__state:checked ~ .case__frame .case__img {
+    .case__img {
       animation-duration: 1ms;
     }
   }
 
   @media (min-width: 900px) {
     .case__inner {
-      grid-template-columns: minmax(0, 40rem) 17rem;
-      grid-template-rows: auto 1fr;
-      justify-content: start;
-      column-gap: var(--mk-space-8);
-      align-items: start;
+      gap: var(--mk-space-4);
     }
 
+    /* As tall as the viewport allows and no taller: the picture is the argument, so it
+       gets the screen, and its width follows from its own ratio. */
     .case__frame {
-      grid-column: 1;
-      grid-row: 1 / span 2;
-      /* Sized against the viewport, not a fixed 600px: on a 800px-tall laptop the case
-         ran past the fold and the controls with it. */
-      height: min(58vh, 560px);
+      height: min(72vh, 740px);
+      width: auto;
+      max-width: 100%;
+      justify-self: center;
     }
 
-    .case__meta {
-      grid-column: 2;
-      grid-row: 1;
-      padding-top: var(--mk-space-4);
+
+    .deck__arrow {
+      width: 64px;
+      height: 64px;
     }
 
-    .case__side {
-      grid-column: 2;
-      grid-row: 2;
-      align-self: start;
-      gap: var(--mk-space-6);
+    .deck__arrow svg {
+      width: 26px;
+      height: 26px;
     }
-
-    .case__stages {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: var(--mk-space-3);
-    }
-
-    .case__service {
-      display: inline;
-    }
-
   }
 </style>
 
 <script>
-  // Two jobs only: let the arrows page the deck, and mark that JS is present so they
-  // are shown at all. Everything else in this section is CSS.
+  // Two jobs only: let the arrows page the deck, and mark that JS is present so they are
+  // shown at all. Everything else in this section is CSS.
   document.documentElement.classList.add("js");
 
   for (const deck of document.querySelectorAll<HTMLElement>("[data-deck]")) {
     const track = deck.querySelector<HTMLElement>("[data-track]");
     if (!track) continue;
 
-    for (const btn of deck.querySelectorAll<HTMLButtonElement>(".deck__arrow")) {
+    const arrows = [...deck.querySelectorAll<HTMLButtonElement>(".deck__arrow")];
+
+    for (const btn of arrows) {
       btn.addEventListener("click", () => {
         const dir = Number(btn.dataset.dir ?? 1);
         track.scrollBy({ left: dir * track.clientWidth, behavior: "smooth" });
       });
     }
+
+    // An arrow that cannot go anywhere says so, rather than looking broken.
+    const sync = () => {
+      const max = track.scrollWidth - track.clientWidth - 2;
+      for (const btn of arrows) {
+        const back = Number(btn.dataset.dir) < 0;
+        btn.disabled = back ? track.scrollLeft <= 2 : track.scrollLeft >= max;
+      }
+    };
+    track.addEventListener("scroll", sync, { passive: true });
+    sync();
   }
 </script>

@@ -20,7 +20,7 @@ const facts = [
     label: "Адрес",
     lines: [`${site.address.city}, ${site.address.street}`, site.address.floor],
     note: "Есть парковка. Как пройти — подскажу по телефону, когда будете рядом.",
-    link: { href: site.links.yandexMaps, text: "Открыть в Яндекс Картах" },
+    link: { href: site.links.twogis, text: "Открыть в 2ГИС" },
   },
   {
     label: "Часы",
@@ -141,7 +141,7 @@ const facts = [
               quality={60}
               loading="lazy"
               decoding="async"
-              class="interior__img mk-melt"
+              class="interior__img"
             />
           </li>
         ))
@@ -153,12 +153,9 @@ const facts = [
     <div class="foot__brand-row">
       <Logo class="foot__brand" label={`${site.name} — ${site.tagline}`} />
       <p class="foot__cards">
-        <a class="fact__link" href={site.links.yandexMaps} rel="noopener nofollow">
-          Яндекс Карты
-        </a>
+        <a class="fact__link" href={site.links.vk} rel="noopener nofollow">ВКонтакте</a>
         <a class="fact__link" href={site.links.twogis} rel="noopener nofollow">2ГИС</a>
         <a class="fact__link" href={site.links.avito} rel="noopener nofollow">Авито</a>
-        <a class="fact__link" href={site.links.vk} rel="noopener nofollow">ВКонтакте</a>
       </p>
     </div>
 
@@ -280,6 +277,7 @@ const facts = [
 
   .fact__link {
     color: var(--mk-gold);
+    min-width: var(--mk-hit);
     text-decoration-thickness: 1px;
     text-underline-offset: 4px;
     min-height: var(--mk-hit);

@@ -343,6 +343,13 @@
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E");
   }
 
+  /* A reveal that starts a few pixels off to one side briefly widened the document and
+     gave the phone a horizontal scrollbar. clip, not hidden: hidden would make this a
+     scroll container and the pinned process photographs would stop sticking. */
+  main {
+    overflow-x: clip;
+  }
+
   .mk-container {
     width: 100%;
     max-width: var(--mk-max-width);

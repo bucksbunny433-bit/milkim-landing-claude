@@ -4,28 +4,19 @@
     "service": "brows",
     "serviceTitle": "Брови",
     "number": 1,
-    "kind": "timeline",
+    "layout": "pair",
     "frames": [
       {
         "file": "brows/01/before.jpg",
-        "label": "До",
-        "mode": "stage",
         "w": 768,
-        "h": 1024
-      },
-      {
-        "file": "brows/01/fresh.jpg",
-        "label": "Сразу после",
-        "mode": "stage",
-        "w": 960,
-        "h": 1280
+        "h": 1024,
+        "role": "before"
       },
       {
         "file": "brows/01/healed.jpg",
-        "label": "Через месяц, зажившее",
-        "mode": "stage",
         "w": 960,
-        "h": 1280
+        "h": 1280,
+        "role": "after"
       }
     ]
   },
@@ -34,28 +25,19 @@
     "service": "brows",
     "serviceTitle": "Брови",
     "number": 2,
-    "kind": "timeline",
+    "layout": "pair",
     "frames": [
       {
         "file": "brows/02/before.jpg",
-        "label": "До",
-        "mode": "stage",
         "w": 670,
-        "h": 1024
-      },
-      {
-        "file": "brows/02/fresh.jpg",
-        "label": "Сразу после",
-        "mode": "stage",
-        "w": 838,
-        "h": 1280
+        "h": 1024,
+        "role": "before"
       },
       {
         "file": "brows/02/healed.jpg",
-        "label": "Через месяц, зажившее",
-        "mode": "stage",
         "w": 949,
-        "h": 1089
+        "h": 1089,
+        "role": "after"
       }
     ]
   },
@@ -64,21 +46,19 @@
     "service": "brows",
     "serviceTitle": "Брови",
     "number": 3,
-    "kind": "pair",
+    "layout": "pair",
     "frames": [
       {
         "file": "brows/03/before.jpg",
-        "label": "До",
-        "mode": "stage",
         "w": 1024,
-        "h": 1024
+        "h": 1024,
+        "role": "before"
       },
       {
         "file": "brows/03/unlabelled-01.jpg",
-        "label": "После",
-        "mode": "stage",
         "w": 2145,
-        "h": 2145
+        "h": 2145,
+        "role": "after"
       }
     ]
   },
@@ -87,67 +67,19 @@
     "service": "brows",
     "serviceTitle": "Брови",
     "number": 4,
-    "kind": "pair",
+    "layout": "pair",
     "frames": [
       {
         "file": "brows/04/before.jpg",
-        "label": "До",
-        "mode": "stage",
         "w": 1024,
-        "h": 1024
+        "h": 1024,
+        "role": "before"
       },
       {
         "file": "brows/04/fresh.png",
-        "label": "Сразу после",
-        "mode": "stage",
         "w": 1159,
-        "h": 1159
-      }
-    ]
-  },
-  {
-    "id": "brows-05",
-    "service": "brows",
-    "serviceTitle": "Брови",
-    "number": 5,
-    "kind": "pair",
-    "frames": [
-      {
-        "file": "brows/05/fresh.jpg",
-        "label": "Сразу после",
-        "mode": "stage",
-        "w": 576,
-        "h": 1024
-      },
-      {
-        "file": "brows/05/healed.jpg",
-        "label": "Через месяц, зажившее",
-        "mode": "stage",
-        "w": 2172,
-        "h": 2172
-      }
-    ]
-  },
-  {
-    "id": "brows-06",
-    "service": "brows",
-    "serviceTitle": "Брови",
-    "number": 6,
-    "kind": "pair",
-    "frames": [
-      {
-        "file": "brows/06/fresh.png",
-        "label": "Сразу после",
-        "mode": "stage",
-        "w": 2181,
-        "h": 2181
-      },
-      {
-        "file": "brows/06/healed.png",
-        "label": "Через месяц, зажившее",
-        "mode": "stage",
-        "w": 2268,
-        "h": 2268
+        "h": 1159,
+        "role": "after"
       }
     ]
   },
@@ -156,21 +88,19 @@
     "service": "brows",
     "serviceTitle": "Брови",
     "number": 7,
-    "kind": "pair",
+    "layout": "pair",
     "frames": [
       {
         "file": "brows/07/before.jpg",
-        "label": "До",
-        "mode": "stage",
         "w": 1024,
-        "h": 1024
+        "h": 1024,
+        "role": "before"
       },
       {
         "file": "brows/07/fresh.jpg",
-        "label": "Сразу после",
-        "mode": "stage",
         "w": 2268,
-        "h": 2268
+        "h": 2268,
+        "role": "after"
       }
     ]
   },
@@ -179,12 +109,10 @@
     "service": "brows",
     "serviceTitle": "Брови",
     "number": 8,
-    "kind": "collage",
+    "layout": "collage",
     "frames": [
       {
         "file": "brows/08/collage.jpg",
-        "label": "До и после, одним кадром",
-        "mode": "collage",
         "w": 3782,
         "h": 3782
       }
@@ -195,12 +123,10 @@
     "service": "brows",
     "serviceTitle": "Брови",
     "number": 9,
-    "kind": "collage",
+    "layout": "collage",
     "frames": [
       {
         "file": "brows/09/unlabelled-01.jpg",
-        "label": "До и после, одним кадром",
-        "mode": "collage",
         "w": 3499,
         "h": 3499
       }
@@ -211,12 +137,10 @@
     "service": "brows",
     "serviceTitle": "Брови",
     "number": 10,
-    "kind": "collage",
+    "layout": "collage",
     "frames": [
       {
         "file": "brows/10/unlabelled-01.jpg",
-        "label": "До и после, одним кадром",
-        "mode": "collage",
         "w": 4809,
         "h": 4809
       }
@@ -227,21 +151,47 @@
     "service": "brows",
     "serviceTitle": "Брови",
     "number": 11,
-    "kind": "pair",
+    "layout": "pair",
     "frames": [
       {
         "file": "brows/11/before.png",
-        "label": "До",
-        "mode": "stage",
         "w": 1757,
-        "h": 2560
+        "h": 2560,
+        "role": "before"
       },
       {
         "file": "brows/11/fresh.png",
-        "label": "Сразу после",
-        "mode": "stage",
         "w": 1169,
-        "h": 1860
+        "h": 1860,
+        "role": "after"
+      }
+    ]
+  },
+  {
+    "id": "brows-05",
+    "service": "brows",
+    "serviceTitle": "Брови",
+    "number": 5,
+    "layout": "single",
+    "frames": [
+      {
+        "file": "brows/05/healed.jpg",
+        "w": 2172,
+        "h": 2172
+      }
+    ]
+  },
+  {
+    "id": "brows-06",
+    "service": "brows",
+    "serviceTitle": "Брови",
+    "number": 6,
+    "layout": "single",
+    "frames": [
+      {
+        "file": "brows/06/healed.png",
+        "w": 2268,
+        "h": 2268
       }
     ]
   },
@@ -250,28 +200,19 @@
     "service": "correction",
     "serviceTitle": "Перекрытие",
     "number": 1,
-    "kind": "timeline",
+    "layout": "pair",
     "frames": [
       {
         "file": "correction/01/before.jpg",
-        "label": "До",
-        "mode": "stage",
         "w": 576,
-        "h": 1024
-      },
-      {
-        "file": "correction/01/fresh.jpg",
-        "label": "Сразу после",
-        "mode": "stage",
-        "w": 2268,
-        "h": 4032
+        "h": 1024,
+        "role": "before"
       },
       {
         "file": "correction/01/healed.jpg",
-        "label": "Через месяц, зажившее",
-        "mode": "stage",
         "w": 4032,
-        "h": 2268
+        "h": 2268,
+        "role": "after"
       }
     ]
   },
@@ -280,12 +221,10 @@
     "service": "correction",
     "serviceTitle": "Перекрытие",
     "number": 2,
-    "kind": "collage",
+    "layout": "collage",
     "frames": [
       {
         "file": "correction/02/unlabelled-01.png",
-        "label": "До и после, одним кадром",
-        "mode": "collage",
         "w": 2366,
         "h": 2366
       }
@@ -296,12 +235,10 @@
     "service": "correction",
     "serviceTitle": "Перекрытие",
     "number": 3,
-    "kind": "collage",
+    "layout": "collage",
     "frames": [
       {
         "file": "correction/03/unlabelled-01.jpg",
-        "label": "До и после, одним кадром",
-        "mode": "collage",
         "w": 4446,
         "h": 4446
       }
@@ -312,12 +249,10 @@
     "service": "correction",
     "serviceTitle": "Перекрытие",
     "number": 4,
-    "kind": "collage",
+    "layout": "collage",
     "frames": [
       {
         "file": "correction/04/unlabelled-01.png",
-        "label": "До и после, одним кадром",
-        "mode": "collage",
         "w": 1254,
         "h": 1254
       }
@@ -328,12 +263,10 @@
     "service": "correction",
     "serviceTitle": "Перекрытие",
     "number": 5,
-    "kind": "collage",
+    "layout": "collage",
     "frames": [
       {
         "file": "correction/05/unlabelled-01.jpg",
-        "label": "До и после, одним кадром",
-        "mode": "collage",
         "w": 3547,
         "h": 3547
       }
@@ -344,12 +277,10 @@
     "service": "correction",
     "serviceTitle": "Перекрытие",
     "number": 6,
-    "kind": "collage",
+    "layout": "collage",
     "frames": [
       {
         "file": "correction/06/unlabelled-01.jpg",
-        "label": "До и после, одним кадром",
-        "mode": "collage",
         "w": 2687,
         "h": 2687
       }
@@ -360,12 +291,10 @@
     "service": "correction",
     "serviceTitle": "Перекрытие",
     "number": 7,
-    "kind": "collage",
+    "layout": "collage",
     "frames": [
       {
         "file": "correction/07/unlabelled-01.png",
-        "label": "До и после, одним кадром",
-        "mode": "collage",
         "w": 2560,
         "h": 2560
       }
@@ -376,12 +305,10 @@
     "service": "correction",
     "serviceTitle": "Перекрытие",
     "number": 8,
-    "kind": "collage",
+    "layout": "collage",
     "frames": [
       {
         "file": "correction/08/unlabelled-01.png",
-        "label": "До и после, одним кадром",
-        "mode": "collage",
         "w": 2560,
         "h": 2560
       }

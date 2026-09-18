@@ -1,25 +1,32 @@
-// Shapes of the editable content in src/content. The JSON files are the source of
-// truth the future admin UI will write to, so the types live next to the page
-// rather than inside a component - both the card and the section that lists the
-// cards need them.
+// Shapes for the JSON in src/content/. Kept here so a data file stays plain JSON that
+// anyone can edit, while the components still get real types.
 
-/** One photograph inside a case: a single stage, or a ready-made before/after collage. */
+/** One photograph inside a case card. */
 export interface Frame {
+  /** Path under src/assets/portfolio/, e.g. "brows/01/before.jpg". */
   file: string;
-  label: string;
-  mode: "stage" | "collage";
-  /** Real pixel dimensions, recorded in the data file on purpose - see CaseCard. */
+  /** Intrinsic size. Read from the data, never from the image module: touching
+      ImageMetadata.width in a template makes Astro emit the untouched original. */
   w: number;
   h: number;
-  /** True where the frame is a finished result with no "before" to pair it with. */
-  marked?: boolean;
+  /** Only on a "pair". Drives alt text; never rendered as a visible label. */
+  role?: "before" | "after";
 }
+
+/**
+ * How a case is shown:
+ *  collage - one image supplied by the studio, already a before/after in a single frame;
+ *  pair    - two real frames placed side by side, which is the same comparison built in CSS;
+ *  single  - a finished result with no "before" frame in existence.
+ */
+export type CaseLayout = "collage" | "pair" | "single";
 
 export interface CaseData {
   id: string;
+  /** Folder under src/assets/portfolio/: "brows" or "correction". */
   service: string;
   serviceTitle: string;
   number: number;
-  kind: string;
+  layout: CaseLayout;
   frames: Frame[];
 }

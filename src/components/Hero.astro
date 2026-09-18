@@ -45,12 +45,14 @@ const { max } = site.links;
         behind its own mask, which only works when a line is a real element.
       */}
       <h1 class="hero__title">
-        <span class="line"><span>Брови, которые</span></span>
-        <span class="line"><span>выглядят</span></span>
-        <span class="line"><span>как ваши</span></span>
+        <span class="line"><span>Брови,</span></span>
+        <span class="line"><span>которые выглядят</span></span>
+        <span class="line"><span>натурально</span></span>
       </h1>
 
-      <p class="hero__lead">Форма — по геометрии вашего лица, эскиз — до пигмента.</p>
+      <p class="hero__lead">
+        Форма — по геометрии вашего лица. Заживление без сильного шелушения.
+      </p>
 
       <div class="hero__actions">
         <a class="mk-btn mk-btn--primary" href={site.booking.dikidi} rel="noopener">
@@ -124,11 +126,15 @@ const { max } = site.links;
     inset: 0;
     z-index: -1;
     background:
-      /* A short vignette at the very top so the wordmark holds against her hair. */
+      /* A short vignette at the very top so the wordmark holds against her hair. It got
+         deeper when the wordmark got bigger: at 48px tall it reaches further down into
+         the photograph, and measured against the brightest pixel under it the gold had
+         dropped to 3.85:1. */
       linear-gradient(
           to bottom,
-          color-mix(in srgb, var(--mk-dark-ground) 62%, transparent) 0%,
-          transparent 14%
+          color-mix(in srgb, var(--mk-dark-ground) 84%, transparent) 0%,
+          color-mix(in srgb, var(--mk-dark-ground) 52%, transparent) 11%,
+          transparent 19%
         ),
       /* Open across the top half - her brows and the gold tip are the argument - then
          solid before the headline starts, so the copy sits at its measured 17.30:1 and
@@ -142,8 +148,8 @@ const { max } = site.links;
           var(--mk-dark-ground) 43%
         ),
       radial-gradient(
-        120% 55% at 50% 4%,
-        color-mix(in oklab, var(--mk-gold) 12%, transparent) 0%,
+        120% 55% at 50% 13%,
+        color-mix(in oklab, var(--mk-gold) 9%, transparent) 0%,
         transparent 62%
       );
   }
@@ -189,7 +195,7 @@ const { max } = site.links;
   }
 
   :global(.hero__logo) {
-    width: 124px;
+    width: clamp(168px, 46vw, 208px);
     color: var(--mk-gold);
   }
 
@@ -340,7 +346,7 @@ const { max } = site.links;
     animation-delay: 520ms;
   }
   .hero__lead {
-    animation-delay: 900ms;
+    animation-delay: 640ms;
   }
   .hero__actions {
     animation-delay: 1080ms;
