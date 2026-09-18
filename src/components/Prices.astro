@@ -54,7 +54,11 @@ const COPY: Record<string, { lead: string; body: string; anchor: string }> = {
               <span>около 2 часов</span>
               <span>основной визит и коррекция</span>
             </p>
-            <a class="mk-btn mk-btn--primary service__cta" href={copy.anchor}>
+            <a
+              class="mk-btn mk-btn--primary service__cta"
+              href={copy.anchor}
+              data-open-works={s.id === "coverup" ? "coverup" : "brows"}
+            >
               Смотреть мои работы
             </a>
           </article>

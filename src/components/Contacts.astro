@@ -1,13 +1,6 @@
 ---
-import { Image } from "astro:assets";
 import site from "../data/site.json";
 import Logo from "./Logo.astro";
-
-const interior = Object.entries(
-  import.meta.glob<{ default: ImageMetadata }>("../assets/studio/*.png", { eager: true }),
-)
-  .sort(([a], [b]) => a.localeCompare(b))
-  .map(([, m]) => m.default);
 
 const primary = site.phones.find((p) => p.primary)!;
 const { telegram, max } = site.links;
@@ -127,26 +120,6 @@ const facts = [
       }
     </ul>
 
-    <ul class="interior" role="list">
-      {
-        interior.map((img, i) => (
-          <li data-reveal="wipe" style={`--i:${i % 3}`}>
-            <Image
-              src={img}
-              alt={`Студия Milkim в Омске, интерьер ${i + 1}`}
-              widths={[260, 420, 640]}
-              width={640}
-              sizes="(min-width: 760px) 30vw, 80vw"
-              format="avif"
-              quality={60}
-              loading="lazy"
-              decoding="async"
-              class="interior__img"
-            />
-          </li>
-        ))
-      }
-    </ul>
   </div>
 
   <footer class="mk-container foot">
@@ -292,23 +265,6 @@ const facts = [
 
   .fact__link--out {
     font-size: var(--mk-step-small);
-  }
-
-  .interior {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--mk-space-2);
-    margin-bottom: var(--mk-space-8);
-  }
-
-  .interior__img {
-    width: 100%;
-    height: auto;
-    /* Same lesson as the process strip: these are landscape frames of the room, and a
-       portrait crop throws the room away. 4:5 is as tall as they take. */
-    aspect-ratio: 4 / 5;
-    object-fit: cover;
-    object-position: 50% 46%;
   }
 
   /* ---- footer ---- */

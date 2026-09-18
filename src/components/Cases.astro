@@ -80,10 +80,7 @@ const groups = [
                 <div class="case__inner">
                   <p class="case__meta">
                     <span class="case__count">
-                      <span class="case__roll">
-                        <b>{String(c.position).padStart(2, "0")}</b>
-                      </span>{" "}
-                      / {c.total}
+                      <b>{String(c.position).padStart(2, "0")}</b> / {c.total}
                     </span>
                   </p>
 
@@ -107,6 +104,7 @@ const groups = [
                         loading="lazy"
                         decoding="async"
                         class="case__img"
+                        style={f.focus ? `object-position:${f.focus}` : undefined}
                       />
                     ))}
 
@@ -277,37 +275,6 @@ const groups = [
     color: var(--mk-text);
   }
 
-  /* The number rolls up into place as its case arrives, so a swipe reads as a counter
-     ticking over rather than text being replaced. */
-  .case__roll {
-    display: inline-block;
-    overflow: hidden;
-    vertical-align: bottom;
-  }
-
-  .case__roll b {
-    display: block;
-  }
-
-  @supports (animation-timeline: view(inline)) {
-    @media (prefers-reduced-motion: no-preference) {
-      .case__roll b {
-        animation: mk-roll linear both;
-        animation-timeline: view(inline);
-        animation-range: entry 30% cover 46%;
-      }
-    }
-  }
-
-  @keyframes mk-roll {
-    from {
-      transform: translateY(105%);
-    }
-    to {
-      transform: translateY(0);
-    }
-  }
-
   /* One box per case, and it is the biggest thing on the page: this section is what the
      visitor came for. The box takes the photograph's own shape rather than the other way
      round - several of the supplied collages carry the studio's own baked captions along
@@ -340,13 +307,18 @@ const groups = [
     gap: var(--mk-space-2);
   }
 
-  /* contain, never cover: cropping a collage would cut into the two halves being
-     compared, which is the entire content of the image. */
+  /* The picture fills its stage. Every supplied collage is exactly 1:1, so for those
+     this crops nothing at all; for a pair each half fills a 1:2 cell, which trims the
+     sides and keeps the full height - and the studio's own baked captions sit along the
+     bottom edge, so height is the part that must survive.
+     No entrance animation on any of this. Nineteen cards, each holding a large photo,
+     each running a scroll-driven timeline, made the deck stutter on a real phone; the
+     swipe itself is the motion now. */
   .case__img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
-    animation: mk-stage-in 720ms var(--mk-ease-out) both;
+    object-fit: cover;
+    object-position: 50% 50%;
   }
 
   /* The warmth of the ground gathers behind the picture. */
@@ -361,13 +333,6 @@ const groups = [
       transparent 74%
     );
     pointer-events: none;
-  }
-
-  @keyframes mk-stage-in {
-    from {
-      opacity: 0;
-      transform: translateY(14px) scale(1.02);
-    }
   }
 
   /* ---- arrows, on the picture ---- */
@@ -421,25 +386,6 @@ const groups = [
     cursor: default;
   }
 
-  /* Scroll-driven, so the movement follows the finger instead of firing on a timer. */
-  @supports (animation-timeline: view(inline)) {
-    @media (prefers-reduced-motion: no-preference) {
-      .case__frame,
-      .case__meta {
-        animation: mk-case-in linear both;
-        animation-timeline: view(inline);
-        animation-range: entry 10% cover 40%;
-      }
-    }
-  }
-
-  @keyframes mk-case-in {
-    from {
-      opacity: 0.2;
-      transform: translateY(22px);
-    }
-  }
-
   @media (hover: hover) and (pointer: fine) {
     .works__tab:hover {
       color: var(--mk-text);
@@ -458,21 +404,40 @@ const groups = [
     .deck__arrow {
       transition-duration: 1ms;
     }
-
-    .case__img {
-      animation-duration: 1ms;
-    }
   }
 
   @media (min-width: 900px) {
+    /* The picture wants the screen, and everything above it is in the way. Heading and
+       lead share a line and the section's padding comes in, because the whole card - the
+       arrows included - has to fit a laptop without scrolling. */
+    .works {
+      padding-block: var(--mk-space-8);
+    }
+
+    .works__head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 24rem);
+      align-items: end;
+      column-gap: var(--mk-space-8);
+      margin-bottom: var(--mk-space-4);
+    }
+
+    .works__title {
+      margin-bottom: 0;
+    }
+
+    .works__tabs {
+      margin-bottom: var(--mk-space-3);
+    }
+
     .case__inner {
-      gap: var(--mk-space-4);
+      gap: var(--mk-space-3);
     }
 
     /* As tall as the viewport allows and no taller: the picture is the argument, so it
        gets the screen, and its width follows from its own ratio. */
     .case__frame {
-      height: min(72vh, 740px);
+      height: min(72vh, 820px);
       width: auto;
       max-width: 100%;
       justify-self: center;
@@ -496,7 +461,10 @@ const groups = [
   // shown at all. Everything else in this section is CSS.
   document.documentElement.classList.add("js");
 
-  for (const deck of document.querySelectorAll<HTMLElement>("[data-deck]")) {
+  const decks = [...document.querySelectorAll<HTMLElement>("[data-deck]")];
+  const syncAll: Array<() => void> = [];
+
+  for (const deck of decks) {
     const track = deck.querySelector<HTMLElement>("[data-track]");
     if (!track) continue;
 
@@ -511,13 +479,38 @@ const groups = [
 
     // An arrow that cannot go anywhere says so, rather than looking broken.
     const sync = () => {
+      // A hidden deck measures 0 wide, which made every arrow in the second group look
+      // like an end stop - and stay that way, because nothing re-checked after the tab
+      // was switched. A deck with no width is simply not measurable yet.
+      if (!track.clientWidth) return;
       const max = track.scrollWidth - track.clientWidth - 2;
       for (const btn of arrows) {
-        const back = Number(btn.dataset.dir) < 0;
-        btn.disabled = back ? track.scrollLeft <= 2 : track.scrollLeft >= max;
+        btn.disabled = Number(btn.dataset.dir) < 0 ? track.scrollLeft <= 2 : track.scrollLeft >= max;
       }
     };
     track.addEventListener("scroll", sync, { passive: true });
+    syncAll.push(sync);
     sync();
+  }
+
+  const resync = () => {
+    for (const s of syncAll) s();
+  };
+  addEventListener("resize", resync, { passive: true });
+
+  // The hero's second path - "I already have old permanent makeup" - has to land on the
+  // cover-up group, not on brows.
+  for (const tab of document.querySelectorAll<HTMLInputElement>('input[name="works-group"]')) {
+    tab.addEventListener("change", resync);
+  }
+
+  for (const link of document.querySelectorAll<HTMLAnchorElement>("[data-open-works]")) {
+    link.addEventListener("click", () => {
+      const id = `works-tab-${link.dataset.openWorks}`;
+      const tab = document.getElementById(id) as HTMLInputElement | null;
+      if (!tab) return;
+      tab.checked = true;
+      tab.dispatchEvent(new Event("change", { bubbles: true }));
+    });
   }
 </script>

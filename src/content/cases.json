@@ -16,7 +16,8 @@
         "file": "brows/01/healed.jpg",
         "w": 960,
         "h": 1280,
-        "role": "after"
+        "role": "after",
+        "focus": "0% 50%"
       }
     ]
   },
@@ -37,7 +38,8 @@
         "file": "brows/02/healed.jpg",
         "w": 949,
         "h": 1089,
-        "role": "after"
+        "role": "after",
+        "focus": "0% 50%"
       }
     ]
   },
@@ -73,13 +75,15 @@
         "file": "brows/04/before.jpg",
         "w": 1024,
         "h": 1024,
-        "role": "before"
+        "role": "before",
+        "focus": "100% 50%"
       },
       {
         "file": "brows/04/fresh.png",
         "w": 1159,
         "h": 1159,
-        "role": "after"
+        "role": "after",
+        "focus": "100% 50%"
       }
     ]
   },
@@ -163,7 +167,8 @@
         "file": "brows/11/fresh.png",
         "w": 1169,
         "h": 1860,
-        "role": "after"
+        "role": "after",
+        "focus": "0% 50%"
       }
     ]
   },
@@ -209,9 +214,9 @@
         "role": "before"
       },
       {
-        "file": "correction/01/healed.jpg",
-        "w": 4032,
-        "h": 2268,
+        "file": "correction/01/fresh.jpg",
+        "w": 2268,
+        "h": 4032,
         "role": "after"
       }
     ]

@@ -6,6 +6,14 @@ import procedure from "../assets/process/procedure.jpg";
 import healing from "../assets/process/healing.jpg";
 import correction from "../assets/process/correction.jpg";
 
+// The room, moved up from the footer: it belongs next to "nothing unexpected in the
+// room", where it answers the sentence, not at the bottom of the page as decoration.
+const interior = Object.entries(
+  import.meta.glob<{ default: ImageMetadata }>("../assets/studio/*.png", { eager: true }),
+)
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([, m]) => m.default);
+
 // Numbered because this genuinely is a sequence - each step only makes sense after
 // the one before it. Wording is the master's own, from the studio's answers.
 const steps = [
@@ -58,6 +66,27 @@ const steps = [
       </h2>
       <p class="process__lead">Ничего неожиданного в кабинете не будет.</p>
     </div>
+
+    <ul class="room" role="list">
+      {
+        interior.map((img, i) => (
+          <li data-reveal style={`--i:${i % 3}`}>
+            <Image
+              src={img}
+              alt={`Кабинет студии Milkim в Омске, вид ${i + 1}`}
+              widths={[260, 420, 640]}
+              width={640}
+              sizes="(min-width: 760px) 30vw, 46vw"
+              format="avif"
+              quality={60}
+              loading="lazy"
+              decoding="async"
+              class="room__img"
+            />
+          </li>
+        ))
+      }
+    </ul>
   </div>
 
   {/*
@@ -111,7 +140,24 @@ const steps = [
   }
 
   .process__head {
+    margin-bottom: var(--mk-space-6);
+  }
+
+  /* Hard edges here on purpose - it is the actual room, and a feathered edge made it
+     read as mood rather than as a place you are about to walk into. */
+  .room {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--mk-space-2);
     margin-bottom: var(--mk-space-8);
+  }
+
+  .room__img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: 50% 46%;
   }
 
   .process__title {

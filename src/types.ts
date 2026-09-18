@@ -11,6 +11,9 @@ export interface Frame {
   h: number;
   /** Only on a "pair". Drives alt text; never rendered as a visible label. */
   role?: "before" | "after";
+  /** object-position, when the default centre crop puts the brows off the stage.
+      e.g. "50% 30%". Omit unless a card actually needs it. */
+  focus?: string;
 }
 
 /**
