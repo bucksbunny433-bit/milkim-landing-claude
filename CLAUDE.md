@@ -43,7 +43,7 @@ Nothing in here is a suggestion.
 | Phone, secondary | +7 906 197-70-77 — publish both |
 | Online booking | DIKIDI — https://dikidi.net/833342 |
 | VK | https://vk.ru/milvicpm |
-| Listings | Avito, 2GIS (`70000001064923408`), Yandex Maps (`205810346343`) |
+| Listings | Avito, 2GIS (`70000001064923408`), Yandex Maps (`205810346343`) — **Yandex Maps is deliberately not linked anywhere on the site** (client's call, 2026-09-18); the id stays in `site.json` as studio data. VK takes its place in the reviews block and the footer |
 | Deposit | 500 ₽. Forfeited if cancelled less than 24 hours ahead |
 | Promo | "Приведи друга" — 15% off a correction. Currently active, publish it |
 | Brand | Full SVG pack (full lockup / emblem / wordmark × gold / black / white / transparent). Screen gold `#F3CF83`, light signature `#F4F1E8`, ground `#000000` |
@@ -80,21 +80,35 @@ Maps and 2GIS cards — a mismatch between the card and the site destroys trust 
 - **Prices display as the base figure alone** — `5 500 ₽`, not "5 500 ₽ + коррекция". The
   client's position is that clients already know a correction is required, so it is not a
   surprise. Correction prices remain visible as their own column in the price table.
-- **Portfolio is accepted as complete.** 11 brow cases, 8 cover-up cases. Case folders follow
-  `до / сразу после / зажившие`; several single files are before/after collages. Brow cases 5
-  and 6 have no "before" frame — present those as a finished result, never labelled as a pair.
+- **Portfolio is accepted as complete.** 11 brow cases, 8 cover-up cases. The source folders
+  still hold `до / сразу после / зажившие` frames, but the site no longer switches between
+  them: since 2026-09-18 every card is ONE square picture, and `src/content/cases.json`
+  names which frames that picture is made of. Three layouts, and no others:
+  `collage` (one supplied before/after in a single frame), `pair` (two real frames side by
+  side, which is the same comparison built in CSS) and `single` (a finished result where no
+  "before" frame exists — brow cases 5 and 6). The client is replacing the `pair` cases with
+  his own square collages as they are produced; each swap is one entry in `cases.json` and
+  never a markup change.
 - **Publication consent obtained** for the client photos supplied.
 - **Reviews come from mixed platforms.** Label each one with its source; where the platform is
   not visible in the screenshot, put the source in text beside it.
 - Adding or replacing a case must never require touching markup: one folder of photos plus a
   short data file per case.
 - **Cases carry no written description.** The client decided on 2026-09-13 that none will be
-  supplied, so the card is images and a stage caption, nothing else. Do not add a placeholder
-  for copy that is not coming.
+  supplied, so the card is the picture and a counter, nothing else — no stage chips, no
+  "до / после" labels (removed 2026-09-18 at the client's instruction), no caption. Do not add
+  a placeholder for copy that is not coming.
+
+- **Nothing in the works section animates.** Nineteen cards each running a scroll-driven
+  timeline made paging stutter on a real phone; the client asked for it to be simple and fast.
+  The swipe is the motion. Do not reintroduce entrance effects here.
 - **Ten of the nineteen cases are ready-made square collages** supplied by the studio, several
-  already carrying the studio's own baked captions. They are captioned "До и после, одним
-  кадром" and are never cropped - forcing them into the card ratio would cut into the halves
-  being compared, which is the entire content of the image.
+  already carrying the studio's own baked captions. Every one of them is exactly 1:1, which is
+  why the card is a square filled edge to edge: at that ratio nothing is cropped. A `pair`
+  fills two 1:2 cells, so the sides are trimmed and the full height survives — the baked
+  captions sit along one edge, and height is the part that must not be lost. Where such a
+  caption is pushed hard against a side, the frame carries a `focus` value in `cases.json`
+  (an `object-position`) that moves the crop window onto it. Five frames need one today.
 - Do not bake captions onto the photos. Text in a raster does not scale between a 220px and a
   680px rendering, is invisible to screen readers, cannot be edited without re-exporting every
   file, and would sit on top of the captions several collages already have. The HTML captions
@@ -102,8 +116,10 @@ Maps and 2GIS cards — a mismatch between the card and the site destroys trust 
 
 ### Design decisions — settled 2026-09-13
 
-- **Split theme.** Hero and footer are dark, carrying the brand as it was designed; portfolio,
-  prices and everything showing skin sit on the light ground so healed pigment reads truthfully.
+- **The whole page is dark.** This replaced the original split theme on the client's
+  instruction ("очень хочется, чтобы весь сайт был чёрным полностью"). Every section carries
+  `.mk-on-dark`. The light-ground tokens still exist and still hold their measured ratios, so
+  the split can be restored, but nothing on the page uses them today.
 - **Hero is a static photo** or a lightweight CSS/SVG animation. Never video — the LCP budget wins.
 - **Palette is derived from the brand pack**, whose guide states the colours outright, so there
   is no need to eyedropper the logo. Measured contrast against WCAG 2.2 AA:
@@ -316,20 +332,33 @@ It needs no npm install — it drives the Chromium already present at `/opt/pw-b
 ## 5. Repository layout
 
 ```
-CLAUDE.md              this file
+CLAUDE.md              this file — the project's standing rules and the client's decisions
+README.md              how to run, edit and publish; written for whoever picks this up next
+docs/
+  portfolio.md         how to add, replace or reorder a case. The most frequent edit
 .claude/skills/
   milkim-visual/       visual + motion playbook and the budget verifier
+scripts/
+  cases.mjs            checks cases.json against the real files - npm run cases
 assets/
   MANIFEST.md          every media slot the page needs — read before requesting materials
   raw/                 untouched originals from the studio; never shipped as-is
 public/                copied to dist/ verbatim: fonts, icons, favicons, video
 src/
-  assets/images/       source images processed by the build pipeline
+  assets/
+    portfolio/         case photographs, brows/NN and correction/NN
+    process/           the five photographs of the process block
+    studio/            the room, shown inside the process block
+    images/            hero background, master portraits
+    brand/             logo SVGs
+    certificates/      diplomas
   components/          .astro components
   layouts/             page shells
   pages/               routes
-  content/             editable content: prices, services, FAQ, reviews (CMS target)
+  content/             editable content: prices, services, FAQ, reviews, cases (CMS target)
+  data/site.json       address, phones, hours, links, deposit, promo, legal details
   styles/              tokens, base, layers
+  types.ts             the shapes the JSON in src/content/ must match
 ```
 
 ---
@@ -407,7 +436,13 @@ npm run build      # static build into dist/
 npm run check      # astro + TypeScript diagnostics
 npm run serve      # serves dist/ WITH GZIP on :4173 - required before verify
 npm run verify     # budgets, reduced-motion, no-JS, screenshots into .verify/
+npm run cases      # checks cases.json against the real photo files
+npm run cases -- --fix   # same, but rewrites w/h from the files first
 ```
+
+Run `npm run cases` after ANY change to the portfolio, before `npm run build`. A wrong
+`w`/`h` makes Astro emit the untouched original — that turned a 3.4 MB build into 53 MB
+once — and a filename that does not exist renders an empty card with no error.
 
 **Never measure against `http-server`, `serve` or `python -m http.server`.** None of them
 compress, and the budgets in §4 are stated for compressed bytes. Measured uncompressed, the
